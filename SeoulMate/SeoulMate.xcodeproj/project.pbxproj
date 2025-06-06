@@ -14,6 +14,8 @@
 		E683A0F82DF1935200496D06 /* Exceptions for "SeoulMate" folder in "SeoulMate" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Source/Components/empty,
+				Source/Extensions/empty,
 				Support/Info.plist,
 			);
 			target = E683A0CA2DF1900400496D06 /* SeoulMate */;

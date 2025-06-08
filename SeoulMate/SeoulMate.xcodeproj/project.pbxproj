@@ -140,6 +140,8 @@
 /* Begin XCBuildConfiguration section */
 		E683A0E22DF1900500496D06 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E683A0CD2DF1900400496D06 /* SeoulMate */;
+			baseConfigurationReferenceRelativePath = Support/Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -168,6 +170,8 @@
 		};
 		E683A0E32DF1900500496D06 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E683A0CD2DF1900400496D06 /* SeoulMate */;
+			baseConfigurationReferenceRelativePath = Support/Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

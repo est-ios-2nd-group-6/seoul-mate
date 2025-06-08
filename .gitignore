@@ -30,6 +30,4 @@ playground.xcworkspace
 # Add this line if you want to avoid checking in source code from the Xcode workspace
 # *.xcworkspace
 
-# For folder structure
-!Source/Components/*
-!Source/Extensions/*
+*.xcconfig

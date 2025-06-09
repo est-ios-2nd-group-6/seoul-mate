@@ -8,6 +8,13 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>tong.visitkorea.or.kr</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
 			<key>apis.data.go.kr</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>

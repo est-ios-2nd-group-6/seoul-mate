@@ -21,5 +21,5 @@
 ## PR Checklist
 PR이 다음 요구 사항을 충족하는지 확인하세요.
 
-- [ ] 커밋 메시지 컨벤션에 맞게 작성했습니다. [Commit message convention 참고  (Ctrl + 클릭하세요.)](https://www.notion.so/oreumi/6-206ebaa8982b8006a104dd2ecfc48be8?source=copy_link#209ebaa8982b80848127e3bc1de91e0b) 
+- [ ] 커밋 메시지 컨벤션에 맞게 작성했습니다. Notion 팀 페이지 내 Commit Message Convention 참고
 - [ ] 변경 사항에 대한 테스트를 했습니다.(버그 수정/기능에 대한 테스트).

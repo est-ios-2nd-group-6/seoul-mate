@@ -75,7 +75,14 @@ class TourApiManager {
                 return
             }
 
-            let json = try JSONDecoder().decode(TourApiListResponseDto.self, from: data)
+            let decoder = JSONDecoder()
+
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyyMMddHHmmss"
+
+            decoder.dateDecodingStrategy = .formatted(formatter)
+
+            let json = try decoder.decode(TourApiListResponseDto.self, from: data)
 
             if let resultCd = json.resultCode, let resultMsg = json.resultMsg {
 				print(resultCd, resultMsg)

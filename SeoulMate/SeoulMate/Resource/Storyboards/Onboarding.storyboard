@@ -16,13 +16,39 @@
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Onboarding" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ar-ne-LmP">
+                                <rect key="frame" x="110.33333333333333" y="405.66666666666669" width="172.66666666666669" height="40.666666666666686"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="5ar-ne-LmP" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="DcT-yd-RjY"/>
+                            <constraint firstItem="5ar-ne-LmP" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="OMa-tu-GNP"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="Oke-Rz-Acg"/>
+                    <connections>
+                        <segue destination="E7O-IR-VBV" kind="showDetail" identifier="tempSegue" id="h9l-7T-bTj"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="132" y="-7"/>
+            <point key="canvasLocation" x="1057.2519083969464" y="-7.042253521126761"/>
+        </scene>
+        <!--Home-->
+        <scene sceneID="FZN-6G-PDW">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Home" id="E7O-IR-VBV" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="yFx-O0-axA"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5Xo-ZV-gPy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2153" y="-7"/>
         </scene>
     </scenes>
     <resources>

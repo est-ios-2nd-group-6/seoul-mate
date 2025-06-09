@@ -12,6 +12,14 @@ class OnboardingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+
+        Task {
+            await TourApiManager.shared.fetchRcmCourseList(by: .area)
+
+            DispatchQueue.main.async { [weak self] in
+                self?.performSegue(withIdentifier: "tempSegue", sender: nil)
+            }
+        }
     }
 
 

@@ -19,20 +19,15 @@ enum fetchCourseListType: String {
 class TourApiManager {
 	static let shared = TourApiManager()
 
-    private init() {
+    var rcmCourseListByArea: [TourApiListItem]?
+    var rcmCourseListByLocation: [Any]?
 
-    }
+    private init() { }
 
-    func fetchRcmCourseListByArea(by: fetchCourseListType, x: Double?, y: Double?) async {
+    func fetchRcmCourseList(by: fetchCourseListType, x: Double? = nil, y: Double? = nil) async {
 
         var baseUrl: String
         var queryItems: [URLQueryItem]
-
-        guard let x, let y else {
-            print("coordinate x, y is missing")
-
-            return
-        }
 
         switch by {
         case .area:
@@ -43,6 +38,12 @@ class TourApiManager {
                 URLQueryItem(name: "areaCode", value: "1") // 서울
             ]
         case .location:
+            guard let x, let y else {
+				print("x, y is missing")
+
+                return
+            }
+
             baseUrl = "http://apis.data.go.kr/B551011/KorService2/locationBasedList2"
             queryItems = [
                 URLQueryItem(name: "arrange", value: "S"), // 대표 이미지가 반드시 있는 항목 거리순 정렬
@@ -61,6 +62,8 @@ class TourApiManager {
         url.append(queryItems: getCommonHeader())
         url.append(queryItems: queryItems)
 
+        print(url)
+
         let request = URLRequest(url: url)
 
         do {
@@ -74,7 +77,7 @@ class TourApiManager {
                 return
             }
 
-            let json = try JSONDecoder().decode(TourApiAreaBasedListResponseDto.self, from: data)
+            let json = try JSONDecoder().decode(TourApiListResponseDto.self, from: data)
 
             if let resultCd = json.resultCode, let resultMsg = json.resultMsg {
 				print(resultCd, resultMsg)
@@ -82,18 +85,7 @@ class TourApiManager {
                 return
             }
 
-            let rcmCourses = json.response.body.items.item
-
-            for rcmCourse in rcmCourses {
-                guard let contentId = rcmCourse.contentid else { continue }
-
-                print(contentId)
-
-                // 코스 상세 정보 조회
-                await fetchRcmCourseDetail(contentId)
-
-                print()
-            }
+            rcmCourseListByArea = json.response.body.items.item
 
         } catch {
             print("Fetcing Recommand Course List is Failed!!", error, separator: "\n")
@@ -102,11 +94,11 @@ class TourApiManager {
     
     /// 한국관광공사 국문 관광정보 서비스 > 상세정보조회 API 호출
     /// - Parameter id: 상세 정보 조회할 컨텐츠(관광지, 숙박시설, 여행코스 ...) ID
-    func fetchRcmCourseDetail(_ id: String) async {
+    func fetchRcmCourseDetail(_ id: String) async -> [TourAPIDetailInfoItem]? {
         guard var url = URL(string: "http://apis.data.go.kr/B551011/KorService2/detailInfo2") else {
             print("invalida URL")
 
-            return
+            return nil
         }
 
         url.append(queryItems: getCommonHeader())
@@ -122,11 +114,11 @@ class TourApiManager {
             let (data, urlResponse) = try await URLSession.shared.data(for: request)
 
             guard let httpResponse = urlResponse as? HTTPURLResponse else {
-                return
+                return nil
             }
 
             guard 200...299 ~= httpResponse.statusCode else {
-                return
+                return nil
             }
 
             let json = try JSONDecoder().decode(TourAPIDetailInfoResponseDto.self, from: data)
@@ -134,19 +126,18 @@ class TourApiManager {
             if let resultCd = json.resultCode, let resultMsg = json.resultMsg {
                 print(resultCd, resultMsg)
 
-                return
+                return nil
             }
 
-            let courses = json.response.body.items.item
+            let detailInfo = json.response.body.items.item
 
-            for course in courses {
-                print(course)
-            }
+            return detailInfo
 
         } catch {
             print("Fetcing Recommand Course Detail is Failed!!", error, separator: "\n")
         }
 
+        return nil
     }
 
     private func getCommonHeader(numOfRows: Int = 10, pageNo: Int = 1) -> [URLQueryItem] {

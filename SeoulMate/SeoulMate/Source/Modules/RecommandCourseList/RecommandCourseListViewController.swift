@@ -10,7 +10,10 @@ import UIKit
 class RecommandCourseListViewController: UIViewController {
     @IBOutlet weak var RecommandCourseListTableView: UITableView!
 
-    var courses: [RecommandCourse] = TourApiManager.shared.rcmCourseListByArea
+	// TODO: 임시 기본값
+    var by: fetchCourseListType? = .area
+
+    var courses: [RecommandCourse] = []
 
     var selectedItem: RecommandCourse? = nil
 
@@ -23,7 +26,14 @@ class RecommandCourseListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationController?.title = "test"
+        switch by {
+        case .area:
+            courses = TourApiManager.shared.rcmCourseListByArea
+        case .location:
+            courses = TourApiManager.shared.rcmCourseListByLocation
+        case nil:
+            courses = []
+        }
 
         Task {
             for (index, course) in courses.enumerated() {

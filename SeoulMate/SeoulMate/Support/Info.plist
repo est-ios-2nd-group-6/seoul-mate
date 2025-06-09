@@ -6,6 +6,28 @@
 	<string>위치를 추적하기 위해 권한이 필요합니다</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>위치를 추적하기 위해 권한이 필요합니다</string>
+	<key>TourApiKey</key>
+	<string>${TOUR_API_KEY}</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>tong.visitkorea.or.kr</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>apis.data.go.kr</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -20,7 +42,7 @@
 					<key>UISceneDelegateClassName</key>
 					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
 					<key>UISceneStoryboardFile</key>
-					<string>Map</string>
+					<string>Onboarding</string>
 				</dict>
 			</array>
 		</dict>

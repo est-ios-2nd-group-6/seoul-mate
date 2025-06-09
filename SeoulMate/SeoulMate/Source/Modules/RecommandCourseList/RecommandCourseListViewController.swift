@@ -8,7 +8,9 @@
 import UIKit
 
 class RecommandCourseListViewController: UIViewController {
-    let list = TourApiManager.shared.rcmCourseListByArea
+    @IBOutlet weak var RecommandCourseListTableView: UITableView!
+
+    var courses: [RecommandCourse] = TourApiManager.shared.rcmCourseListByArea
 
     var selectedItem: RecommandCourse? = nil
 
@@ -20,20 +22,35 @@ class RecommandCourseListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        navigationController?.title = "test"
+
+        Task {
+            for (index, course) in courses.enumerated() {
+                let image = await ImageManager.shared.getImage(course.firstImageUrl)
+
+                courses[index].image = image
+            }
+
+            RecommandCourseListTableView.reloadData()
+        }
     }
 }
 
 extension RecommandCourseListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return list.count
+        return courses.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "rcmCourseListCell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "rcmCourseListCell", for: indexPath) as? RecommandCourseListTableViewCell else {
+            return UITableViewCell()
+        }
 
-        let course = list[indexPath.row]
+        let course = courses[indexPath.row]
 
-        cell.textLabel?.text = course.title
+        cell.listImageView.image = course.image
+        cell.titleLabel.text = course.title
 
         return cell
     }
@@ -41,7 +58,7 @@ extension RecommandCourseListViewController: UITableViewDataSource {
 
 extension RecommandCourseListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        selectedItem = list[indexPath.row]
+        selectedItem = courses[indexPath.row]
 
         return indexPath
     }

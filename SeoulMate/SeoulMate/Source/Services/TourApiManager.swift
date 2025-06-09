@@ -19,8 +19,8 @@ enum fetchCourseListType: String {
 class TourApiManager {
 	static let shared = TourApiManager()
 
-    var rcmCourseListByArea: [TourApiListItem]?
-    var rcmCourseListByLocation: [Any]?
+    var rcmCourseListByArea: [RecommandCourse] = []
+    var rcmCourseListByLocation: [RecommandCourse] = []
 
     private init() { }
 
@@ -62,8 +62,6 @@ class TourApiManager {
         url.append(queryItems: getCommonHeader())
         url.append(queryItems: queryItems)
 
-        print(url)
-
         let request = URLRequest(url: url)
 
         do {
@@ -85,7 +83,13 @@ class TourApiManager {
                 return
             }
 
-            rcmCourseListByArea = json.response.body.items.item
+            let courseList = json.response.body.items.item
+
+            for course in courseList {
+                let rcmCourse = RecommandCourse(courseItem: course)
+
+                rcmCourseListByArea.append(rcmCourse)
+            }
 
         } catch {
             print("Fetcing Recommand Course List is Failed!!", error, separator: "\n")

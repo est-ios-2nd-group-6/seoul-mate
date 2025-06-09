@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import UIKit
 
 struct TourAPIDetailInfoItem: Codable {
     let contentid, contenttypeid, subnum, subcontentid: String
@@ -33,3 +33,4 @@ struct TourAPIDetailInfoResponseDto: Codable {
     let responseTime, resultCode, resultMsg: String?
     let response: Response
 }
+

@@ -14,13 +14,13 @@ struct RecommandCourse {
 
     let title: String
 
-    let createdTime: String
-    let modifiedTime: String
+    let createdTime: Date
+    let modifiedTime: Date
 
     let firstImageUrl: String
     var image: UIImage? = nil
 
-    init(contentId: String, contentTypeId: String, title: String, createdTime: String, modifiedTime: String, firstImageUrl: String, image: UIImage? = nil) {
+    init(contentId: String, contentTypeId: String, title: String, createdTime: Date, modifiedTime: Date, firstImageUrl: String, image: UIImage? = nil) {
         self.contentId = contentId
         self.contentTypeId = contentTypeId
         self.title = title
@@ -38,5 +38,4 @@ struct RecommandCourse {
         self.modifiedTime = courseItem.modifiedtime
         self.firstImageUrl = courseItem.firstimage
     }
-
 }

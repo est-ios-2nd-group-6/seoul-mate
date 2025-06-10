@@ -12,15 +12,17 @@ struct TourApiListItem: Codable {
     let cat1: Cat1
     let cat2: Cat2
     let cat3: Cat3
-    let contentid, contenttypeid, createdtime: String
+    let contentid, contenttypeid: String
     let firstimage, firstimage2: String
     let cpyrhtDivCD: CpyrhtDivCD
-    let mapx, mapy, mlevel, modifiedtime: String
+    let mapx, mapy, mlevel: String
     let sigungucode, tel, title, zipcode: String
     let lDongRegnCD, lDongSignguCD: String
     let lclsSystm1: Cat1
     let lclsSystm2: Cat2
     let lclsSystm3: Cat3
+
+    let createdtime, modifiedtime: Date
 
     enum CodingKeys: String, CodingKey {
         case addr1, addr2, areacode, cat1, cat2, cat3, contentid, contenttypeid, createdtime, firstimage, firstimage2

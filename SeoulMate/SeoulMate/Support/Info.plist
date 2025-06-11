@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NaverMapApiKey</key>
-	<string>${NaverMap_API_KEY}</string>
+	<key>GoogleRoutesApiKey</key>
+	<string>${GOOGLE_ROUTES_API_KEY}</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -40,10 +40,12 @@
 					<key>UISceneDelegateClassName</key>
 					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
 					<key>UISceneStoryboardFile</key>
-					<string>Map</string>
+					<string>RouteMap</string>
 				</dict>
 			</array>
 		</dict>
 	</dict>
+	<key>naverMapApiKey</key>
+	<string>${NaverMap_API_KEY}</string>
 </dict>
 </plist>

@@ -17,8 +17,6 @@ class MapTableViewCell: UITableViewCell {
         super.awakeFromNib()
         numberView.clipsToBounds = true
         numberView.layer.cornerRadius = numberView.bounds.width / 2
-        numberView.backgroundColor = .orange
-        
         
         
         

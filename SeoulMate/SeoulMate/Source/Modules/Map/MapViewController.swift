@@ -64,21 +64,11 @@ class MapViewController: UIViewController {
     }
     
 
-    @IBOutlet weak var addPlaceButton: UIButton!
     @IBOutlet weak var myMapView: NMFNaverMapView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var upDownButton: UIButton!
     @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var tableContentView: UIView!
-    @IBOutlet weak var mapViewHeightConstraint: NSLayoutConstraint!
     
-    @IBAction func addPlacesAction(_ sender: Any) {
-        // 장소가 2개 이상인 경우 경로
-        if let lastMarker {
-            pathArray.append(lastMarker.position)
-            
-        }
-    }
     @IBAction func upDownAction(_ sender: Any) {
 
         UIView.animate(withDuration: 0.3) {
@@ -92,7 +82,7 @@ class MapViewController: UIViewController {
     var lastMarker: NMFMarker?
     var markersArray: [NMFMarker] = []
     let pathOverlay = NMFPath()
-    var pathArray: [NMGLatLng] = []
+    var scheduleItemsArray: [[NMGLatLng]] = []
     let latLngOfLastMarker: NMGLatLng? = nil
     let circleColor = UIColor(red: 0.58, green: 0.78, blue: 0.98, alpha: 1.0)
     var opacity: Double = 0
@@ -106,12 +96,20 @@ class MapViewController: UIViewController {
         northEastLat: 37.715133,
         northEastLng: 127.269311
     )
+    var selectedDays: [String] = []
+    
+    let colorArray: [UIColor] = [.blue, .red, .yellow, .green, .main, .purple, .darkGray, .magenta, .systemIndigo]
+    var lastColor: UIColor?
+    var colorSequence: [UIColor] = []
     
     let defaultDistanceStrategy = NMCDefaultDistanceStrategy()
     var clusterer: NMCClusterer<ItemKey>?
     
     let infoWindow = NMFInfoWindow()
     var customInfoWindowDataSource = CustomInfoWindowDataSource()
+    
+    var currentTopIndexPath: IndexPath?
+
 
     
     override func viewDidLoad() {
@@ -132,7 +130,7 @@ class MapViewController: UIViewController {
         myMapView.mapView.positionMode = .direction
         
         // 경로 표시
-        makePath()
+        makePath(for: 0)
         
         // 현재 위치 표시
         let locationOverlay = myMapView.mapView.locationOverlay
@@ -157,7 +155,7 @@ class MapViewController: UIViewController {
                                                   seoulBounds.northEast,
                                                   NMGLatLng(lat: seoulBounds.northEastLat, lng: seoulBounds.southWestLng),
                                                   seoulBounds.southWest])
-        polylineOverlay?.color = .orange
+        polylineOverlay?.color = .main
         polylineOverlay?.mapView = myMapView.mapView
         
         // 장소 정보
@@ -170,10 +168,8 @@ class MapViewController: UIViewController {
             return true
         }
         
+//        makeMarkerComponets()
         
-//        clustering()
-        
-       
 
     }
     
@@ -191,6 +187,11 @@ class MapViewController: UIViewController {
         super.viewWillDisappear(animated)
         
         circleTimer?.invalidate()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        // TODO: cell 선택했을 때 여행지 정보로 가야함
     }
     
     func circleAnimation(_ animated: Bool) {
@@ -227,28 +228,121 @@ class MapViewController: UIViewController {
         }
     }
     
-    func makePath() {
-        pathArray = [NMGLatLng(lat: 37.582564808534975, lng: 127.06799230339993),
-                     NMGLatLng(lat: 37.68679153826095, lng: 126.99438668262837),
-                     NMGLatLng(lat: 37.55822420754909, lng: 126.82962705707905)
+    func makePath(for section: Int) {
+        scheduleItemsArray = [
+            [NMGLatLng(lat: 37.582564808534975, lng: 127.06799230339993),
+             NMGLatLng(lat: 37.68679153826095, lng: 126.99438668262837),
+             NMGLatLng(lat: 37.55822420754909, lng: 126.98962705707905)
+            ],
+            [NMGLatLng(lat: 37.522564808534975, lng: 126.9679456339993),
+             NMGLatLng(lat: 37.53679153826095, lng: 126.91829668262837),
+             NMGLatLng(lat: 37.51822420754909, lng: 126.92962749207905),
+            ],
+            [NMGLatLng(lat: 37.592564808534975, lng: 126.86736230339993),
+             NMGLatLng(lat: 37.646123412676195, lng: 126.99438668092837),
+             NMGLatLng(lat: 37.59931823123229, lng: 126.9961095707905)]
         ]
-        if pathArray.count >= 2 {
-            let paths = pathArray.map { $0 as AnyObject }
-            pathOverlay.path = NMGLineString(points: paths)
-            pathOverlay.width = 8
-            pathOverlay.color = .orange
-            pathOverlay.outlineWidth = 0
-            pathOverlay.patternIcon = NMFOverlayImage(name: "route_path_arrow")
-            pathOverlay.patternInterval = 10
-            for coord in pathArray {
-                let marker = NMFMarker(position: coord)
-                marker.mapView = myMapView.mapView
-                markersArray.append(marker)
+        pathOverlay.mapView = nil
+        markersArray.forEach { $0.mapView = nil }
+        markersArray.removeAll()
+
+        let dayCoords = scheduleItemsArray[section]
+        guard dayCoords.count >= 2 else { return }
+
+        // 1) Path
+        let points = dayCoords.map { $0 as AnyObject }
+        pathOverlay.path = NMGLineString(points: points)
+        pathOverlay.width = 8
+        pathOverlay.color = .main
+        pathOverlay.outlineWidth = 0
+        pathOverlay.patternIcon = NMFOverlayImage(name: "route_path_arrow")
+        pathOverlay.patternInterval = 10
+        pathOverlay.mapView = myMapView.mapView
+        
+        // 2) Markers
+        for (i, coord) in dayCoords.enumerated() {
+            let marker = NMFMarker(position: coord)
+            marker.mapView = myMapView.mapView
+            
+            // 기존 스타일 재사용
+            marker.captionTextSize = 30
+            marker.captionText = "\(i + 1)"
+            marker.captionColor = .main
+            marker.iconImage = NMF_MARKER_IMAGE_BLACK
+            marker.iconTintColor = getColor(at: i)
+            
+            // 터치 시 카메라 이동
+            marker.touchHandler = { _ in
+                let update = NMFCameraUpdate(scrollTo: coord)
+                update.animation = .easeIn
+                self.myMapView.mapView.moveCamera(update)
+                return true
             }
-            pathOverlay.mapView = myMapView.mapView
+            
+            markersArray.append(marker)
         }
+
+//        if scheduleItemsArray.count >= 2 {
+//            let paths = scheduleItemsArray.map { $0 as AnyObject }
+//            pathOverlay.path = NMGLineString(points: paths)
+//            pathOverlay.width = 8
+//            pathOverlay.color = .main
+//            pathOverlay.outlineWidth = 0
+//            pathOverlay.patternIcon = NMFOverlayImage(name: "route_path_arrow")
+//            pathOverlay.patternInterval = 10
+//            for coord in scheduleItemsArray {
+//                let marker = NMFMarker(position: coord)
+//                marker.mapView = myMapView.mapView
+//                markersArray.append(marker)
+//            }
+//            pathOverlay.mapView = myMapView.mapView
+//            
+//        }
     }
     
+//    func makeMarkerComponets() {
+//        for i in 0 ..< markersArray.count {
+//            // caption
+//            markersArray[i].captionTextSize = 30
+//            markersArray[i].captionText = "\(i + 1)"
+//            markersArray[i].captionColor = .main
+//            
+//            // color
+//            markersArray[i].iconImage = NMF_MARKER_IMAGE_BLACK
+//            markersArray[i].iconTintColor = getColor(at: i)
+//            
+//            // touch event
+//            markersArray[i].touchHandler = { (overlay) in
+//                if let _ = overlay as? NMFMarker {
+//                    let cameraUpdate = NMFCameraUpdate(scrollTo: self.markersArray[i].position)
+//                    cameraUpdate.animation = .easeIn
+//                    cameraUpdate.animationDuration = 0.2
+//                    self.myMapView.mapView.moveCamera(cameraUpdate)
+//                }
+//                return true
+//            }
+//        }
+//        
+//    }
+    
+    func getColor(at index: Int) -> UIColor {
+        // 이미 생성된 경우 재사용
+        if index < colorSequence.count {
+            return colorSequence[index]
+        }
+
+        // 필요한 색을 계속 생성해서 채우기
+        while colorSequence.count <= index {
+            let availableColors = colorArray.filter { $0 != lastColor }
+            let newColor = availableColors.randomElement() ?? colorArray.first!
+            colorSequence.append(newColor)
+            lastColor = newColor
+        }
+
+        return colorSequence[index]
+    }
+
+
     func checkUserCurrentLocationAuthorization(_ status: CLAuthorizationStatus) {
         switch status {
         case .notDetermined:
@@ -307,30 +401,35 @@ class MapViewController: UIViewController {
         present(requestLocationServiceAlert, animated: true)
     }
     
-    func clustering() {
-        let builder = NMCComplexBuilder<ItemKey>()
-        builder.minClusteringZoom = 9
-        builder.maxClusteringZoom = 16
-        builder.maxScreenDistance = 200
-        builder.thresholdStrategy = self
-        builder.distanceStrategy = self
-        builder.tagMergeStrategy = self
-        builder.markerManager = MarkerManager()
-        builder.leafMarkerUpdater = self
-        builder.clusterMarkerUpdater = self
-        self.clusterer = builder.build()
-        
-        var keyTagMap = [ItemKey: ItemData]()
-        for i in 0 ..< pathArray.count {
-            let key = ItemKey(identifier: i, position: NMGLatLng(lat: pathArray[i].lat, lng: pathArray[i].lng))
-            keyTagMap[key] = ItemData(name: "ㅇㅇㅇ", gu: "구구구")
-        }
-        
-        
+//    func clustering() {
+//        let builder = NMCComplexBuilder<ItemKey>()
+//        builder.minClusteringZoom = 9
+//        builder.maxClusteringZoom = 16
+//        builder.maxScreenDistance = 200
+//        builder.thresholdStrategy = self
+//        builder.distanceStrategy = self
+//        builder.tagMergeStrategy = self
+//        builder.markerManager = MarkerManager()
+//        builder.leafMarkerUpdater = self
+//        builder.clusterMarkerUpdater = self
+//        self.clusterer = builder.build()
+//        
+//        var keyTagMap = [ItemKey: ItemData]()
+//        for i in 0 ..< scheduleItemsArray.count {
+//            let key = ItemKey(identifier: i, position: NMGLatLng(lat: scheduleItemsArray[i].lat, lng: scheduleItemsArray[i].lng))
+//            keyTagMap[key] = ItemData(name: "ㅇㅇㅇ", gu: "구구구")
+//        }
+//        
+//        
+//    
+//        self.clusterer?.addAll(keyTagMap)
+//        self.clusterer?.mapView = myMapView.mapView
+//    }
     
-        self.clusterer?.addAll(keyTagMap)
-        self.clusterer?.mapView = myMapView.mapView
-    }
+    @objc func footerButtonTapped(_ sender: UIButton) {
+            let section = sender.tag
+            print("Button tapped in section \(section)")
+        }
     
 }
 
@@ -353,17 +452,17 @@ extension MapViewController: NMFMapViewTouchDelegate {
         let latitude = latlng.lat
         let longitutde = latlng.lng
         print("latitude: \(latitude), longitutde: \(longitutde)")
-        lastMarker?.mapView = nil
-        
-        let marker = NMFMarker()
-        marker.position = latlng
-        marker.mapView = mapView
-        lastMarker = marker
-        
-        infoWindow.close()
-        
-        infoWindow.position = latlng
-        infoWindow.open(with: mapView)
+//        lastMarker?.mapView = nil
+//        
+//        let marker = NMFMarker()
+//        marker.position = latlng
+//        marker.mapView = mapView
+//        lastMarker = marker
+//        
+//        infoWindow.close()
+//        
+//        infoWindow.position = latlng
+//        infoWindow.open(with: mapView)
         
 
 
@@ -392,18 +491,67 @@ extension MapViewController: CLLocationManagerDelegate {
 
 extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return scheduleItemsArray.count
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return pathArray.count
+        return scheduleItemsArray[section].count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MapTableViewCell else { return UITableViewCell() }
         
-        cell.numberLabel.text = "\(indexPath.row + 1)"
-        return cell
+        let isLastRow = indexPath.row == scheduleItemsArray[indexPath.section].count
+        
+        if !isLastRow {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "placeInfoCell", for: indexPath) as? MapTableViewCell else { return UITableViewCell() }
+
+            cell.numberLabel.text = "\(indexPath.row + 1)"
+            cell.placeTitleLabel.text = String(format: "%.3f", scheduleItemsArray[indexPath.section][indexPath.row].lat)
+            cell.numberView.backgroundColor = colorSequence[indexPath.row]
+            return cell
+        } else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "addButtonCell", for: indexPath) as? AddPlaceButtonCell else { return UITableViewCell() }
+            return cell
+
+        }
+
     }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sectionTitle = ["Day1", "Day2", "Day3"]
+        return sectionTitle[section]
+    }
+    
+    
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let tableView = scrollView as? UITableView else { return }
+        
+        //화면 상단에 가장 가까운 셀 찾기
+            guard let indexPaths = tableView.indexPathsForVisibleRows else { return }
+
+            let topIndexPath = indexPaths.min(by: {
+                let cellFrame0 = tableView.rectForRow(at: $0)
+                let cellFrame1 = tableView.rectForRow(at: $1)
+
+                let y0 = tableView.convert(cellFrame0, to: tableView.superview).minY
+                let y1 = tableView.convert(cellFrame1, to: tableView.superview).minY
+
+                return y0 < y1
+            })
+
+            if let top = topIndexPath {
+                print("상단에 가장 가까운 셀: section \(top.section), row \(top.row)")
+                makePath(for: top.section)
+            }
+
+
+        }
+        
+    
     
     
 }

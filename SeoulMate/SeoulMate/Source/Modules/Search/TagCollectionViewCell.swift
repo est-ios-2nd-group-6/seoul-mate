@@ -17,7 +17,7 @@ class TagCollectionViewCell: UICollectionViewCell {
     
     func setCell(text: String){
         self.label.text = text
-        self.layer.backgroundColor = .init(red:240/255, green: 240/255, blue: 240/255, alpha: 1.0)
+        self.layer.backgroundColor = .init(red:240/255, green: 240/255, blue: 240/255, alpha: 0.6)
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true
     }

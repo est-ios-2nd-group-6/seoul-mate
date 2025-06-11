@@ -7,15 +7,20 @@
 
 import UIKit
 
+enum SourceType {
+    case home
+    case map
+}
+
 class SearchViewController: UIViewController {
 
     var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
 
     @IBOutlet weak var searchResultTableView: UITableView!
-
     @IBOutlet weak var tagCollectionView: UICollectionView!
-
     @IBOutlet weak var searchbarView: UISearchBar!
+    
+    var vcSourceType:SourceType?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +58,6 @@ extension SearchViewController: UICollectionViewDataSource {
                 for: indexPath
             ) as! TagCollectionViewCell
         cell.setCell(text: tags[indexPath.item])
-        print(#function)
         return cell
     }
 }
@@ -72,27 +76,6 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
 
 extension SearchViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(tags[indexPath.row])
-    }
-}
-
-class LeftAlignedCollectionViewFlowLayout: UICollectionViewFlowLayout {
-    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        let attributes = super.layoutAttributesForElements(in: rect)
-        var leftMargin = sectionInset.left
-        var maxY: CGFloat = -1.0
-        attributes?.forEach { layoutAttribute in
-            if layoutAttribute.representedElementCategory == .cell {
-                if layoutAttribute.frame.origin.y >= maxY {
-                    leftMargin = sectionInset.left
-                }
-                layoutAttribute.frame.origin.x = leftMargin
-                leftMargin += layoutAttribute.frame.width + minimumInteritemSpacing
-                maxY = max(layoutAttribute.frame.maxY, maxY)
-            }
-        }
-        self.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-        return attributes
     }
 }
 
@@ -123,6 +106,10 @@ extension SearchViewController: UITableViewDataSource {
 }
 
 extension SearchViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     }
 }

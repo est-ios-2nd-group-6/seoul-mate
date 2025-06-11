@@ -2,20 +2,20 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>TourApiKey</key>
-	<string>${TOUR_API_KEY}</string>
+	<key>NaverMapApiKey</key>
+	<string>${NaverMap_API_KEY}</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>tong.visitkorea.or.kr</key>
+			<key>apis.data.go.kr</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
 			</dict>
-			<key>apis.data.go.kr</key>
+			<key>tong.visitkorea.or.kr</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -24,6 +24,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>TourApiKey</key>
+	<string>${TOUR_API_KEY}</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -38,7 +40,7 @@
 					<key>UISceneDelegateClassName</key>
 					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
 					<key>UISceneStoryboardFile</key>
-					<string>Onboarding</string>
+					<string>Map</string>
 				</dict>
 			</array>
 		</dict>

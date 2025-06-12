@@ -11,4 +11,7 @@ extension Bundle {
     var tourApiKey: String? {
         return infoDictionary?["TourApiKey"] as? String
     }
+    var googleApiKey: String? {
+        return infoDictionary?["GoogleApiKey"] as? String
+    }
 }

@@ -24,7 +24,7 @@ class SearchResultTableHeaderCell: UITableViewCell {
         // Configure the view for the selected state
     }
     @objc func deleteAll() {
-        delegate?.didButtonTapped(cell: self)
+        delegate?.didRemoveAllButtonTapped()
     }
     
 }

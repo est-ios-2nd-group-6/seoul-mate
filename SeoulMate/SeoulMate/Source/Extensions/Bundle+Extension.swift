@@ -11,4 +11,8 @@ extension Bundle {
     var tourApiKey: String? {
         return infoDictionary?["TourApiKey"] as? String
     }
+    
+    var naverMapApiKey: String? {
+        return infoDictionary?["NaverMapApiKey"] as? String
+    }
 }

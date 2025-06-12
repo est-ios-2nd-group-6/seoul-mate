@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vra-w2-YFl">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Calendar View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController id="Y6W-OH-hqX" customClass="CalendarViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="여행 일정 등록" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gaR-VX-7cd">
+                                <rect key="frame" x="14" y="172" width="192" height="41"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RzT-2o-lnm" customClass="UICalendarView">
+                                <rect key="frame" x="20" y="228" width="353" height="481"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2i8-dB-7gG">
+                                <rect key="frame" x="20" y="729" width="353" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="nSn-il-1Rh"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Button"/>
+                                <connections>
+                                    <segue destination="kRs-P2-g65" kind="show" identifier="mapSegue" id="QsZ-Va-lfb"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="2i8-dB-7gG" firstAttribute="leading" secondItem="RzT-2o-lnm" secondAttribute="leading" id="0sw-JK-peM"/>
+                            <constraint firstItem="RzT-2o-lnm" firstAttribute="top" secondItem="gaR-VX-7cd" secondAttribute="bottom" constant="15" id="8Ub-Rm-Xxc"/>
+                            <constraint firstItem="2i8-dB-7gG" firstAttribute="top" secondItem="RzT-2o-lnm" secondAttribute="bottom" constant="20" id="GCD-6s-iZ3"/>
+                            <constraint firstItem="2i8-dB-7gG" firstAttribute="trailing" secondItem="RzT-2o-lnm" secondAttribute="trailing" id="Hb2-9A-CYL"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="2i8-dB-7gG" secondAttribute="bottom" constant="20" id="T13-90-z7o"/>
+                            <constraint firstItem="2i8-dB-7gG" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="UB2-q4-9ju"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="RzT-2o-lnm" secondAttribute="trailing" constant="20" id="XdV-Gv-3pA"/>
+                            <constraint firstItem="gaR-VX-7cd" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="14" id="hAO-6x-YFa"/>
+                            <constraint firstItem="RzT-2o-lnm" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="20" id="oat-vy-Unv"/>
+                            <constraint firstItem="gaR-VX-7cd" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="10" id="yIn-Fb-5NN"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="QpU-Dz-7DA"/>
+                    <connections>
+                        <outlet property="calendarView" destination="RzT-2o-lnm" id="8sF-ec-iPx"/>
+                        <outlet property="registerScheduleButton" destination="2i8-dB-7gG" id="etz-7K-8f3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1008.3969465648854" y="4.9295774647887329"/>
+        </scene>
+        <!--Map-->
+        <scene sceneID="Fop-e0-ZZp">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Map" id="kRs-P2-g65" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="Ttz-24-TId"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nuY-qs-yWM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1940.4580152671756" y="61.971830985915496"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="1dl-en-n0L">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="vra-w2-YFl" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="tgK-NQ-ale">
+                        <rect key="frame" x="0.0" y="118" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Y6W-OH-hqX" kind="relationship" relationship="rootViewController" id="1fd-GC-hnI"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uyx-jI-1Mx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="81.679389312977094" y="4.9295774647887329"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

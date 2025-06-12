@@ -1,5 +1,5 @@
 //
-//  RoutePedestrianResponseDto.swift
+//  TMapRoutesApiPedestrianResponseDto.swift
 //  SeoulMate
 //
 //  Created by JuHyeon Seong on 6/10/25.
@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct RoutePedestrianResponseDto: Codable {
+struct TMapRoutesApiResponseDto: Codable {
+    let usedFavoriteRouteVertices: String?
     let type: String
     let features: [Feature]
 }
@@ -63,17 +64,23 @@ struct Properties: Codable {
     let name, description: String
     let direction, nearPoiName, nearPoiX, nearPoiY: String?
     let intersectionName: String?
-    let facilityType, facilityName: String
+//    let facilityType, facilityName: String?
     let turnType: Int?
     let pointType: PointType?
     let lineIndex, distance, time, roadType: Int?
     let categoryRoadType: Int?
+
+    let totalFare, taxiFare: Int?
+    let nextRoadName: String?
 }
 
 enum PointType: String, Codable {
     case ep = "EP"
     case gp = "GP"
     case sp = "SP"
+    case e = "E"
+    case n = "N"
+    case s = "S"
 }
 
 enum FeatureType: String, Codable {

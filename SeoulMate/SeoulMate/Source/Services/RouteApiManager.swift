@@ -31,11 +31,59 @@ class RouteApiManager {
     //        }
     //    }
 
-    private func calcRouteByWalk(startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) {
+    public func calcRouteByDrive(startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
+        guard let url = URL(string: "https://apis.openapi.sk.com/tmap/routes?version=1&format=json") else {
+            fatalError("URL Initialization is Failed")
+        }
 
+        guard let tMapRoutesApiKey = Bundle.main.tMapRoutesApiKey else {
+            fatalError("T Map Routes Api Key is missing")
+        }
+
+        var routeReqDto = TMapRoutesApiRequestDto(
+            startX: startPoint.longitude,
+            startY: startPoint.latitude,
+            startName: "test",
+            endX: endPoint.longitude,
+            endY: endPoint.latitude,
+            endName: "test"
+        )
+
+        if let intermediates {
+            let passList = intermediates.reduce("") {
+                $0.appending("\($1.latitude)_\($1.longitude)")
+            }
+
+            routeReqDto.passList = passList
+        }
+
+        do {
+            var request = URLRequest(url: url)
+
+            request.httpMethod = "POST"
+            request.httpBody = try JSONEncoder().encode(routeReqDto)
+
+            request.addValue(tMapRoutesApiKey, forHTTPHeaderField: "appKey")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            let session = URLSession.shared
+
+            let (data, _) = try await session.data(for: request)
+
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+
+            let response = try decoder.decode(TMapRoutesApiResponseDto.self, from: data)
+
+            return response
+        } catch {
+            print(error)
+        }
+
+        return nil
     }
 
-    public func calcRouteByTransit(startPoint: Location, endPoint: Location) async -> RoutesApiResponseDto? {
+    public func calcRouteByTransit(startPoint: Location, endPoint: Location) async -> GoogleRoutesApiResponseDto? {
         guard let url = URL(string: "https://routes.googleapis.com/directions/v2:computeRoutes") else {
             fatalError("URL Initialization is Failed")
         }
@@ -47,7 +95,7 @@ class RouteApiManager {
         let origin = Destination(latitude: startPoint.latitude, longitude: startPoint.longitude)
         let destination = Destination(latitude: endPoint.latitude, longitude: endPoint.longitude)
 
-        let routeReqDto = RoutesApiRequestDto(
+        let routeReqDto = GoogleRoutesApiRequestDto(
             origin: origin,
             destination: destination,
             intermediates: nil
@@ -71,7 +119,7 @@ class RouteApiManager {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
 
-            let response = try decoder.decode(RoutesApiResponseDto.self, from: data)
+            let response = try decoder.decode(GoogleRoutesApiResponseDto.self, from: data)
 
             return response
         } catch {
@@ -79,5 +127,58 @@ class RouteApiManager {
         }
 
         return nil
+    }
+
+    public func calcRouteByWalk(startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
+        guard let url = URL(string: "https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json") else {
+            fatalError("URL Initialization is Failed")
+        }
+
+        guard let tMapRoutesApiKey = Bundle.main.tMapRoutesApiKey else {
+            fatalError("T Map Routes Api Key is missing")
+        }
+
+        var routeReqDto = TMapRoutesApiRequestDto(
+            startX: startPoint.longitude,
+            startY: startPoint.latitude,
+            startName: "test",
+            endX: endPoint.longitude,
+            endY: endPoint.latitude,
+            endName: "test"
+        )
+
+        if let intermediates {
+            let passList = intermediates.reduce("") {
+                $0.appending("\($1.latitude)_\($1.longitude)")
+            }
+
+            routeReqDto.passList = passList
+        }
+
+        do {
+            var request = URLRequest(url: url)
+
+            request.httpMethod = "POST"
+            request.httpBody = try JSONEncoder().encode(routeReqDto)
+
+            request.addValue(tMapRoutesApiKey, forHTTPHeaderField: "appKey")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            let session = URLSession.shared
+
+            let (data, _) = try await session.data(for: request)
+
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+
+            let response = try decoder.decode(TMapRoutesApiResponseDto.self, from: data)
+
+            return response
+        } catch {
+            print(error)
+        }
+
+        return nil
+
     }
 }

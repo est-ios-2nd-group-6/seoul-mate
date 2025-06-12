@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct RoutesApiResponseDto: Codable {
+struct GoogleRoutesApiResponseDto: Codable {
     struct Location: Codable {
         let latLng: High
     }
@@ -32,7 +32,7 @@ struct Leg: Codable {
     let distanceMeters: Int
     let duration, staticDuration: String
     let polyline: Polyline
-    let startLocation, endLocation: RoutesApiResponseDto.Location
+    let startLocation, endLocation: GoogleRoutesApiResponseDto.Location
     let steps: [Step]
     let localizedValues: LegLocalizedValues
     let stepsOverview: StepsOverview
@@ -70,7 +70,7 @@ struct Step: Codable {
     let distanceMeters: Int?
     let staticDuration: String
     let polyline: Polyline
-    let startLocation, endLocation: RoutesApiResponseDto.Location
+    let startLocation, endLocation: GoogleRoutesApiResponseDto.Location
     let navigationInstruction: NavigationInstruction
     let localizedValues: StepLocalizedValues
     let travelMode: String
@@ -112,7 +112,7 @@ struct StopDetails: Codable {
 
 struct Stop: Codable {
     let name: String
-    let location: RoutesApiResponseDto.Location
+    let location: GoogleRoutesApiResponseDto.Location
 }
 
 struct TransitLine: Codable {

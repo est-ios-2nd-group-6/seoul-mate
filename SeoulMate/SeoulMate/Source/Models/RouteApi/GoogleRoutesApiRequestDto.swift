@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RoutesApiRequestDto: Encodable {
+struct GoogleRoutesApiRequestDto: Encodable {
     let origin: Destination
     let destination: Destination
     let intermediates: [Destination]?

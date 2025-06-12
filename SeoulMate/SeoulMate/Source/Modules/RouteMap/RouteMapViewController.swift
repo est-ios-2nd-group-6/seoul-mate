@@ -10,7 +10,7 @@ import NMapsMap
 
 var dummyData = [
     NMGLatLng(lat: 37.552987, lng: 126.972591),
-    //        NMGLatLng(lat: 37.68679153826095, lng: 126.99438668262837),
+    NMGLatLng(lat: 37.484171739, lng: 126.929784067),
     NMGLatLng(lat: 37.496486, lng: 127.028361)
 ]
 
@@ -34,7 +34,7 @@ class RouteMapViewController: UIViewController {
         }
 
         Task {
-            await calcRoute(type: type, startPoint: startPoint, endPoint: endPoint)
+            await calcRoute(type: type, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
         }
 
     }
@@ -74,7 +74,7 @@ class RouteMapViewController: UIViewController {
             moveCamera(location: startPoint)
 
             Task {
-                await calcRoute(type: .drive, startPoint: startPoint, endPoint: endPoint)
+                await calcRoute(type: .drive, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
             }
         } else {
             // TODO: 좌표 생성 못했을때 오류 처리
@@ -84,6 +84,8 @@ class RouteMapViewController: UIViewController {
 
 extension RouteMapViewController {
     func setupLayout() {
+        naverMapView.showLocationButton = true
+
         let cornerRadius = segmentedControl.frame.height / 2
 
         self.segmentedControl.layer.borderColor = UIColor.white.cgColor
@@ -168,16 +170,7 @@ extension RouteMapViewController {
     }
 
     func calcRouteTMap(type: TravelMode, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
-        var response: TMapRoutesApiResponseDto? = nil
-
-        if type == .drive {
-            response = await RouteApiManager.shared.calcRouteByDrive(startPoint: startPoint, endPoint: endPoint)
-        }
-        else if type == .walk {
-            response = await RouteApiManager.shared.calcRouteByWalk(startPoint: startPoint, endPoint: endPoint)
-        } else {
-            return
-        }
+        var response: TMapRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteTMap(type: type, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
 
         var lineParts: [NMGLineString<AnyObject>] = []
 
@@ -215,54 +208,6 @@ extension RouteMapViewController {
             drawPathOverlay(lineParts: lineParts)
         }
     }
-
-//    func calcRouteByDrive(startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
-//        var lineParts: [NMGLineString<AnyObject>] = []
-//
-//        let response: TMapRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteByDrive(startPoint: startPoint, endPoint: endPoint)
-//
-//
-//    }
-
-//    func calcRouteByWalk(startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
-//        var lineParts: [NMGLineString<AnyObject>] = []
-//
-//        let result = await RouteApiManager.shared.calcRouteByWalk(startPoint: startPoint, endPoint: endPoint)
-//
-//        if let features = result?.features {
-//            for feature in features {
-//                if feature.properties.pointType == .sp {
-////                    feature.properties.totalDistance // 총 이동 거리
-////                    feature.properties.totalTime // 총 소요시간 (ETA)
-//                }
-//
-//
-//                if feature.geometry.type == .point {
-//                    // TODO: 마커 처리
-////                    if case let .double(latitude) = feature.geometry.coordinates[0],
-////                       case let .double(longitude) = feature.geometry.coordinates[1] {
-////
-////                    }
-//                } else if feature.geometry.type == .lineString {
-//                    var points: [NMGLatLng] = []
-//
-//                    for coordinate in feature.geometry.coordinates {
-//                        guard case let .doubleArray(latLng) = coordinate else {
-//							continue
-//                        }
-//
-//                        let point = NMGLatLng(lat: latLng[1], lng: latLng[0])
-//                        points.append(point)
-//                    }
-//
-//                    let linePart = NMGLineString<AnyObject>(points: points)
-//                    lineParts.append(linePart)
-//                }
-//            }
-//
-//            drawPathOverlay(lineParts: lineParts)
-//        }
-//    }
 
     func drawPathOverlay(lineParts: [NMGLineString<AnyObject>], colorParts: [NMFPathColor]? = nil) {
         multipartPath.width = 8

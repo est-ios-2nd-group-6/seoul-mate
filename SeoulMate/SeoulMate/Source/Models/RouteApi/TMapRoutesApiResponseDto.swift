@@ -59,9 +59,9 @@ enum GeometryType: String, Codable {
 
 struct Properties: Codable {
     let totalDistance, totalTime: Int?
-    let index: Int
+    let index: Int?
     let pointIndex: Int?
-    let name, description: String
+    let name, description: String?
     let direction, nearPoiName, nearPoiX, nearPoiY: String?
     let intersectionName: String?
 //    let facilityType, facilityName: String?
@@ -81,6 +81,7 @@ enum PointType: String, Codable {
     case e = "E"
     case n = "N"
     case s = "S"
+    case b1 = "B1"
 }
 
 enum FeatureType: String, Codable {

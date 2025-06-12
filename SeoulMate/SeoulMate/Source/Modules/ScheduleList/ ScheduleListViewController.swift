@@ -63,15 +63,11 @@ class ScheduleListViewController: UIViewController {
                 let alert = UIAlertController(title: "여행 옵션", message: nil, preferredStyle: .actionSheet)
 
                 alert.addAction(UIAlertAction(title: "일정 보기", style: .default) { _ in
-//                    let vc = ScheduleDetailViewController()
-//                    vc.tour = tour
-//                    self.navigationController?.pushViewController(vc, animated: true)
+
                 })
 
                 alert.addAction(UIAlertAction(title: "수정", style: .default) { _ in
-                    //                    let vc = ScheduleEditViewController()
-                    //                    vc.tourToEdit = tour
-                    //                    self.navigationController?.pushViewController(editVC, animated: true)
+
                 })
 
                 alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
@@ -100,47 +96,17 @@ class ScheduleListViewController: UIViewController {
         floatingButton.clipsToBounds = true
     }
 
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if segue.identifier == "ScheduleDetail",
-//           let cell = sender as? UITableViewCell,
-//           let indexPath = scheduleListTableView.indexPath(for: cell),
-//           let destination = segue.destination as? ScheduleDetailViewController {
-//
-//            let selectedItem = tripItems[indexPath.row]
-//
-//            switch selectedItem {
-//            case .trip(let tour):
-//                destination.tour = tour
-//            default:
-//                break
-//            }
-//        }
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         FloatingButtondesign()
 
-        let manager = CoreDataManager.shared
-        let existing = manager.fetchTours()
-
-        if existing.isEmpty {
-            insertUpdatedSampleData(into: manager.context)
-            print("샘플 데이터 삽입됨")
-        } else {
-            print("이미 Tour 데이터 \(existing.count)개 존재")
-        }
-
+        CoreDataManager.shared.seedDummyData()
         fetchScheduleList()
-
-        //        guard Bundle.main.NAVER_API_KEY != nil else {
-        //            print("API 키를 로드하지 못했습니다")
-        //            return
-        //        }
-        //
-        //        guard Bundle.main.GoolgePlace_API_KEY != nil else {
-        //            print("API 키를 로드하지 못했습니다")
-        //            return
-        //        }
     }
 }
 extension ScheduleListViewController: UITableViewDataSource {
@@ -155,36 +121,57 @@ extension ScheduleListViewController: UITableViewDataSource {
 
         switch item {
         case .sectionTitle(let title):
-            let cell = tableView
-                .dequeueReusableCell(withIdentifier: "TitleCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell", for: indexPath)
             as! ScheduleListTitleTableViewCell
             cell.titleLabel.text = title
             return cell
 
         case .trip(let tour):
-            let cell = tableView
-                .dequeueReusableCell(withIdentifier: "TripCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TripCell", for: indexPath)
             as! ScheduleListTripTableViewCell
 
             var displayTitle = tour.title?.trimmingCharacters(in: .whitespacesAndNewlines)
-
             if displayTitle == nil || displayTitle == "" {
-                if let placesSet = tour.places as? Set<Place>, !placesSet.isEmpty {
-                    let sortedPlaces = placesSet.sorted { ($0.name ?? "") < ($1.name ?? "") }
-
-                    if let firstPlace = sortedPlaces.first, let placeName = firstPlace.name {
-                        displayTitle = placeName
-                    }
+                if let pois = tour.pois as? Set<POI>,
+                   let firstPOI = pois.sorted(by: { ($0.name ?? "") < ($1.name ?? "") }).first {
+                    displayTitle = firstPOI.name
                 }
             }
 
             cell.tripNameLabel.text = displayTitle ?? "제목 없는 여행"
+
             let start = tour.startDate ?? Date()
-            let end   = tour.endDate   ?? Date()
+            let end = tour.endDate ?? Date()
             cell.tripDateLabel.text = formatDateRange(start, end)
 
-            cell.tripImageView.image = UIImage(systemName: "map")
+            if
+                let schedules = tour.days as? Set<Schedule>,
+                let firstSchedule = schedules.sorted(by: { ($0.date ?? Date()) < ($1.date ?? Date()) }).first,
+                let pois = firstSchedule.pois?.array as? [POI],
+                let imageURLString = pois.first(where: { $0.imageURL != nil })?.imageURL,
+                let imageURL = URL(string: imageURLString)
+            {
+                cell.tripImageView.load(from: imageURL)
+            } else {
+                cell.tripImageView.image = UIImage(systemName: "photo")
+                cell.tripImageView.tintColor = UIColor(named: "Main")
+            }
+
+            cell.cityCountLabel.text = "\(tour.title?.count.description ?? "0") 개의 장소"
             return cell
+        }
+    }
+}
+
+extension UIImageView {
+    func load(from url: URL) {
+        DispatchQueue.global().async {
+            if let data = try? Data(contentsOf: url),
+               let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.image = image
+                }
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="tjz-ue-iuu">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -133,7 +133,7 @@
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1vT-zo-RuT">
-                                <rect key="frame" x="327" y="734" width="50" height="50"/>
+                                <rect key="frame" x="327" y="675" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="1Sg-qk-Jje"/>
                                     <constraint firstAttribute="height" constant="50" id="Opw-DI-JL5"/>
@@ -153,11 +153,13 @@
                             <constraint firstItem="a2F-Un-EwC" firstAttribute="trailing" secondItem="AKW-6S-I44" secondAttribute="trailing" id="Q6x-RN-2GU"/>
                             <constraint firstItem="AKW-6S-I44" firstAttribute="trailing" secondItem="1vT-zo-RuT" secondAttribute="trailing" constant="16" id="aQq-07-Z7v"/>
                             <constraint firstItem="a2F-Un-EwC" firstAttribute="leading" secondItem="AKW-6S-I44" secondAttribute="leading" id="bl7-g0-GXs"/>
-                            <constraint firstItem="1vT-zo-RuT" firstAttribute="bottom" secondItem="AKW-6S-I44" secondAttribute="bottom" id="rP5-ic-GEl"/>
+                            <constraint firstItem="1vT-zo-RuT" firstAttribute="bottom" secondItem="AKW-6S-I44" secondAttribute="bottom" constant="-10" id="rP5-ic-GEl"/>
                             <constraint firstAttribute="bottom" secondItem="a2F-Un-EwC" secondAttribute="bottom" id="uU0-nd-Yqw"/>
                         </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" title="내 여행" image="suitcase" catalog="system" id="WaD-kz-w4f"/>
                     <navigationItem key="navigationItem" title="My Trips" id="kC6-qV-foF"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="floatingButton" destination="1vT-zo-RuT" id="fxL-PY-SrX"/>
                         <outlet property="scheduleListTableView" destination="a2F-Un-EwC" id="Ogo-f6-d45"/>
@@ -165,12 +167,31 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YZf-3h-xr0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="2840.4580152671756" y="-34.507042253521128"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="9l3-l9-cBr">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="tjz-ue-iuu" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="HUH-rv-eXP">
+                        <rect key="frame" x="0.0" y="118" width="393" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="CrW-ba-Bhz" kind="relationship" relationship="rootViewController" id="F6M-Yl-g02"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yKm-l1-xx7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
             <point key="canvasLocation" x="1913.740458015267" y="-34.507042253521128"/>
         </scene>
     </scenes>
     <resources>
         <image name="ellipsis" catalog="system" width="128" height="37"/>
         <image name="plus" catalog="system" width="128" height="113"/>
+        <image name="suitcase" catalog="system" width="128" height="100"/>
         <namedColor name="Main">
             <color red="0.92941176891326904" green="0.47450977563858032" blue="0.38431376218795776" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

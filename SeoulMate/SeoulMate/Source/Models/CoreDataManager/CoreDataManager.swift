@@ -14,12 +14,14 @@ final class CoreDataManager {
 
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "SeoulMate")
-        container.persistentStoreDescriptions.first?.shouldMigrateStoreAutomatically = true
-        container.persistentStoreDescriptions.first?.shouldInferMappingModelAutomatically = true
-
-        container.loadPersistentStores { _, error in
+        guard let description = container.persistentStoreDescriptions.first else {
+            fatalError("Persistent store description not found")
+        }
+        description.shouldMigrateStoreAutomatically = true
+        description.shouldInferMappingModelAutomatically = true
+        container.loadPersistentStores { storeDescription, error in
             if let error = error {
-                fatalError("Core Data load error: \(error)")
+                fatalError("Unable to load store: \(error.localizedDescription)")
             }
         }
         return container
@@ -28,7 +30,18 @@ final class CoreDataManager {
     var context: NSManagedObjectContext {
         persistentContainer.viewContext
     }
-    
+
+    // MARK: - Save Context
+    func saveContext() {
+        guard context.hasChanges else { return }
+        do {
+            try context.save()
+        } catch {
+            print("Context 저장 실패: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Tag
     func firstFetchTag() {
         let request: NSFetchRequest<Tag> = Tag.fetchRequest()
         let count = (try? context.count(for: request)) ?? 0
@@ -53,7 +66,6 @@ final class CoreDataManager {
             tag.name = name
             tag.selected = false
         }
-
         saveContext()
     }
 
@@ -62,15 +74,10 @@ final class CoreDataManager {
         if sortedByName {
             request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         }
-        do {
-            return try context.fetch(request)
-        } catch {
-            print("Tag fetch 실패: \(error.localizedDescription)")
-            return []
-        }
+        return (try? context.fetch(request)) ?? []
     }
 
-    func toggle(tag: Tag) {
+    func tagSelectToggle(tag: Tag) {
         tag.selected.toggle()
         saveContext()
     }
@@ -78,80 +85,41 @@ final class CoreDataManager {
     func fetchSelectedTags() -> [Tag] {
         let request: NSFetchRequest<Tag> = Tag.fetchRequest()
         request.predicate = NSPredicate(format: "selected == YES")
-        do {
-            return try context.fetch(request)
-        } catch {
-            print("Selected Tag fetch 실패: \(error.localizedDescription)")
-            return []
-        }
+        return (try? context.fetch(request)) ?? []
     }
+
+    // MARK: - Fetch Tours
     func fetchTours() -> [Tour] {
         let request: NSFetchRequest<Tour> = Tour.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
-
-        do {
-            return try context.fetch(request)
-        } catch {
-            print("Failed to fetch tours: \(error.localizedDescription)")
-            return []
-        }
+        return (try? context.fetch(request)) ?? []
     }
 
-    func savePlace(from dto: PlaceTextSearchDTO, context: NSManagedObjectContext) {
-        let place = Place(context: context)
-        place.id = UUID()
-        place.name = dto.name
-        place.address = dto.formattedAddress
-        place.latitude = dto.location.latitude
-        place.longitude = dto.location.longitude
-
-        do {
-            try context.save()
-            print("장소 저장 완료: \(place.name ?? "-")")
-        } catch {
-            print("저장 실패: \(error.localizedDescription)")
-        }
+    func fetchSchedules(for tour: Tour) -> [Schedule] {
+        let request: NSFetchRequest<Schedule> = Schedule.fetchRequest()
+        request.predicate = NSPredicate(format: "tour == %@", tour)
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        return (try? context.fetch(request)) ?? []
     }
 
-    func savePOI(from dto: PlaceTextSearchDTO, category: String, context: NSManagedObjectContext) {
-        let poi = POI(context: context)
-        poi.id = UUID()
-        poi.name = dto.name
-        poi.category = category
-        poi.address = dto.formattedAddress
-        poi.latitude = dto.location.latitude
-        poi.longitude = dto.location.longitude
-        poi.openingHours = dto.regularOpeningHours.weekdayDescriptions.joined(separator: "\n")
-        poi.descriptionText = "⭐️ 평점: \(dto.rating) (\(dto.userRatingCount)명)"
-        poi.imageURL = dto.photos.first?.googleMapsURI
-        poi.rating = Double(dto.rating)
-        poi.isSaved = false
-
-        let fetchRequest: NSFetchRequest<Tag> = Tag.fetchRequest()
-        if let tags = try? context.fetch(fetchRequest).shuffled().prefix(1) {
-            for tag in tags {
-                poi.addToTags(tag)
-            }
-        }
-
-        do {
-            try context.save()
-            print("POI 저장 완료: \(poi.name ?? "-")")
-        } catch {
-            print("POI 저장 실패: \(error.localizedDescription)")
-        }
+    // MARK: - POI
+    func fetchPOIs(for schedule: Schedule) -> [POI] {
+        guard let arr = schedule.pois else { return [] }
+        return arr.compactMap { $0 as? POI }
     }
 
-    func saveContext() {
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                print("저장 실패: \(error.localizedDescription)")
-            }
-        }
+    func togglePOISaved(_ poi: POI) {
+        poi.isSaved.toggle()
+        saveContext()
     }
 
+    func fetchSavedPOIs() -> [POI] {
+        let request: NSFetchRequest<POI> = POI.fetchRequest()
+        request.predicate = NSPredicate(format: "isSaved == true")
+        return (try? context.fetch(request)) ?? []
+    }
+
+    // MARK: - Delete
     func delete(_ object: NSManagedObject) {
         context.delete(object)
         saveContext()
@@ -160,7 +128,6 @@ final class CoreDataManager {
     func deleteTour(_ tour: Tour) {
         if let schedules = tour.days as? Set<Schedule> {
             for schedule in schedules {
-                // 관계 수동 제거
                 schedule.pois = nil
                 context.delete(schedule)
             }
@@ -168,8 +135,8 @@ final class CoreDataManager {
 
         tour.course = nil
         tour.transportMode = nil
-
         context.delete(tour)
+
         saveContext()
     }
 }

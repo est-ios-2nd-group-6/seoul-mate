@@ -12,7 +12,7 @@ struct SearchResult {
     var category:[String]
     var profileImage:String?
     var photos:[TourApiGoogleResponse.Photo]?
-    var primaryTypeDisplayName:TourApiGoogleResponse.PrimaryTypeDisplayName
+    var primaryTypeDisplayName:TourApiGoogleResponse.PrimaryTypeDisplayName?
     struct DisplayName: Codable {
         var text: String
         var languageCode: String
@@ -116,8 +116,10 @@ class TourApiManager_hs {
             formatter.dateFormat = "yyyyMMddHHmmss"
             decoder.dateDecodingStrategy = .formatted(formatter)
             let json = try decoder.decode(TourApiGoogleResponse.self, from: data)
+            searchByTitleResultList.removeAll()
             for (key,value) in json.places.enumerated() {
                 var result = SearchResult(title: value.displayName.text, category: value.types,profileImage: value.photos.first?.name,photos: value.photos,primaryTypeDisplayName: value.primaryTypeDisplayName)
+                print(result)
                 searchByTitleResultList.append(result)
             }
         } catch {
@@ -127,7 +129,6 @@ class TourApiManager_hs {
 
     private func getCommonHeaderKorPublic(numOfRows: Int = 10, pageNo: Int = 1) -> [URLQueryItem] {
         guard let tourApiKey = Bundle.main.tourApiKey else {
-            print(#function)
             print("API KEY를 찾을 수 없습니다.")
             return []
         }

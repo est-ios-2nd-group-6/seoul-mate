@@ -42,7 +42,7 @@ struct TourApiGoogleResponse: Codable {
     struct Place: Codable {
         var types:[String]
         var displayName:DisplayName
-        var primaryTypeDisplayName:PrimaryTypeDisplayName
+        var primaryTypeDisplayName:PrimaryTypeDisplayName?
         var photos:[Photo]
     }
     struct Photo: Codable {

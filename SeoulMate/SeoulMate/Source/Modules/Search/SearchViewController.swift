@@ -43,9 +43,10 @@ class SearchViewController: UIViewController {
         tagCollectionView.collectionViewLayout = layout
         tagCollectionView.backgroundColor = .systemBackground
     }
-    
+
     @IBAction func searchItemButton(_ sender: Any) {
-        guard let keyword = searchBar.text else { return }
+        guard let keyword = searchBar.text, !keyword.isEmpty else { return }
+        searchBar.resignFirstResponder()
         Task {
             self.searchResultTableView.isHidden = false
             items.removeAll()
@@ -54,8 +55,9 @@ class SearchViewController: UIViewController {
             items = TourApiManager_hs.shared.searchByTitleResultList
             self.searchResultTableView.reloadData()
         }
+        searchBar.text = ""
     }
-    
+
 }
 
 extension SearchViewController: UICollectionViewDataSource {
@@ -111,9 +113,10 @@ extension SearchViewController: UITableViewDataSource {
                     withIdentifier: String(describing: SearchResultTableViewCell.self),
                     for: indexPath
                 ) as! SearchResultTableViewCell
+                print(#line,items.count)
             if items.count != 0 {
                 cell.titleLabel.text = items[indexPath.row].title
-                cell.subTitleLabel.text = items[indexPath.row].primaryTypeDisplayName.text
+                cell.subTitleLabel.text = items[indexPath.row].primaryTypeDisplayName?.text
                 if let profileURL = items[indexPath.row].profileImage, let apiKey = Bundle.main.googleApiKey,
                     let url = URL(
                         string:
@@ -132,8 +135,6 @@ extension SearchViewController: UITableViewDataSource {
             }
             return cell
         }
-        //        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing:SearchResultTableViewCell.self), for: indexPath) as! SearchResultTableViewCell
-        //        return cell
     }
 }
 
@@ -143,9 +144,8 @@ extension SearchViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath)
     }
-    
+
 }
 
 protocol SearchViewControllerDelegate: AnyObject {
@@ -154,21 +154,24 @@ protocol SearchViewControllerDelegate: AnyObject {
 }
 
 extension SearchViewController: SearchViewControllerDelegate {
-    func didRemoveButtonTapped(cell: UITableViewCell){
-        guard let item = self.searchResultTableView.indexPath(for: cell) else {return}
+    func didRemoveButtonTapped(cell: UITableViewCell) {
+        guard let item = self.searchResultTableView.indexPath(for: cell) else { return }
+        print(item)
         items.remove(at: item.row)
-        DispatchQueue.main.async{
-            self.searchResultTableView.deleteRows(at: [item], with: .automatic)
+        DispatchQueue.main.async {
+            self.searchResultTableView.deleteRows(at: [item], with: .fade)
             if self.items.count == 1 {
                 self.searchResultTableView.isHidden = true
             }
         }
     }
-    
+
     func didRemoveAllButtonTapped() {
-            let alertVC = CustomAlertController()
-            alertVC.delegate = self
-            present(alertVC, animated: true)
+        let alertVC = CustomAlertController()
+        alertVC.modalPresentationStyle = .overFullScreen
+        alertVC.modalTransitionStyle = .crossDissolve
+        alertVC.delegate = self
+        present(alertVC, animated: false)
     }
 }
 

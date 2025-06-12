@@ -23,7 +23,7 @@ class CustomAlertController: UIViewController {
 
     func setupView() {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-
+        
         backgroundView.backgroundColor = .white
         backgroundView.layer.cornerRadius = 6
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
@@ -45,7 +45,7 @@ class CustomAlertController: UIViewController {
         cancelButton.setTitle("취소", for: .normal)
         cancelButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         cancelButton.setTitleColor(.lightGray, for: .normal)
-        cancelButton.addTarget(self, action: #selector(dismissSelf), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(dismissAlert), for: .touchUpInside)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
 
         stackView.axis = .horizontal
@@ -72,8 +72,13 @@ class CustomAlertController: UIViewController {
         ])
     }
 
-    @objc func dismissSelf() {
-        dismiss(animated: true)
+    @objc func dismissAlert() {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.backgroundView.alpha = 0
+            self.view.backgroundColor = .clear
+        }) { _ in
+            self.dismiss(animated: false)
+        }
     }
 
     @objc func deleteItem() {

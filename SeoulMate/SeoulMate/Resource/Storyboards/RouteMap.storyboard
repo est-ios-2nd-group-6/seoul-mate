@@ -4,6 +4,8 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -17,24 +19,57 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9gp-6J-x4i" customClass="NMFNaverMapView">
-                                <rect key="frame" x="0.0" y="118" width="393" height="300"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PfX-MS-qNX" customClass="NMFNaverMapView">
+                                <rect key="frame" x="0.0" y="118" width="393" height="666"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="300" id="miu-5Q-dQy"/>
-                                </constraints>
                             </view>
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4yC-ei-Gq2">
+                                <rect key="frame" x="96.666666666666686" y="134" width="200" height="50"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="vMN-UC-zX6">
+                                    <rect key="frame" x="0.0" y="0.0" width="200" height="50"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <blurEffect style="extraLight"/>
+                            </visualEffectView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="EtA-iE-33F">
+                                <rect key="frame" x="96.666666666666686" y="134" width="200" height="51"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="YV0-8f-kaD"/>
+                                    <constraint firstAttribute="height" constant="50" id="vke-72-90t"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="" image="car" catalog="system"/>
+                                    <segment title="">
+                                        <imageReference key="image" image="bus.fill" catalog="system" symbolScale="default"/>
+                                    </segment>
+                                    <segment title="" image="figure.walk" catalog="system"/>
+                                </segments>
+                                <color key="selectedSegmentTintColor" name="Main"/>
+                                <connections>
+                                    <action selector="didValueChanged:" destination="Y6W-OH-hqX" eventType="valueChanged" id="gw9-Ts-Yg7"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="9gp-6J-x4i" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="2Yt-zM-Yfo"/>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="9gp-6J-x4i" secondAttribute="trailing" id="Xdr-Cb-9jx"/>
-                            <constraint firstItem="9gp-6J-x4i" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" id="twt-J2-qY4"/>
+                            <constraint firstItem="PfX-MS-qNX" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" id="3CH-V6-yAB"/>
+                            <constraint firstItem="PfX-MS-qNX" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="3li-Ez-c5V"/>
+                            <constraint firstItem="EtA-iE-33F" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="16" id="FPn-Qt-aK7"/>
+                            <constraint firstItem="EtA-iE-33F" firstAttribute="centerX" secondItem="PfX-MS-qNX" secondAttribute="centerX" id="Ntj-7n-0WM"/>
+                            <constraint firstItem="4yC-ei-Gq2" firstAttribute="width" secondItem="EtA-iE-33F" secondAttribute="width" id="Pyg-kv-XEn"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="PfX-MS-qNX" secondAttribute="bottom" id="Quz-Ov-4Da"/>
+                            <constraint firstItem="4yC-ei-Gq2" firstAttribute="height" secondItem="EtA-iE-33F" secondAttribute="height" id="YKB-fF-g9n"/>
+                            <constraint firstItem="PfX-MS-qNX" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="b3Z-BX-0dh"/>
+                            <constraint firstItem="4yC-ei-Gq2" firstAttribute="centerY" secondItem="EtA-iE-33F" secondAttribute="centerY" id="odL-yp-cbm"/>
+                            <constraint firstItem="4yC-ei-Gq2" firstAttribute="centerX" secondItem="EtA-iE-33F" secondAttribute="centerX" id="uat-t9-LSI"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="naverMapView" destination="9gp-6J-x4i" id="AfN-xX-kEO"/>
+                        <outlet property="naverMapView" destination="PfX-MS-qNX" id="jiv-5N-Vp7"/>
+                        <outlet property="segmentedControl" destination="EtA-iE-33F" id="50r-J1-tte"/>
+                        <outlet property="visualEffectView" destination="4yC-ei-Gq2" id="7Nd-HI-370"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -43,6 +78,12 @@
         </scene>
     </scenes>
     <resources>
+        <image name="bus.fill" catalog="system" width="128" height="122"/>
+        <image name="car" catalog="system" width="128" height="95"/>
+        <image name="figure.walk" catalog="system" width="94" height="128"/>
+        <namedColor name="Main">
+            <color red="0.92941176891326904" green="0.47450977563858032" blue="0.38431376218795776" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

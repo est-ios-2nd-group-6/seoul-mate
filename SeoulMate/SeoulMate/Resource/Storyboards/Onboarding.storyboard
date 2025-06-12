@@ -12,16 +12,16 @@
         <!--Onboarding View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController id="Y6W-OH-hqX" customClass="OnboardingViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OnboardingViewController" id="Y6W-OH-hqX" customClass="OnboardingViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yvX-s7-fS7">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yvX-s7-fS7">
+                                <rect key="frame" x="0.0" y="-6" width="393" height="864"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WEk-GJ-C0i">
-                                        <rect key="frame" x="40" y="591" width="313" height="35"/>
+                                        <rect key="frame" x="40" y="539" width="313" height="35"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="태그 선택하기" cornerStyle="capsule">
                                             <color key="baseBackgroundColor" name="Main"/>
@@ -31,7 +31,7 @@
                                         </connections>
                                     </button>
                                     <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="huW-e8-YMC">
-                                        <rect key="frame" x="160" y="545" width="73" height="26"/>
+                                        <rect key="frame" x="160" y="493" width="73" height="26"/>
                                     </pageControl>
                                 </subviews>
                                 <constraints>
@@ -42,6 +42,7 @@
                                     <constraint firstItem="WEk-GJ-C0i" firstAttribute="top" secondItem="huW-e8-YMC" secondAttribute="bottom" constant="20" id="kfF-5s-o1g"/>
                                     <constraint firstItem="6rh-R5-hrf" firstAttribute="trailing" secondItem="WEk-GJ-C0i" secondAttribute="trailing" constant="40" id="mzO-Lq-fEB"/>
                                     <constraint firstItem="huW-e8-YMC" firstAttribute="top" secondItem="6rh-R5-hrf" secondAttribute="top" constant="707" id="qwp-2A-xMp"/>
+                                    <constraint firstAttribute="trailing" secondItem="WEk-GJ-C0i" secondAttribute="trailing" constant="40" id="xNE-hj-Rmh"/>
                                     <constraint firstItem="huW-e8-YMC" firstAttribute="leading" secondItem="6rh-R5-hrf" secondAttribute="leading" constant="160" id="xbO-cr-bPB"/>
                                 </constraints>
                                 <viewLayoutGuide key="contentLayoutGuide" id="Xik-6z-rsP"/>
@@ -53,6 +54,10 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="yvX-s7-fS7" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="bRS-AL-B4b"/>
+                            <constraint firstItem="yvX-s7-fS7" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="whg-5s-QEo"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Oke-Rz-Acg"/>
                     <connections>
@@ -80,8 +85,8 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Ppq-co-jEi" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Qo6-rg-kMZ">
-                        <rect key="frame" x="0.0" y="118" width="393" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="Qo6-rg-kMZ">
+                        <rect key="frame" x="0.0" y="118" width="393" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

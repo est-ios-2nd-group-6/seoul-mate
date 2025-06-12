@@ -131,8 +131,18 @@ class OnboadingTagSelectViewController: UIViewController {
         didSetUpTag = true
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        title = "관심있는 곳"
+        navigationItem.hidesBackButton = true
 
         CoreDataManager.shared.firstFetchTag()
         tags = CoreDataManager.shared.fetchTags()

@@ -31,6 +31,7 @@
                                     <color key="baseBackgroundColor" name="Main"/>
                                 </buttonConfiguration>
                                 <connections>
+                                    <action selector="startButtonTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Mae-Mh-fDi"/>
                                     <segue destination="kXQ-4I-RnQ" kind="show" id="jau-rj-jGr"/>
                                 </connections>
                             </button>

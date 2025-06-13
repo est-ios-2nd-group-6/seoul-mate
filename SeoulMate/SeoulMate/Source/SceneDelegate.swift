@@ -18,17 +18,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = scene as? UIWindowScene else { return }
 
-        window = UIWindow(windowScene: windowScene)
-
-        let storyboardName = Storage.isFirstLaunch() ? "Onboarding" : "Home"
-        let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
-
-        guard let rootVC = storyboard.instantiateInitialViewController() else {
-            fatalError("Initial View Controller 설정 확인 필요")
-        }
-
-        window?.rootViewController = rootVC
-        window?.makeKeyAndVisible()
+//        window = UIWindow(windowScene: windowScene)
+//
+//        let storyboardName = Storage.isFirstLaunch() ? "Onboarding" : "Home"
+//        let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
+//
+//        guard let rootVC = storyboard.instantiateInitialViewController() else {
+//            fatalError("Initial View Controller 설정 확인 필요")
+//        }
+//
+//        window?.rootViewController = rootVC
+//        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

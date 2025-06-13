@@ -68,7 +68,7 @@
         <!--OnboardingTagSelect-->
         <scene sceneID="FZN-6G-PDW">
             <objects>
-                <viewControllerPlaceholder storyboardName="OnboardingTagSelect" id="E7O-IR-VBV" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardIdentifier="OnboardingTagSelect" storyboardName="OnboardingTagSelect" id="E7O-IR-VBV" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="yFx-O0-axA"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Xo-ZV-gPy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -12,7 +12,7 @@
         <!--Onboading Tag Select View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController id="Y6W-OH-hqX" customClass="OnboadingTagSelectViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OnboardingTagSelect" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Y6W-OH-hqX" customClass="OnboadingTagSelectViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -32,7 +32,7 @@
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="startButtonTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Mae-Mh-fDi"/>
-                                    <segue destination="kXQ-4I-RnQ" kind="show" id="jau-rj-jGr"/>
+                                    <segue destination="kXQ-4I-RnQ" kind="show" id="C32-vq-Ooh"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -45,11 +45,12 @@
                             <constraint firstItem="adU-Lu-gXa" firstAttribute="bottom" secondItem="vDu-zF-Fre" secondAttribute="bottom" id="RY4-WG-6o4"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="adU-Lu-gXa" secondAttribute="trailing" constant="40" id="avy-lZ-mzU"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="4as-zE-aH4" secondAttribute="trailing" constant="16" id="da6-w4-6Vb"/>
-                            <constraint firstItem="adU-Lu-gXa" firstAttribute="top" secondItem="4as-zE-aH4" secondAttribute="bottom" constant="20" id="h9U-Q6-f5r"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="startButton" destination="adU-Lu-gXa" id="drf-WL-SpY"/>
                         <outlet property="tagListView" destination="4as-zE-aH4" id="TK3-Ie-M2t"/>
+                        <outlet property="tagListViewHeight" destination="Ag7-Vd-mYq" id="QT1-lV-cpc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -151,6 +151,51 @@ class TourApiManager {
         return nil
     }
 
+    func fetchCommonDetailInfo(_ id: String) async -> TourApiCommonDetailInfoItem? {
+        guard var url = URL(string: "http://apis.data.go.kr/B551011/KorService2/detailCommon2") else {
+            print("invalida URL")
+
+            return nil
+        }
+
+        url.append(queryItems: getCommonHeader())
+
+        url.append(queryItems: [
+            URLQueryItem(name: "contentId", value: id)
+        ])
+
+        let request = URLRequest(url: url)
+
+        do {
+            let (data, urlResponse) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = urlResponse as? HTTPURLResponse else {
+                return nil
+            }
+
+            guard 200...299 ~= httpResponse.statusCode else {
+                return nil
+            }
+
+
+            let json = try JSONDecoder().decode(TourApiDetailCommonResponseDto.self, from: data)
+
+            if let resultCd = json.resultCode, let resultMsg = json.resultMsg {
+                print(resultCd, resultMsg)
+                return nil
+            }
+
+            let commonDetailInfo = json.response.body.items.item.first
+
+            return commonDetailInfo
+
+        } catch {
+            print("Fetcing Common Detail Info is Failed!!", error, separator: "\n")
+        }
+
+        return nil
+    }
+
     private func getCommonHeader(numOfRows: Int = 10, pageNo: Int = 1) -> [URLQueryItem] {
         guard let tourApiKey = Bundle.main.tourApiKey else {
 			print("API KEY를 찾을 수 없습니다.")

@@ -7,38 +7,34 @@
 
 import Foundation
 
-enum travelMode {
-    case walk
+enum RouteOption: Hashable {
+    case drive(searchOption: SearchOption?)
+    case walk(searchOption: SearchOption?)
     case transit
-    case drive
+
+    var title: String {
+        switch self {
+        case .drive(let searchOption), .walk(let searchOption):
+            return searchOption?.title ?? ""
+        case .transit:
+            return ""
+        }
+    }
 }
 
 class RouteApiManager {
     static let shared = RouteApiManager()
 
-    private init() {
+    private init() { }
 
-    }
-
-    //    public func calcRoute(mode: travelMode, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
-    //        switch mode {
-    //        case .walk:
-    //			calcRouteByWalk(startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
-    //        case .transit:
-    //            await calcRouteByTransit(startPoint: startPoint, endPoint: endPoint)
-    //        case .drive:
-    //            print("drive")
-    //        }
-    //    }
-
-    private func getApiUrl(type: TravelMode) -> URL? {
+    private func getApiUrl(type: RouteOption) -> URL? {
         var baseUrl: String
 
         switch type {
         case .drive:
             baseUrl = "https://apis.openapi.sk.com/tmap/routes?version=1&format=json"
         case .transit:
-			baseUrl = "https://routes.googleapis.com/directions/v2:computeRoutes"
+            baseUrl = "https://routes.googleapis.com/directions/v2:computeRoutes"
         case .walk:
             baseUrl = "https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json"
         }
@@ -46,7 +42,7 @@ class RouteApiManager {
         return URL(string: baseUrl)
     }
 
-    public func calcRouteTMap(type: TravelMode, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
+    public func calcRouteTMap(type: RouteOption, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
         guard let url = getApiUrl(type: type) else {
             fatalError("URL Initialization is Failed")
         }
@@ -70,13 +66,20 @@ class RouteApiManager {
             routeReqDto.passList = passList
         }
 
+        switch type {
+        case .drive(let searchOption), .walk(let searchOption):
+            routeReqDto.searchOption = searchOption
+        case .transit:
+            break
+        }
+
         do {
             var request = URLRequest(url: url)
 
             request.httpMethod = "POST"
             request.httpBody = try JSONEncoder().encode(routeReqDto)
 
-//            print(String(data: request.httpBody ?? Data(), encoding: .utf8))
+            //            print(String(data: request.httpBody ?? Data(), encoding: .utf8))
 
             request.addValue(tMapRoutesApiKey, forHTTPHeaderField: "appKey")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -85,7 +88,7 @@ class RouteApiManager {
 
             let (data, _) = try await session.data(for: request)
 
-//            print(String(data: data, encoding: .utf8))
+            //            print(String(data: data, encoding: .utf8))
 
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601

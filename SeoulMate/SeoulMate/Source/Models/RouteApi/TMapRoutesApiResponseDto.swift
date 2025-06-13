@@ -76,12 +76,25 @@ struct Properties: Codable {
 
 enum PointType: String, Codable {
     case ep = "EP"
-    case gp = "GP"
-    case sp = "SP"
     case e = "E"
-    case n = "N"
+
+    case sp = "SP"
     case s = "S"
+
+    case gp = "GP"
+    case n = "N"
+
     case b1 = "B1"
+    case b2 = "B2"
+    case b3 = "B3"
+
+    case pp = "PP"
+	case pp1 = "PP1"
+    case pp2 = "PP2"
+    case pp3 = "PP3"
+    case pp4 = "PP4"
+    case pp5 = "PP5"
+
 }
 
 enum FeatureType: String, Codable {

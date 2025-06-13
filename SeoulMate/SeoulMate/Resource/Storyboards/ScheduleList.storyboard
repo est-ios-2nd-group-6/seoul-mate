@@ -13,7 +13,7 @@
         <!--My Trips-->
         <scene sceneID="9Md-Ce-97f">
             <objects>
-                <viewController storyboardIdentifier="ScheduleListViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="CrW-ba-Bhz" customClass="ScheduleListViewController" customModule="ScheduleListViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ScheduleList" useStoryboardIdentifierAsRestorationIdentifier="YES" id="CrW-ba-Bhz" customClass="ScheduleListViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="jGN-SY-0hM">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

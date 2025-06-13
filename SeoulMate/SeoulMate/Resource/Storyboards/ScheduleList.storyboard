@@ -96,8 +96,7 @@
                                                                     <state key="normal" title="Button"/>
                                                                     <buttonConfiguration key="configuration" style="plain" image="ellipsis" catalog="system"/>
                                                                     <connections>
-                                                                        <action selector="moreButton:" destination="CrW-ba-Bhz" eventType="touchUpInside" id="6Kg-vF-z8w"/>
-                                                                        <action selector="moreButton:" destination="wuS-T3-hBP" eventType="touchUpInside" id="wkB-2o-ahb"/>
+                                                                        <action selector="moreButton:" destination="CrW-ba-Bhz" eventType="touchUpInside" id="XgB-xC-fjD"/>
                                                                     </connections>
                                                                 </button>
                                                             </subviews>

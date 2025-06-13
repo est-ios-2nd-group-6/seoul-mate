@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Ppq-co-jEi">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -12,46 +12,97 @@
         <!--Onboarding View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController id="Y6W-OH-hqX" customClass="OnboardingViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OnboardingViewController" id="Y6W-OH-hqX" customClass="OnboardingViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Onboarding" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ar-ne-LmP">
-                                <rect key="frame" x="110.33333333333333" y="405.66666666666669" width="172.66666666666669" height="40.666666666666686"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yvX-s7-fS7">
+                                <rect key="frame" x="0.0" y="-6" width="393" height="864"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WEk-GJ-C0i">
+                                        <rect key="frame" x="40" y="539" width="313" height="35"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="태그 선택하기" cornerStyle="capsule">
+                                            <color key="baseBackgroundColor" name="Main"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <segue destination="E7O-IR-VBV" kind="show" id="2Ft-DO-kNo"/>
+                                        </connections>
+                                    </button>
+                                    <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="huW-e8-YMC">
+                                        <rect key="frame" x="160" y="493" width="73" height="26"/>
+                                    </pageControl>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="6rh-R5-hrf" firstAttribute="bottom" secondItem="WEk-GJ-C0i" secondAttribute="bottom" constant="76" id="NXo-ko-RgN"/>
+                                    <constraint firstItem="WEk-GJ-C0i" firstAttribute="leading" secondItem="6rh-R5-hrf" secondAttribute="leading" constant="40" id="XZH-5X-cjy"/>
+                                    <constraint firstItem="WEk-GJ-C0i" firstAttribute="bottom" secondItem="yvX-s7-fS7" secondAttribute="bottomMargin" id="gUF-2b-vmm"/>
+                                    <constraint firstItem="6rh-R5-hrf" firstAttribute="trailing" secondItem="huW-e8-YMC" secondAttribute="trailing" constant="160" id="ho8-UB-h9r"/>
+                                    <constraint firstItem="WEk-GJ-C0i" firstAttribute="top" secondItem="huW-e8-YMC" secondAttribute="bottom" constant="20" id="kfF-5s-o1g"/>
+                                    <constraint firstItem="6rh-R5-hrf" firstAttribute="trailing" secondItem="WEk-GJ-C0i" secondAttribute="trailing" constant="40" id="mzO-Lq-fEB"/>
+                                    <constraint firstItem="huW-e8-YMC" firstAttribute="top" secondItem="6rh-R5-hrf" secondAttribute="top" constant="707" id="qwp-2A-xMp"/>
+                                    <constraint firstAttribute="trailing" secondItem="WEk-GJ-C0i" secondAttribute="trailing" constant="40" id="xNE-hj-Rmh"/>
+                                    <constraint firstItem="huW-e8-YMC" firstAttribute="leading" secondItem="6rh-R5-hrf" secondAttribute="leading" constant="160" id="xbO-cr-bPB"/>
+                                </constraints>
+                                <viewLayoutGuide key="contentLayoutGuide" id="Xik-6z-rsP"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="6rh-R5-hrf"/>
+                                <connections>
+                                    <outlet property="delegate" destination="Y6W-OH-hqX" id="FCk-nE-uKB"/>
+                                </connections>
+                            </scrollView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="5ar-ne-LmP" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="DcT-yd-RjY"/>
-                            <constraint firstItem="5ar-ne-LmP" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="OMa-tu-GNP"/>
+                            <constraint firstItem="yvX-s7-fS7" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="bRS-AL-B4b"/>
+                            <constraint firstItem="yvX-s7-fS7" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="whg-5s-QEo"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Oke-Rz-Acg"/>
                     <connections>
-                        <segue destination="E7O-IR-VBV" kind="showDetail" identifier="tempSegue" id="h9l-7T-bTj"/>
+                        <outlet property="pageControl" destination="huW-e8-YMC" id="oD1-zp-XHp"/>
+                        <outlet property="scrollView" destination="yvX-s7-fS7" id="bdC-6Z-Pj3"/>
+                        <outlet property="startButton" destination="WEk-GJ-C0i" id="wYd-m1-hHs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1057.2519083969464" y="-7.042253521126761"/>
+            <point key="canvasLocation" x="1979.3893129770991" y="-7.042253521126761"/>
         </scene>
-        <!--Home-->
+        <!--OnboardingTagSelect-->
         <scene sceneID="FZN-6G-PDW">
             <objects>
-                <viewControllerPlaceholder storyboardName="Home" id="E7O-IR-VBV" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardName="OnboardingTagSelect" id="E7O-IR-VBV" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="yFx-O0-axA"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Xo-ZV-gPy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2153" y="-7"/>
+            <point key="canvasLocation" x="3079.3893129770991" y="-7.042253521126761"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="gx5-mJ-M9r">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Ppq-co-jEi" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="Qo6-rg-kMZ">
+                        <rect key="frame" x="0.0" y="118" width="393" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Y6W-OH-hqX" kind="relationship" relationship="rootViewController" id="Ewy-sr-Dta"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bNb-ih-ZaE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1052.6717557251909" y="-7.042253521126761"/>
         </scene>
     </scenes>
     <resources>
+        <namedColor name="Main">
+            <color red="0.92941176891326904" green="0.47450977563858032" blue="0.38431376218795776" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

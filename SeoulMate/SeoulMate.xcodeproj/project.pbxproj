@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D73AD54E2DF96170000EA79B /* GooglePlaces in Frameworks */ = {isa = PBXBuildFile; productRef = D73AD54D2DF96170000EA79B /* GooglePlaces */; };
+		D73AD5502DF96170000EA79B /* GooglePlacesSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D73AD54F2DF96170000EA79B /* GooglePlacesSwift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		E683A0CB2DF1900400496D06 /* SeoulMate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeoulMate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D73AD54E2DF96170000EA79B /* GooglePlaces in Frameworks */,
+				D73AD5502DF96170000EA79B /* GooglePlacesSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +85,8 @@
 			);
 			name = SeoulMate;
 			packageProductDependencies = (
+				D73AD54D2DF96170000EA79B /* GooglePlaces */,
+				D73AD54F2DF96170000EA79B /* GooglePlacesSwift */,
 			);
 			productName = SeoulMate;
 			productReference = E683A0CB2DF1900400496D06 /* SeoulMate.app */;
@@ -107,6 +116,9 @@
 			);
 			mainGroup = E683A0C22DF1900400496D06;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D73AD54C2DF96170000EA79B /* XCRemoteSwiftPackageReference "ios-places-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E683A0CC2DF1900400496D06 /* Products */;
 			projectDirPath = "";
@@ -151,7 +163,7 @@
 				INFOPLIST_FILE = SeoulMate/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Onboarding;
+				INFOPLIST_KEY_UIMainStoryboardFile = Search;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16;
@@ -181,7 +193,7 @@
 				INFOPLIST_FILE = SeoulMate/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Onboarding;
+				INFOPLIST_KEY_UIMainStoryboardFile = Search;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16;
@@ -339,6 +351,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D73AD54C2DF96170000EA79B /* XCRemoteSwiftPackageReference "ios-places-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googlemaps/ios-places-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D73AD54D2DF96170000EA79B /* GooglePlaces */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D73AD54C2DF96170000EA79B /* XCRemoteSwiftPackageReference "ios-places-sdk" */;
+			productName = GooglePlaces;
+		};
+		D73AD54F2DF96170000EA79B /* GooglePlacesSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D73AD54C2DF96170000EA79B /* XCRemoteSwiftPackageReference "ios-places-sdk" */;
+			productName = GooglePlacesSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E683A0C32DF1900400496D06 /* Project object */;
 }

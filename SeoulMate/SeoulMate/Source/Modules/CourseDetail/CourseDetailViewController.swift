@@ -21,31 +21,31 @@ class CourseDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let id = course?.contentId {
-            Task {
-
-                let courseSubItems = await TourApiManager.shared.fetchRcmCourseDetail(id) ?? []
-
-                for courseSubItem in courseSubItems {
-                    var place = RecommandCoursePlace(courseSubItem: courseSubItem)
-
-                    place.description = place.description
-                        .replacingOccurrences(of: "&lt;", with: "<")
-                        .replacingOccurrences(of: "&gt;", with: ">")
-                        .replacing(/<br\s*\/>/, with: "\n")
-                        .trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-
-                    let image = await ImageManager.shared.getImage(courseSubItem.subdetailimg)
-
-                    place.image = image
-
-                    places.append(place)
-                }
-
-                self.courseListTableView.reloadData()
-                self.courseListTableViewHeight.constant = 1500
-            }
-        }
+//        if let id = course?.contentId {
+//            Task {
+//
+//                let courseSubItems = await TourApiManager.shared.fetchRcmCourseDetail(id) ?? []
+//
+//                for courseSubItem in courseSubItems {
+//                    var place = RecommandCoursePlace(courseSubItem: courseSubItem)
+//
+//                    place.description = place.description
+//                        .replacingOccurrences(of: "&lt;", with: "<")
+//                        .replacingOccurrences(of: "&gt;", with: ">")
+//                        .replacing(/<br\s*\/>/, with: "\n")
+//                        .trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+//
+//                    let image = await ImageManager.shared.getImage(courseSubItem.subdetailimg)
+//
+//                    place.image = image
+//
+//                    places.append(place)
+//                }
+//
+//                self.courseListTableView.reloadData()
+//                self.courseListTableViewHeight.constant = 1500
+//            }
+//        }
     }
 
     override func viewIsAppearing(_ animated: Bool) {

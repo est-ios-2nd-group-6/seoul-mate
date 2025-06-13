@@ -19,6 +19,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="iEC-KF-NbZ" kind="relationship" relationship="viewControllers" id="juQ-8Z-6KN"/>
+                        <segue destination="POB-mz-tXn" kind="relationship" relationship="viewControllers" id="Sma-yb-8MI"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5GQ-X9-Q4m" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -33,10 +34,21 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Av1-eT-mzF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1324" y="-331"/>
+            <point key="canvasLocation" x="892" y="-241"/>
+        </scene>
+        <!--ScheduleListViewController-->
+        <scene sceneID="U3y-mO-ElS">
+            <objects>
+                <viewControllerPlaceholder storyboardIdentifier="SchduleList" storyboardName="ScheduleList" referencedIdentifier="ScheduleListViewController" id="POB-mz-tXn" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="내 여행" image="calendar" catalog="system" id="Z6u-Rv-lbF"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Auc-G2-nCd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="856" y="169"/>
         </scene>
     </scenes>
     <resources>
+        <image name="calendar" catalog="system" width="128" height="107"/>
         <image name="house" catalog="system" width="128" height="104"/>
     </resources>
 </document>

@@ -110,7 +110,7 @@ class OnboadingTagSelectViewController: UIViewController {
         guard let title = sender.currentTitle,
               let tag = tags.first(where: { $0.name == title }) else { return }
 
-        CoreDataManager.shared.toggle(tag: tag)
+        CoreDataManager.shared.tagSelectToggle(tag: tag)
 
         let isSelected = tag.selected
         sender.isSelected = isSelected

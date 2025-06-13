@@ -9,8 +9,8 @@ import Foundation
 import CoreData
 
 extension CoreDataManager {
-    func seedDummyData() {
-        guard fetchTours().isEmpty else { return }
+    func seedDummyData() async {
+        guard await fetchToursAsync().isEmpty else { return }
 
         // Tour 1: 역사 탐방
         let tour1 = Tour(context: context)
@@ -18,8 +18,6 @@ extension CoreDataManager {
         tour1.title = "서울 역사 탐방"
         tour1.startDate = Date()
         tour1.endDate = Calendar.current.date(byAdding: .day, value: 2, to: tour1.startDate!)!
-        tour1.transportMode = "도보"
-        tour1.notes = "경복궁, 북촌한옥마을 위주"
         tour1.createdAt = Date()
 
         // Day 1 POIs
@@ -81,8 +79,6 @@ extension CoreDataManager {
         tour2.title = "홍대 맛집&카페 투어"
         tour2.startDate = Calendar.current.date(byAdding: .day, value: 3, to: Date())!
         tour2.endDate = Calendar.current.date(byAdding: .day, value: 4, to: Date())!
-        tour2.transportMode = "지하철"
-        tour2.notes = "홍대 맛집과 카페 방문"
         tour2.createdAt = Date()
 
         let schedule3 = Schedule(context: context)
@@ -117,8 +113,6 @@ extension CoreDataManager {
         tour3.title = "강남 쇼핑 투어"
         tour3.startDate = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
         tour3.endDate = Calendar.current.date(byAdding: .day, value: -5, to: Date())!
-        tour3.transportMode = "버스"
-        tour3.notes = "가로수길, 백화점 중심 쇼핑"
         tour3.createdAt = Calendar.current.date(byAdding: .day, value: -10, to: Date())!
 
         let schedulePast = Schedule(context: context)
@@ -155,8 +149,6 @@ extension CoreDataManager {
         tour4.title = "역사 탐방 투어"
         tour4.startDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 2))!
         tour4.endDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 3))!
-        tour4.transportMode = "지하철"
-        tour4.notes = "서울의 역사적 명소 탐방"
         tour4.createdAt = Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 30))!
 
         let schedule4 = Schedule(context: context)
@@ -193,8 +185,6 @@ extension CoreDataManager {
         tour5.title = "한강 피크닉 투어"
         tour5.startDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 10))!
         tour5.endDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 10))!
-        tour5.transportMode = "자전거"
-        tour5.notes = "한강변 피크닉 및 라이딩"
         tour5.createdAt = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 8))!
 
         let schedule5 = Schedule(context: context)
@@ -231,8 +221,6 @@ extension CoreDataManager {
         tour6.title = "미술관 데이트 투어"
         tour6.startDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 15))!
         tour6.endDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 15))!
-        tour6.transportMode = "도보"
-        tour6.notes = "서울 주요 미술관 탐방"
         tour6.createdAt = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 12))!
 
         let schedule6 = Schedule(context: context)
@@ -269,8 +257,6 @@ extension CoreDataManager {
         tour7.title = "남산 야경 투어"
         tour7.startDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 20))!
         tour7.endDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 20))!
-        tour7.transportMode = "도보"
-        tour7.notes = "남산타워와 주변 야경 감상"
         tour7.createdAt = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 18))!
 
         let schedule7 = Schedule(context: context)
@@ -307,8 +293,6 @@ extension CoreDataManager {
         tour8.title = "전통시장 미식 투어"
         tour8.startDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 25))!
         tour8.endDate = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 26))!
-        tour8.transportMode = "버스"
-        tour8.notes = "서울의 전통시장 탐방과 먹거리"
         tour8.createdAt = Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 22))!
 
         let schedule8 = Schedule(context: context)

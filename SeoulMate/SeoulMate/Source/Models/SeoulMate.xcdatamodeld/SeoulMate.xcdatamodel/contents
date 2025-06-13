@@ -44,10 +44,8 @@
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="endDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="startDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
-        <attribute name="transportMode" attributeType="String"/>
         <relationship name="course" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Course" inverseName="schedules" inverseEntity="Course"/>
         <relationship name="days" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Schedule" inverseName="tour" inverseEntity="Schedule"/>
         <relationship name="pois" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="POI" inverseName="tour" inverseEntity="POI"/>

@@ -1,71 +1,202 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="DM2-Ly-You">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="UiN-wa-bpZ">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Home View Controller-->
-        <scene sceneID="s0d-6b-0kx">
-            <objects>
-                <viewController storyboardIdentifier="Home" modalPresentationStyle="fullScreen" id="Y6W-OH-hqX" customClass="HomeViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QRm-UQ-JFN">
-                                <rect key="frame" x="95" y="749" width="202" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="RecommandCourseList"/>
-                                <connections>
-                                    <segue destination="4XF-bf-n0b" kind="show" id="bsO-Fn-Q9w"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="Yrh-PF-91x"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1057.2519083969464" y="-13.380281690140846"/>
-        </scene>
-        <!--RecommandCourseList-->
-        <scene sceneID="J6X-Ma-NhP">
-            <objects>
-                <viewControllerPlaceholder storyboardName="RecommandCourseList" id="4XF-bf-n0b" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="oqn-DF-amp"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bu1-vg-MbZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1705.3435114503816" y="224.64788732394368"/>
-        </scene>
         <!--Navigation Controller-->
-        <scene sceneID="XzS-hJ-aCd">
+        <scene sceneID="fmW-gV-6iD">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="overFullScreen" id="DM2-Ly-You" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="HomeViewController" automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="overFullScreen" id="UiN-wa-bpZ" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="jIb-w4-0Bu">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="6ae-un-3Jk">
                         <rect key="frame" x="0.0" y="118" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="Y6W-OH-hqX" kind="relationship" relationship="rootViewController" id="jLm-uf-avV"/>
+                        <segue destination="74w-di-8Wr" kind="relationship" relationship="rootViewController" id="GRG-Xc-C2F"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="0iv-rc-UIV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oM3-dA-qyz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="130.53435114503816" y="-13.380281690140846"/>
+            <point key="canvasLocation" x="1982.4427480916029" y="-13.380281690140846"/>
+        </scene>
+        <!--Home-->
+        <scene sceneID="8ZX-U4-j2P">
+            <objects>
+                <viewController id="74w-di-8Wr" customClass="HomeViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ewm-9J-CoC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5eI-lL-Jcc">
+                                <rect key="frame" x="16" y="194" width="361" height="34.333333333333343"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="서울메이트와 떠나는 서울 여행" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tCe-n3-u0Q">
+                                        <rect key="frame" x="0.0" y="0.0" width="292.66666666666669" height="34.333333333333336"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZzB-oF-6b3">
+                                        <rect key="frame" x="292.66666666666669" y="0.0" width="68.333333333333314" height="34.333333333333336"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="더보기"/>
+                                        <connections>
+                                            <segue destination="EWq-9V-ufg" kind="show" id="kvh-Vs-PQL"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="xC0-DA-NBv">
+                                <rect key="frame" x="0.0" y="236.33333333333337" width="393" height="250"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="250" id="JND-6g-Ynv"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="UMb-7n-vJA">
+                                    <size key="itemSize" width="260" height="201"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="RecommandCourseCollectionViewCell" id="cHH-H7-uAa" customClass="RecommandCourseCollectionViewCell" customModule="SeoulMate" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="-1.3333333333333333" width="316" height="252.33333333333334"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="6pr-cq-dPB">
+                                            <rect key="frame" x="0.0" y="0.0" width="316" height="252.33333333333334"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BHw-hA-12i">
+                                                    <rect key="frame" x="8" y="8" width="300" height="236.33333333333334"/>
+                                                    <subviews>
+                                                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="HNu-rM-Ppa">
+                                                            <rect key="frame" x="0.0" y="0.0" width="300" height="228.33333333333334"/>
+                                                            <subviews>
+                                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="zCV-Nv-IPy">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="300" height="200"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="height" constant="200" id="LI6-p8-wIX"/>
+                                                                        <constraint firstAttribute="width" constant="300" id="Q0W-nH-g6r"/>
+                                                                    </constraints>
+                                                                </imageView>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hKY-lv-Zjy">
+                                                                    <rect key="frame" x="0.0" y="208" width="300" height="20.333333333333343"/>
+                                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                                    <nil key="textColor"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                            </subviews>
+                                                        </stackView>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="HNu-rM-Ppa" firstAttribute="leading" secondItem="BHw-hA-12i" secondAttribute="leading" id="Bs0-ZO-WJ8"/>
+                                                        <constraint firstItem="HNu-rM-Ppa" firstAttribute="top" secondItem="BHw-hA-12i" secondAttribute="top" id="TJY-7C-REq"/>
+                                                        <constraint firstAttribute="trailing" secondItem="HNu-rM-Ppa" secondAttribute="trailing" id="WS3-5A-jBY"/>
+                                                        <constraint firstAttribute="bottom" secondItem="HNu-rM-Ppa" secondAttribute="bottom" constant="8" id="p4H-h7-UfV"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="BHw-hA-12i" firstAttribute="leading" secondItem="6pr-cq-dPB" secondAttribute="leading" constant="8" id="DJV-4y-07D"/>
+                                                <constraint firstAttribute="trailing" secondItem="BHw-hA-12i" secondAttribute="trailing" constant="8" id="Vjs-ga-sRa"/>
+                                                <constraint firstItem="BHw-hA-12i" firstAttribute="top" secondItem="6pr-cq-dPB" secondAttribute="top" constant="8" id="YOV-GA-8Lt"/>
+                                                <constraint firstAttribute="bottom" secondItem="BHw-hA-12i" secondAttribute="bottom" constant="8" id="vuc-jR-oev"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <connections>
+                                            <outlet property="thumbnailImageView" destination="zCV-Nv-IPy" id="LSM-CR-Bxg"/>
+                                            <outlet property="titleLabel" destination="hKY-lv-Zjy" id="Xyz-Q6-HTf"/>
+                                            <outlet property="wrapperView" destination="BHw-hA-12i" id="5z6-7t-RSf"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="74w-di-8Wr" id="rfF-nB-lqn"/>
+                                    <outlet property="delegate" destination="74w-di-8Wr" id="dvd-NH-6UU"/>
+                                </connections>
+                            </collectionView>
+                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DQx-HT-lqC">
+                                <rect key="frame" x="16" y="502.33333333333331" width="361" height="34.333333333333314"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="회원님 근처의 추천 코스" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Na-lN-LMW">
+                                        <rect key="frame" x="0.0" y="0.0" width="292.66666666666669" height="34.333333333333336"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rek-Cj-AcH">
+                                        <rect key="frame" x="292.66666666666669" y="0.0" width="68.333333333333314" height="34.333333333333336"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="더보기"/>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="fok-P9-BB6"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="DQx-HT-lqC" firstAttribute="top" secondItem="xC0-DA-NBv" secondAttribute="bottom" constant="16" id="3Zy-aC-9er"/>
+                            <constraint firstItem="5eI-lL-Jcc" firstAttribute="top" secondItem="fok-P9-BB6" secondAttribute="top" constant="32" id="79I-Xg-z4x"/>
+                            <constraint firstItem="fok-P9-BB6" firstAttribute="trailing" secondItem="xC0-DA-NBv" secondAttribute="trailing" id="BfE-L8-WFC"/>
+                            <constraint firstItem="fok-P9-BB6" firstAttribute="trailing" secondItem="5eI-lL-Jcc" secondAttribute="trailing" constant="16" id="JxS-Zn-AQ3"/>
+                            <constraint firstItem="xC0-DA-NBv" firstAttribute="top" secondItem="5eI-lL-Jcc" secondAttribute="bottom" constant="8" id="W7F-nE-Ts6"/>
+                            <constraint firstItem="5eI-lL-Jcc" firstAttribute="leading" secondItem="fok-P9-BB6" secondAttribute="leading" constant="16" id="aOM-O1-eIL"/>
+                            <constraint firstItem="xC0-DA-NBv" firstAttribute="leading" secondItem="fok-P9-BB6" secondAttribute="leading" id="d8b-Zr-tMS"/>
+                            <constraint firstItem="DQx-HT-lqC" firstAttribute="leading" secondItem="fok-P9-BB6" secondAttribute="leading" constant="16" id="iuw-Ei-LXS"/>
+                            <constraint firstItem="fok-P9-BB6" firstAttribute="trailing" secondItem="DQx-HT-lqC" secondAttribute="trailing" constant="16" id="jLZ-c4-93M"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Home" id="Kjb-W5-1KF">
+                        <barButtonItem key="rightBarButtonItem" image="magnifyingglass" catalog="system" id="zlU-Ql-91a">
+                            <color key="tintColor" systemColor="labelColor"/>
+                            <connections>
+                                <segue destination="Y4i-bK-3pF" kind="show" id="Dyi-9Q-U2n"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="rcmCourseListByAreaCollectionView" destination="xC0-DA-NBv" id="nUw-Wo-6U9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Oyp-x2-DaG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2983.969465648855" y="-13.380281690140846"/>
+        </scene>
+        <!--SearchVC-->
+        <scene sceneID="fHp-qa-FwJ">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Search" referencedIdentifier="SearchVC" id="Y4i-bK-3pF" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="TnB-rV-Ef5"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QcI-dv-ZUm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3720" y="-211"/>
+        </scene>
+        <!--RecommandCourseListViewController-->
+        <scene sceneID="d7u-GT-ncs">
+            <objects>
+                <viewControllerPlaceholder storyboardIdentifier="RecommandCourseListViewController" storyboardName="RecommandCourseList" referencedIdentifier="RecommandCourseListViewController" id="EWq-9V-ufg" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="PGE-fh-aj5"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="K7h-cD-h4u" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3827" y="-68"/>
         </scene>
     </scenes>
     <resources>
+        <image name="magnifyingglass" catalog="system" width="128" height="117"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

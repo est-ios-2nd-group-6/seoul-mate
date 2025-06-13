@@ -135,6 +135,7 @@ extension HomeViewController: CLLocationManagerDelegate {
         switch manager.authorizationStatus {
         case .authorizedWhenInUse: // 위치 서비스를 사용 가능한 상태
             print("위치 서비스 사용 가능")
+            locationManager.requestLocation()
             break
         case .restricted, .denied: // 위치 서비스를 사용 가능하지 않은 상태
             print("위치 서비스 사용 불가")
@@ -151,7 +152,7 @@ extension HomeViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let coordinate = locations.last?.coordinate {
             if isFetchedLocationList { return }
-            
+
             if TourApiManager.shared.rcmCourseListByLocation.count == 0 {
                 Task {
                     isFetchedLocationList = true

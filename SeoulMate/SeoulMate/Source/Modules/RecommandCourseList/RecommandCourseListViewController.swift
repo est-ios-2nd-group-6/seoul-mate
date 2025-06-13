@@ -34,16 +34,6 @@ class RecommandCourseListViewController: UIViewController {
         case nil:
             courses = []
         }
-
-        Task {
-            for (index, course) in courses.enumerated() {
-                let image = await ImageManager.shared.getImage(course.firstImageUrl)
-
-                courses[index].image = image
-            }
-
-            RecommandCourseListTableView.reloadData()
-        }
     }
 }
 

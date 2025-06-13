@@ -93,7 +93,10 @@ class TourApiManager {
             let courseList = json.response.body.items.item
 
             for course in courseList {
-                let rcmCourse = RecommandCourse(courseItem: course)
+                var rcmCourse = RecommandCourse(courseItem: course)
+
+            	let image = await ImageManager.shared.getImage(course.firstimage)
+                rcmCourse.image = image
 
                 rcmCourseListByArea.append(rcmCourse)
             }

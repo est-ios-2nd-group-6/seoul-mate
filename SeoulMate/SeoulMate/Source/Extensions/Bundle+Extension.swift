@@ -13,7 +13,7 @@ extension Bundle {
     }
     
     var naverMapApiKey: String? {
-        return infoDictionary?["naverMapApiKey"] as? String
+        return infoDictionary?["NaverMapApiKey"] as? String
     }
 
     var googleRoutesApiKey: String? {

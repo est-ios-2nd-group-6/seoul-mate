@@ -125,6 +125,7 @@
                                             <outlet property="tripDateLabel" destination="6xd-HI-qyJ" id="8ZU-Xd-gNZ"/>
                                             <outlet property="tripImageView" destination="aNK-Fz-DoT" id="5Op-ka-NBJ"/>
                                             <outlet property="tripNameLabel" destination="brB-Ff-kOv" id="TP3-vi-ffx"/>
+                                            <segue destination="1yb-j8-xa7" kind="show" id="mhw-MM-EUY"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -169,6 +170,16 @@
             </objects>
             <point key="canvasLocation" x="2840.4580152671756" y="-34.507042253521128"/>
         </scene>
+        <!--Map-->
+        <scene sceneID="hbP-ZL-fx6">
+            <objects>
+                <viewControllerPlaceholder storyboardIdentifier="MapViewController" storyboardName="Map" id="1yb-j8-xa7" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="WHf-dm-R7p"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8y6-Wa-drI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3642" y="-298"/>
+        </scene>
         <!--Calendar-->
         <scene sceneID="MP6-eE-SRP">
             <objects>
@@ -177,7 +188,7 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="37u-lE-WeB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3679" y="-35"/>
+            <point key="canvasLocation" x="3582" y="228"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="9l3-l9-cBr">

@@ -45,10 +45,6 @@ class ScheduleListViewController: UIViewController {
         return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
     }
 
-    @IBAction func floatingButton(_ sender: Any) {
-        // 새 여행 일정 추가
-    }
-
     @IBAction func moreButton(_ sender: Any) {
         guard let button = sender as? UIButton else { return }
 
@@ -95,7 +91,17 @@ class ScheduleListViewController: UIViewController {
         floatingButton.layer.cornerRadius = floatingButton.frame.height / 2
         floatingButton.clipsToBounds = true
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? MapViewController {
+            guard let indexPath = scheduleListTableView.indexPathForSelectedRow else { return }
 
+            let item = tripItems[indexPath.row]
+            guard case .trip(let tour) = item else { return }
+
+            // MapView에 tour 필요
+            //vc.tour = tour
+        }
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)

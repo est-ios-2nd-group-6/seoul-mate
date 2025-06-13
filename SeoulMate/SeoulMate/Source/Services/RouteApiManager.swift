@@ -68,7 +68,9 @@ class RouteApiManager {
 
         switch type {
         case .drive(let searchOption), .walk(let searchOption):
-            routeReqDto.searchOption = searchOption
+            if let searchOption {
+                routeReqDto.searchOption = searchOption
+            }
         case .transit:
             break
         }

@@ -309,12 +309,10 @@ extension RouteMapViewController {
         }
 
         switch type {
-        case .drive(nil):
-
-        case .drive(let searchOption):
+        case .drive(nil), .walk(nil):
+            break
+        case .drive(_), .walk(_):
             await calcRouteTMap(type: type, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
-        case .walk(let searchOption):
-
         case .transit:
             await calcRouteByTransit(startPoint: startPoint, endPoint: endPoint)
         }

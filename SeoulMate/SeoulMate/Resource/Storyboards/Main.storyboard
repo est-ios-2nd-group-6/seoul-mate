@@ -19,22 +19,11 @@
                     </tabBar>
                     <connections>
                         <segue destination="iEC-KF-NbZ" kind="relationship" relationship="viewControllers" id="juQ-8Z-6KN"/>
-                        <segue destination="5AW-nq-E8v" kind="relationship" relationship="viewControllers" id="BXv-QH-r6Q"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5GQ-X9-Q4m" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="130.53435114503816" y="-13.380281690140846"/>
-        </scene>
-        <!--ScheduleList-->
-        <scene sceneID="zFg-ya-cos">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="ScheduleList" storyboardName="ScheduleList" referencedIdentifier="ScheduleList" id="5AW-nq-E8v" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="xOR-ZY-9eH"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="PEA-MN-VGN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1323" y="-230"/>
         </scene>
         <!--HomeViewController-->
         <scene sceneID="PqN-AX-wAg">

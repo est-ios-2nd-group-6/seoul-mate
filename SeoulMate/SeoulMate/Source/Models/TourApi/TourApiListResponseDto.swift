@@ -25,9 +25,11 @@ struct TourApiListItem: Codable {
     let createdtime, modifiedtime: Date
 
     enum CodingKeys: String, CodingKey {
-        case addr1, addr2, areacode, cat1, cat2, cat3, contentid, contenttypeid, createdtime, firstimage, firstimage2
+        case addr1, addr2, areacode, cat1, cat2, cat3, contentid, contenttypeid, createdtime
+        case firstimage, firstimage2
         case cpyrhtDivCD = "cpyrhtDivCd"
-        case mapx, mapy, mlevel, modifiedtime, sigungucode, tel, title, zipcode
+        case mapx, mapy, mlevel, modifiedtime
+        case sigungucode, tel, title, zipcode
         case lDongRegnCD = "lDongRegnCd"
         case lDongSignguCD = "lDongSignguCd"
         case lclsSystm1, lclsSystm2, lclsSystm3

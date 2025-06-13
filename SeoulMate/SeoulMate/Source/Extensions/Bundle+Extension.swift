@@ -11,7 +11,7 @@ extension Bundle {
     var tourApiKey: String? {
         return infoDictionary?["TourApiKey"] as? String
     }
-
+    
     var naverMapApiKey: String? {
         return infoDictionary?["naverMapApiKey"] as? String
     }
@@ -22,5 +22,9 @@ extension Bundle {
 
     var tMapRoutesApiKey: String? {
         return infoDictionary?["TMapRoutesApiKey"] as? String
+    }
+
+    var googleApiKey: String? {
+        return infoDictionary?["GoogleApiKey"] as? String
     }
 }

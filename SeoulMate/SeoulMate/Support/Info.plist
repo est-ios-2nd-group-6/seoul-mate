@@ -6,6 +6,8 @@
 	<string>${TMAP_ROUTES_API_KEY}</string>
 	<key>GoogleRoutesApiKey</key>
 	<string>${GOOGLE_ROUTES_API_KEY}</string>
+	<key>GoogleApiKey</key>
+	<string>${GOOGLE_API_KEY}</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -42,12 +44,14 @@
 					<key>UISceneDelegateClassName</key>
 					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
 					<key>UISceneStoryboardFile</key>
-					<string>RouteMap</string>
+					<string>Onboarding</string>
 				</dict>
 			</array>
 		</dict>
 	</dict>
 	<key>naverMapApiKey</key>
 	<string>${NaverMap_API_KEY}</string>
+	<key>CFBundleIdentifier</key>
+	<string>SeoulMate/SeoulMate/Support/Info.plist</string>
 </dict>
 </plist>

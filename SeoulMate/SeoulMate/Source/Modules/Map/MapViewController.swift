@@ -215,13 +215,20 @@ class MapViewController: UIViewController {
         footer.backgroundColor = .clear
         tableView.tableFooterView = footer
         
-//        let vc = MapSheetViewController()
-//        if let sheet = vc.sheetPresentationController {
-//            sheet.detents = [.medium(), .large()]
-//        }
-//        self.present(vc, animated: true)
+        guard let vc = storyboard?.instantiateViewController(withIdentifier: "PageSheetViewController") else { return }
+        if let presentationController = vc.presentationController as? UISheetPresentationController {
+            let small = UISheetPresentationController.Detent.custom(identifier: .init(rawValue: "small")) { context in
+                return context.maximumDetentValue * 0.05
+            }
 
+            presentationController.detents = [small ,.medium(), .large()]
+            presentationController.prefersGrabberVisible = true
+            presentationController.largestUndimmedDetentIdentifier = .large
+        }
+        vc.isModalInPresentation = true
         
+        self.present(vc, animated: true)
+     
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -243,8 +250,8 @@ class MapViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         
-//        guard let sheet = segue.destination.sheetPresentationController else { return }
         
+       
         
     }
     

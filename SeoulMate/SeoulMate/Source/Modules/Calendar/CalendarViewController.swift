@@ -12,9 +12,11 @@ class CalendarViewController: UIViewController {
     
     @IBOutlet weak var registerScheduleButton: UIButton!
     @IBOutlet weak var calendarView: UICalendarView!
+    
     var selectedDays: [String] = []
     var rangeStart: Date?
     var selectedDateObjects: [Date] = []
+
     
     private let formatter: DateFormatter = {
         let f = DateFormatter()
@@ -158,8 +160,6 @@ extension CalendarViewController: UICalendarSelectionMultiDateDelegate {
         let allComps = Array(Set(oldComps + newComps))
 
         calendarView.reloadDecorations(forDateComponents: allComps, animated: true)
-
-
     }
     
     

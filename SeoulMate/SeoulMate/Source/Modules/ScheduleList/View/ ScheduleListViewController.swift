@@ -37,7 +37,7 @@ class ScheduleListViewController: UIViewController {
         if let vc = segue.destination as? MapViewController {
             guard let indexPath = scheduleListTableView.indexPathForSelectedRow else { return }
 
-            let item = tripItems[indexPath.row]
+            let item = viewModel.tripItems[indexPath.row]
             guard case .trip(let tour) = item else { return }
 
             // MapView에 tour 필요

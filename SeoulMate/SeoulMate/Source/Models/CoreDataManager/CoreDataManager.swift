@@ -125,7 +125,6 @@ final class CoreDataManager {
             }
 
             tour.course = nil
-            tour.transportMode = nil
             self.context.delete(tour)
 
             try? self.context.save()
@@ -139,6 +138,7 @@ final class CoreDataManager {
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
         return (try? context.fetch(request)) ?? []
     }
+
     // MARK: - POI
     func fetchPOIs(for schedule: Schedule) -> [POI] {
         guard let arr = schedule.pois else { return [] }

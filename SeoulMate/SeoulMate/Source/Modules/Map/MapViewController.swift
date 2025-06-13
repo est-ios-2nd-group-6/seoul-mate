@@ -215,19 +215,7 @@ class MapViewController: UIViewController {
         footer.backgroundColor = .clear
         tableView.tableFooterView = footer
         
-        guard let vc = storyboard?.instantiateViewController(withIdentifier: "PageSheetViewController") else { return }
-        if let presentationController = vc.presentationController as? UISheetPresentationController {
-            let small = UISheetPresentationController.Detent.custom(identifier: .init(rawValue: "small")) { context in
-                return context.maximumDetentValue * 0.05
-            }
-
-            presentationController.detents = [small ,.medium(), .large()]
-            presentationController.prefersGrabberVisible = true
-            presentationController.largestUndimmedDetentIdentifier = .large
-        }
-        vc.isModalInPresentation = true
-        
-        self.present(vc, animated: true)
+       
      
     }
     
@@ -250,6 +238,8 @@ class MapViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         
+        if let vc = segue.destination as? DetailSheetViewController {
+        }
         
        
         
@@ -590,6 +580,22 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
             makePath(for: indexPath.section)
             
         }
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let vc = storyboard?.instantiateViewController(withIdentifier: "DetailSheetViewController") as? DetailSheetViewController else { return }
+        vc.place = "굽네치킨"
+        vc.placeCategory = "식당"
+        vc.placeOpenTime = "09:00 ~ 22:00"
+        if let presentationController = vc.presentationController as? UISheetPresentationController {
+            let small = UISheetPresentationController.Detent.custom(identifier: .init(rawValue: "small")) { context in
+                return context.maximumDetentValue * 0.33
+            }
+
+            presentationController.detents = [small]
+        }
+//        vc.isModalInPresentation = true
+        
+        self.present(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {

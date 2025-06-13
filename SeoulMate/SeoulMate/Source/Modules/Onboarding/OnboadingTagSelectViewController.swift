@@ -17,7 +17,7 @@ class OnboadingTagSelectViewController: UIViewController {
     var tagButtons: [UIButton] = []
 
     @IBAction func startButtonTapped(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let homeTabBarController = storyboard.instantiateInitialViewController() else { return }
 
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,

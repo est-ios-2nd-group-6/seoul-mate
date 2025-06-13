@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window = UIWindow(windowScene: windowScene)
 
-        let storyboardName = Storage.isFirstLaunch() ? "Onboarding" : "Home"
+        let storyboardName = Storage.isFirstLaunch() ? "Onboarding" : "Main"
         let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
 
         guard let rootVC = storyboard.instantiateInitialViewController() else {

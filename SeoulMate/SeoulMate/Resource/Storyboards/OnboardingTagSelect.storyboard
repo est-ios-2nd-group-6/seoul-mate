@@ -32,7 +32,7 @@
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="startButtonTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Mae-Mh-fDi"/>
-                                    <segue destination="kXQ-4I-RnQ" kind="show" id="C32-vq-Ooh"/>
+                                    <segue destination="kXQ-4I-RnQ" kind="show" id="xnY-nf-0Gh"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -57,10 +57,10 @@
             </objects>
             <point key="canvasLocation" x="26.717557251908396" y="-28.169014084507044"/>
         </scene>
-        <!--Home-->
+        <!--Main-->
         <scene sceneID="bVE-TQ-6hv">
             <objects>
-                <viewControllerPlaceholder storyboardName="Home" id="kXQ-4I-RnQ" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardIdentifier="Main" storyboardName="Main" id="kXQ-4I-RnQ" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="EnA-4w-lEf"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kWT-rE-gY6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

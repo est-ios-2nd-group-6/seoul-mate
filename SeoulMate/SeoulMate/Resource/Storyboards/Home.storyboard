@@ -20,6 +20,9 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Jqd-9R-G68">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="74w-di-8Wr" kind="relationship" relationship="rootViewController" id="GRG-Xc-C2F"/>
                     </connections>
@@ -155,6 +158,7 @@
                             <constraint firstItem="fok-P9-BB6" firstAttribute="trailing" secondItem="DQx-HT-lqC" secondAttribute="trailing" constant="16" id="jLZ-c4-93M"/>
                         </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" title="홈" image="house" catalog="system" id="ITm-Ca-xfj"/>
                     <navigationItem key="navigationItem" title="Home" id="Kjb-W5-1KF">
                         <barButtonItem key="rightBarButtonItem" image="magnifyingglass" catalog="system" id="zlU-Ql-91a">
                             <color key="tintColor" systemColor="labelColor"/>
@@ -163,6 +167,7 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="rcmCourseListByAreaCollectionView" destination="xC0-DA-NBv" id="nUw-Wo-6U9"/>
                     </connections>
@@ -193,6 +198,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="house" catalog="system" width="128" height="104"/>
         <image name="magnifyingglass" catalog="system" width="128" height="117"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

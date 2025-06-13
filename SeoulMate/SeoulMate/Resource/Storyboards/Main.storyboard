@@ -10,7 +10,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="6bz-s7-aRX">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="overFullScreen" id="eeQ-wO-9jg" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="Main" automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="overFullScreen" id="eeQ-wO-9jg" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="e9j-ug-7V5">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
@@ -19,7 +19,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="iEC-KF-NbZ" kind="relationship" relationship="viewControllers" id="juQ-8Z-6KN"/>
-                        <segue destination="POB-mz-tXn" kind="relationship" relationship="viewControllers" id="Sma-yb-8MI"/>
+                        <segue destination="btf-M3-dfl" kind="relationship" relationship="viewControllers" id="MnB-76-wlo"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5GQ-X9-Q4m" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -36,19 +36,18 @@
             </objects>
             <point key="canvasLocation" x="892" y="-241"/>
         </scene>
-        <!--ScheduleListViewController-->
-        <scene sceneID="U3y-mO-ElS">
+        <!--ScheduleList-->
+        <scene sceneID="0Je-CI-RTG">
             <objects>
-                <viewControllerPlaceholder storyboardIdentifier="SchduleList" storyboardName="ScheduleList" referencedIdentifier="ScheduleListViewController" id="POB-mz-tXn" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="내 여행" image="calendar" catalog="system" id="Z6u-Rv-lbF"/>
+                <viewControllerPlaceholder storyboardName="ScheduleList" id="btf-M3-dfl" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="P9r-N3-rFv"/>
                 </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Auc-G2-nCd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tce-0l-Rm5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="856" y="169"/>
+            <point key="canvasLocation" x="929" y="162"/>
         </scene>
     </scenes>
     <resources>
-        <image name="calendar" catalog="system" width="128" height="107"/>
         <image name="house" catalog="system" width="128" height="104"/>
     </resources>
 </document>

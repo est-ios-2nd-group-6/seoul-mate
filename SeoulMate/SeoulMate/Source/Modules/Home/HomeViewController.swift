@@ -10,6 +10,7 @@ import CoreLocation
 
 class HomeViewController: UIViewController {
     @IBOutlet weak var rcmCourseListByAreaCollectionView: UICollectionView!
+
     let locationManager: CLLocationManager = CLLocationManager()
 
     var rcmCourseListByArea: [RecommandCourse] = []
@@ -21,12 +22,14 @@ class HomeViewController: UIViewController {
 
         Task {
             await TourApiManager.shared.fetchRcmCourseList(by: .area)
-            //            await TourApiManager.shared.fetchRcmCourseList(by: .location, x: , )
             rcmCourseListByArea = TourApiManager.shared.rcmCourseListByArea
+
+            locationManager.requestLocation()
 
             rcmCourseListByAreaCollectionView.reloadData()
 
-            locationManager.startUpdatingLocation()
+//            await TourApiManager.shared.fetchRcmCourseList(by: .location, x: , )
+
         }
     }
 }

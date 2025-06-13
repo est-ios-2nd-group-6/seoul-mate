@@ -12,10 +12,20 @@ class OnboadingTagSelectViewController: UIViewController {
     @IBOutlet weak var tagListView: UIView!
     @IBOutlet weak var tagListViewHeight: NSLayoutConstraint!
     @IBOutlet weak var startButton: UIButton!
-    
+
     var tags: [Tag] = []
     var tagButtons: [UIButton] = []
 
+    @IBAction func startButtonTapped(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let homeTabBarController = storyboard.instantiateInitialViewController() else { return }
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.rootViewController = homeTabBarController
+            window.makeKeyAndVisible()
+        }
+    }
     private func initTagView() {
         tagButtons.forEach { $0.removeFromSuperview() }
         tagButtons = []
@@ -129,6 +139,11 @@ class OnboadingTagSelectViewController: UIViewController {
         guard !didSetUpTag else { return }
         initTagView()
         didSetUpTag = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 
     override func viewWillAppear(_ animated: Bool) {

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AddToScheduleSheetViewController" customModule="SeoulMate" customModuleProvider="target">
+            <connections>
+                <outlet property="addToScheduleTableView" destination="Oug-a8-AWd" id="kND-Gi-FZe"/>
+                <outlet property="view" destination="iN0-l3-epB" id="UaQ-1A-RIB"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="일정에 추가" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IUM-pK-cta">
+                    <rect key="frame" x="0.0" y="134" width="393" height="24"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" estimatedSectionHeaderHeight="-1" sectionFooterHeight="28" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Oug-a8-AWd">
+                    <rect key="frame" x="24" y="174" width="345" height="608"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="2WE-rL-Y7f"/>
+                        <outlet property="delegate" destination="-1" id="6jf-Zp-xzM"/>
+                    </connections>
+                </tableView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="egI-M3-V1Y">
+                    <rect key="frame" x="0.0" y="782" width="393" height="70"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="70" id="hPT-kT-hfZ"/>
+                    </constraints>
+                    <state key="normal" title="Button"/>
+                    <buttonConfiguration key="configuration" style="filled" title="추가"/>
+                </button>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="egI-M3-V1Y" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="5Fk-8b-Ush"/>
+                <constraint firstItem="Oug-a8-AWd" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="24" id="7Gu-Vd-HLE"/>
+                <constraint firstItem="Oug-a8-AWd" firstAttribute="top" secondItem="IUM-pK-cta" secondAttribute="bottom" constant="16" id="95s-0z-VDa"/>
+                <constraint firstItem="egI-M3-V1Y" firstAttribute="top" secondItem="Oug-a8-AWd" secondAttribute="bottom" id="EOI-5Y-Erj"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Oug-a8-AWd" secondAttribute="trailing" constant="24" id="Gwr-d5-Tju"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="IUM-pK-cta" secondAttribute="trailing" id="XuM-Dl-bri"/>
+                <constraint firstAttribute="trailing" secondItem="egI-M3-V1Y" secondAttribute="trailing" id="Xvx-i7-3yb"/>
+                <constraint firstItem="IUM-pK-cta" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="dnG-n5-q6h"/>
+                <constraint firstItem="IUM-pK-cta" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="16" id="gAI-lA-9un"/>
+                <constraint firstAttribute="bottom" secondItem="egI-M3-V1Y" secondAttribute="bottom" id="iG9-V0-BpS"/>
+            </constraints>
+            <point key="canvasLocation" x="156.4885496183206" y="10.563380281690142"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

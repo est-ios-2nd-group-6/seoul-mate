@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Onboading Tag Select View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="OnboardingTagSelect" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Y6W-OH-hqX" customClass="OnboadingTagSelectViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4as-zE-aH4">
+                                <rect key="frame" x="16" y="118" width="361" height="611"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="611" id="Ag7-Vd-mYq"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="adU-Lu-gXa">
+                                <rect key="frame" x="40" y="749" width="313" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="여행 시작하기" cornerStyle="capsule">
+                                    <color key="baseBackgroundColor" name="Main"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="startButtonTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Mae-Mh-fDi"/>
+                                    <segue destination="kXQ-4I-RnQ" kind="show" id="C32-vq-Ooh"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="adU-Lu-gXa" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="40" id="18J-HJ-iyw"/>
+                            <constraint firstItem="4as-zE-aH4" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" id="7hc-92-sil"/>
+                            <constraint firstItem="4as-zE-aH4" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="16" id="Hp9-3e-hGW"/>
+                            <constraint firstItem="adU-Lu-gXa" firstAttribute="bottom" secondItem="vDu-zF-Fre" secondAttribute="bottom" id="RY4-WG-6o4"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="adU-Lu-gXa" secondAttribute="trailing" constant="40" id="avy-lZ-mzU"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="4as-zE-aH4" secondAttribute="trailing" constant="16" id="da6-w4-6Vb"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="startButton" destination="adU-Lu-gXa" id="drf-WL-SpY"/>
+                        <outlet property="tagListView" destination="4as-zE-aH4" id="TK3-Ie-M2t"/>
+                        <outlet property="tagListViewHeight" destination="Ag7-Vd-mYq" id="QT1-lV-cpc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="26.717557251908396" y="-28.169014084507044"/>
+        </scene>
+        <!--Home-->
+        <scene sceneID="bVE-TQ-6hv">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Home" id="kXQ-4I-RnQ" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="EnA-4w-lEf"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="kWT-rE-gY6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="973" y="-28"/>
+        </scene>
+    </scenes>
+    <resources>
+        <namedColor name="Main">
+            <color red="0.92941176891326904" green="0.47450977563858032" blue="0.38431376218795776" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

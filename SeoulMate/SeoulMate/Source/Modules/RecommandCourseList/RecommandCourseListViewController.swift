@@ -18,7 +18,7 @@ class RecommandCourseListViewController: UIViewController {
     var selectedItem: RecommandCourse? = nil
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? CourseDetailViewController {
+        if let vc = segue.destination as? RecommandCourseDetailViewController {
             vc.course = selectedItem
         }
     }

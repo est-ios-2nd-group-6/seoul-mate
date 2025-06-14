@@ -16,10 +16,11 @@ struct TempTour {
 }
 
 var dummyData: [TempTour] = [
-    TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
+//    TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
     TempTour(name: "신림역", latitude: 37.484171739, longitude: 126.929784067),
-    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
-    TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
+//    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
+//    TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
+    TempTour(name: "옥수역", latitude: 37.540429916, longitude: 127.018709461),
 ]
 
 struct RouteData {
@@ -35,16 +36,16 @@ struct RouteData {
         var pointColor: UIColor {
             switch self.type {
             case .sp, .s:
-                return UIColor(red: 217/255, green: 73/255, blue: 80/255, alpha: 1)
+                return .mapPointGreen
 
             case .ep, .e:
-                return UIColor(red: 79/255, green: 188/255, blue: 99/255, alpha: 1)
+                return .mapPointRed
 
             case .b1, .b2, .b3, .pp, .pp1, .pp2, .pp3, .pp4, .pp5:
-                return UIColor(red: 150/255, green: 155/255, blue: 165/255, alpha: 1)
+                return .mapPointGray
 
             case .n, .gp:
-                return UIColor(red: 150/255, green: 155/255, blue: 165/255, alpha: 1)
+                return .mapPointGray
             }
         }
 
@@ -75,16 +76,16 @@ struct RouteData {
         }
 
         let polyline: [Coordinate]
-        let travelMode: RouteOption? = nil
+        var travelMode: RouteOption? = nil
         let traffic: Int? = nil
 
         var lineColor: UIColor? {
             switch travelMode {
             case .transit:
-                return UIColor(red: 86/255, green: 169/255, blue: 73/255, alpha: 1)
+                return .mapLineGreen
             case .drive, .walk, nil:
                 // drive -> traffic에 따른 분기 필요
-                return UIColor(red: 54/255, green: 81/255, blue: 251/255, alpha: 1)
+                return .mapLineBasic
             }
         }
     }
@@ -147,7 +148,11 @@ class RouteMapViewController: UIViewController {
     var routeCache: [RouteOption: [RouteData]] = [:]
 
     var selectedRouteOption: RouteOption = .drive {
-        didSet {
+        didSet(oldVal) {
+            if selectedRouteOption == oldVal {
+				return
+            }
+
             if routeCache[selectedRouteOption, default: []].isEmpty {
                 Task {
                     if selectedRouteOption == .drive || selectedRouteOption == .walk {
@@ -364,63 +369,76 @@ extension RouteMapViewController {
 
         switch type {
         case .drive, .walk:
-            await calcRouteTMap(type: type, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
+            await calcRouteByTMap(type: type, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
         case .transit:
-            await calcRouteByTransit(startPoint: startPoint, endPoint: endPoint)
+            await calcRouteTransitByGoogle(startPoint: startPoint, endPoint: endPoint)
         }
     }
 
-    func calcRouteByTransit(startPoint: Location, endPoint: Location) async {
-        var lineParts: [NMGLineString<AnyObject>] = []
-        var colorParts: [NMFPathColor] = []
+    func calcRouteTransitByGoogle(startPoint: Location, endPoint: Location) async {
+        // TODO: computeAlternativeRoutes true 시 경로 오류
+        let response: GoogleRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteTransitByGoogle(startPoint: startPoint, endPoint: endPoint)
 
-        let response: GoogleRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteByTransit(startPoint: startPoint, endPoint: endPoint)
+        guard let response else { return }
 
-        guard let steps = response?.routes[0].legs[0].steps else {
-            return
-        }
+        var routeData = RouteData()
 
-        for step in steps {
-            var points: [NMGLatLng] = []
+        for route in response.routes {
+            let leg = route.legs[0]
 
-            for coordinate in step.polyline.geoJSONLinestring.coordinates {
-                let latitude: Double = coordinate[1]
-                let longitude: Double = coordinate[0]
+            let steps = leg.steps
 
-                let point = NMGLatLng(lat: latitude, lng: longitude)
+            routeData.totalDistance = leg.distanceMeters
 
-                points.append(point)
+            let duration: String = leg.duration.replacing(/[a-zA-Z]/, with: "")
+
+            if let totalTime = Int(duration) {
+                routeData.totalTime = totalTime
             }
 
-            let linePart: NMGLineString<AnyObject> = NMGLineString<AnyObject>(points: points)
+            let startLocation = leg.startLocation.latLng
 
-            lineParts.append(linePart)
+            let startPoint = RouteData.Point(
+                latitude: startLocation.latitude,
+                longitude: startLocation.longitude,
+                type: .s
+            )
 
-            var color: UIColor
+            routeData.points.append(startPoint)
 
-            switch step.travelMode {
-            case "WALK":
-                color = UIColor(red: 54/255, green: 81/255, blue: 251/255, alpha: 1)
-            case "TRANSIT":
-                color = UIColor(red: 86/255, green: 169/255, blue: 73/255, alpha: 1)
-            default:
-                color = .lightGray
+            let endLocation = leg.endLocation.latLng
+
+            let endPoint = RouteData.Point(
+                latitude: endLocation.latitude,
+                longitude: endLocation.longitude,
+                type: .e
+            )
+
+            routeData.points.append(endPoint)
+
+            for step in steps {
+                var polyline: [RouteData.Coordinate] = []
+
+                for coordinate in step.polyline.geoJSONLinestring.coordinates {
+                    let latitude: Double = coordinate[1]
+                    let longitude: Double = coordinate[0]
+
+                    polyline.append(.init(latitude: latitude, longitude: longitude))
+                }
+
+                var path: RouteData.Path = .init(polyline: polyline)
+
+                path.travelMode = RouteOption(rawValue: step.travelMode)
+
+                routeData.paths.append(path)
             }
 
-            let colorPart: NMFPathColor = NMFPathColor(color: color)
-
-            colorParts.append(colorPart)
-
-            print(lineParts.count)
-            print(colorParts.count)
-
-            print(step.staticDuration, step.travelMode)
-            print(linePart.points.first, linePart.points.last, color)
+            routeCache[.transit, default: []].append(routeData)
         }
     }
 
-    func calcRouteTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
-        let response: TMapRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteTMap(type: type, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
+    func calcRouteByTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
+        let response: TMapRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteByTMap(type: type, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
 
         var routeData = RouteData()
         routeData.searchOption = searchOption
@@ -558,11 +576,11 @@ extension RouteMapViewController: UITableViewDataSource {
         var image: UIImage? = UIImage(systemName: "target")?.withRenderingMode(.alwaysOriginal)
 
         if index == 0 {
-            image = image?.withTintColor(.mapGreen)
+            image = image?.withTintColor(.mapPointGreen)
         } else if index == dummyData.count - 1 {
-            image = image?.withTintColor(.mapRed)
+            image = image?.withTintColor(.mapPointRed)
         } else {
-            image = image?.withTintColor(.mapGray)
+            image = image?.withTintColor(.mapPointGray)
         }
 
         cell.cellImageView.image = image
@@ -603,7 +621,7 @@ extension RouteMapViewController: UICollectionViewDataSource {
         cell.wrapperView.layer.shadowRadius = 5
         cell.wrapperView.layer.shadowOffset = CGSize(width: 0, height: 0)
 
-        cell.optionLabel.text = option?.title
+        cell.optionLabel.text = option?.title ?? "추천 경로 \(index + 1)"
 
         cell.totalDistance.text = "\(Int(round(Double(data.totalDistance / 1000))))km"
 
@@ -626,16 +644,8 @@ extension RouteMapViewController: UICollectionViewDataSource {
 // MARK: - Extension : UICollectionViewDeletagate
 extension RouteMapViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RouteOptionCollectionViewCell", for: indexPath) as? RouteOptionCollectionViewCell else {
-        //            return
-        //        }
-
         selectedSearchOption = indexPath.item
 
-        print(selectedSearchOption)
-
         collectionView.reloadData()
-
-        //        collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
     }
 }

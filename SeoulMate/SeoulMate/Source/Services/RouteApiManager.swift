@@ -7,21 +7,10 @@
 
 import Foundation
 
-enum RouteOption: Hashable, CaseIterable {
-//    case drive(searchOption: SearchOption?)
-//    case walk(searchOption: SearchOption?)
-    case drive
-    case walk
-    case transit
-
-//    var title: String {
-//        switch self {
-//        case .drive(let searchOption), .walk(let searchOption):
-//            return searchOption?.title ?? ""
-//        case .transit:
-//            return ""
-//        }
-//    }
+enum RouteOption:String, Hashable, CaseIterable {
+    case drive = "DRIVE"
+    case walk = "WALK"
+    case transit = "TRANSIT"
 
     var searchOptions: [SearchOption]? {
         switch self {
@@ -55,7 +44,7 @@ class RouteApiManager {
         return URL(string: baseUrl)
     }
 
-    public func calcRouteTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
+    public func calcRouteByTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
         guard let url = getApiUrl(type: type) else {
             fatalError("URL Initialization is Failed")
         }
@@ -114,7 +103,7 @@ class RouteApiManager {
         return nil
     }
 
-    public func calcRouteByTransit(startPoint: Location, endPoint: Location) async -> GoogleRoutesApiResponseDto? {
+    public func calcRouteTransitByGoogle(startPoint: Location, endPoint: Location) async -> GoogleRoutesApiResponseDto? {
         guard let url = URL(string: "https://routes.googleapis.com/directions/v2:computeRoutes") else {
             fatalError("URL Initialization is Failed")
         }
@@ -129,7 +118,8 @@ class RouteApiManager {
         let routeReqDto = GoogleRoutesApiRequestDto(
             origin: origin,
             destination: destination,
-            intermediates: nil
+            intermediates: nil,
+            computeAlternativeRoutes: false
         )
 
         do {

@@ -7,17 +7,30 @@
 
 import Foundation
 
-enum RouteOption: Hashable {
-    case drive(searchOption: SearchOption?)
-    case walk(searchOption: SearchOption?)
+enum RouteOption: Hashable, CaseIterable {
+//    case drive(searchOption: SearchOption?)
+//    case walk(searchOption: SearchOption?)
+    case drive
+    case walk
     case transit
 
-    var title: String {
+//    var title: String {
+//        switch self {
+//        case .drive(let searchOption), .walk(let searchOption):
+//            return searchOption?.title ?? ""
+//        case .transit:
+//            return ""
+//        }
+//    }
+
+    var searchOptions: [SearchOption]? {
         switch self {
-        case .drive(let searchOption), .walk(let searchOption):
-            return searchOption?.title ?? ""
+        case .drive:
+            return [.recommand, .fastest, .shortest]
+        case .walk:
+            return [.recommand, .preferBoulevard, .avoidStair]
         case .transit:
-            return ""
+            return nil
         }
     }
 }
@@ -42,7 +55,7 @@ class RouteApiManager {
         return URL(string: baseUrl)
     }
 
-    public func calcRouteTMap(type: RouteOption, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
+    public func calcRouteTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
         guard let url = getApiUrl(type: type) else {
             fatalError("URL Initialization is Failed")
         }
@@ -67,7 +80,7 @@ class RouteApiManager {
         }
 
         switch type {
-        case .drive(let searchOption), .walk(let searchOption):
+        case .drive, .walk:
             if let searchOption {
                 routeReqDto.searchOption = searchOption
             }
@@ -81,16 +94,12 @@ class RouteApiManager {
             request.httpMethod = "POST"
             request.httpBody = try JSONEncoder().encode(routeReqDto)
 
-            //            print(String(data: request.httpBody ?? Data(), encoding: .utf8))
-
             request.addValue(tMapRoutesApiKey, forHTTPHeaderField: "appKey")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
             let session = URLSession.shared
 
             let (data, _) = try await session.data(for: request)
-
-            //            print(String(data: data, encoding: .utf8))
 
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601

@@ -213,6 +213,8 @@ class RouteMapViewController: UIViewController {
         return nil
     }
 
+    var isMapFullscreend: Bool = false
+
     var collectionViewLayout: UICollectionViewCompositionalLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.4),
                                               heightDimension: .fractionalHeight(1))
@@ -241,6 +243,8 @@ class RouteMapViewController: UIViewController {
         super.viewDidLoad()
 
         setupLayout()
+
+        naverMapView.mapView.touchDelegate = self
 
         let routeInfoTabGesture = UITapGestureRecognizer(target: self, action: #selector(toggleRouteInfo))
 
@@ -647,5 +651,17 @@ extension RouteMapViewController: UICollectionViewDelegate {
         selectedSearchOption = indexPath.item
 
         collectionView.reloadData()
+    }
+}
+
+extension RouteMapViewController: NMFMapViewTouchDelegate {
+    func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
+        print(#function)
+        isMapFullscreend.toggle()
+
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self else { return }
+            self.view.subviews.filter { $0 != self.naverMapView }.forEach { $0.isHidden = self.isMapFullscreend }
+        }
     }
 }

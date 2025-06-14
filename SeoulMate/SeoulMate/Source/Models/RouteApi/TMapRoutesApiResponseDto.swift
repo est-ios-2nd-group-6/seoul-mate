@@ -22,6 +22,7 @@ struct Feature: Codable {
 struct Geometry: Codable {
     let type: GeometryType
     let coordinates: [Coordinate]
+    let traffic: [[Int]]?
 }
 
 enum Coordinate: Codable {

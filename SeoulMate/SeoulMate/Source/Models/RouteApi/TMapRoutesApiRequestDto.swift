@@ -12,8 +12,12 @@ struct TMapRoutesApiRequestDto: Codable {
     let startName: String
     let endX, endY: Double
     let endName: String
+
+    var trafficInfo = "Y"
+
     var passList: String? = nil
     var searchOption: SearchOption = .recommand
+
 }
 
 enum SearchOption: Int, Codable, CaseIterable {

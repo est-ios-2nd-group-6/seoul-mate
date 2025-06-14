@@ -59,7 +59,8 @@ class RouteApiManager {
             startName: "test",
             endX: endPoint.longitude,
             endY: endPoint.latitude,
-            endName: "test"
+            endName: "test",
+            trafficInfo: "Y",
         )
 
         if let intermediates {
@@ -68,13 +69,8 @@ class RouteApiManager {
             routeReqDto.passList = passList
         }
 
-        switch type {
-        case .drive, .walk:
-            if let searchOption {
-                routeReqDto.searchOption = searchOption
-            }
-        case .transit:
-            break
+        if let searchOption {
+            routeReqDto.searchOption = searchOption
         }
 
         do {

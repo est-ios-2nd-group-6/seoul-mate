@@ -8,7 +8,8 @@
 import UIKit
 import NMapsMap
 
-// TODO: 경로를 실시간으로 계속 받아와야 할까 아니면 한번만 받고 저장해둔걸 보여줘야 할까,,
+// TODO: cameraUpdateWithFitBounds(_:)
+// TODO: Trafic에 따른 색상
 struct TempTour {
     var name: String
     var latitude: Double
@@ -75,17 +76,33 @@ struct RouteData {
             case walk
         }
 
+        enum Traffic: Int {
+            case unknown = 0
+            case smooth = 1
+           case slow = 2
+           case verySlow = 4
+        }
+
         let polyline: [Coordinate]
         var travelMode: RouteOption? = nil
-        let traffic: Int? = nil
+        var traffic: Traffic? = nil
 
         var lineColor: UIColor? {
             switch travelMode {
             case .transit:
                 return .mapLineGreen
-            case .drive, .walk, nil:
+            case .walk, nil:
                 // drive -> traffic에 따른 분기 필요
                 return .mapLineBasic
+            case .drive:
+                switch traffic {
+                case nil, .unknown, .smooth:
+                    return .mapLineGreen
+                case .slow:
+                    return .mapLineOrange
+                case .verySlow:
+                    return .mapPointRed
+                }
             }
         }
     }
@@ -100,7 +117,6 @@ struct RouteData {
 }
 
 class RouteMapViewController: UIViewController {
-    // cameraUpdateWithFitBounds(_:)
     // MARK: - Outlets
     @IBOutlet weak var naverMapView: NMFNaverMapView!
 
@@ -245,6 +261,12 @@ class RouteMapViewController: UIViewController {
         setupLayout()
 
         naverMapView.mapView.touchDelegate = self
+        naverMapView.mapView.extent = NMGLatLngBounds(
+            southWestLat: 37.413294,
+            southWestLng: 126.734086,
+            northEastLat: 37.715133,
+            northEastLng: 127.269311
+        )
 
         let routeInfoTabGesture = UITapGestureRecognizer(target: self, action: #selector(toggleRouteInfo))
 
@@ -475,19 +497,57 @@ extension RouteMapViewController {
                     }
 
                 } else if feature.geometry.type == .lineString {
-                    // TOOD: 혼잡도에 따른 라인 색상 변경
-                    var polyline: [RouteData.Coordinate] = []
+                    let coordinates = feature.geometry.coordinates
 
-                    for coordinate in feature.geometry.coordinates {
-                        guard case let .doubleArray(latLng) = coordinate else {
-                            continue
+                    if let traffics = feature.geometry.traffic, !traffics.isEmpty {
+                        for traffic in traffics {
+                            let startIndex = traffic[0]
+                            let endIndex = traffic[1]
+                            let trafficValue = traffic[2]
+
+                            let polyline: [RouteData.Coordinate] = coordinates[startIndex...endIndex].compactMap { coordinate in
+                                guard case let .doubleArray(latLng) = coordinate else {
+                                    return nil
+                                }
+
+                                return RouteData.Coordinate(latitude: latLng[1], longitude: latLng[0])
+                            }
+
+                            let path: RouteData.Path = .init(
+                                polyline: polyline,
+                                travelMode: type,
+                                traffic: RouteData.Path.Traffic(
+                                    rawValue: trafficValue
+                                )
+                            )
+
+                            routeData.paths.append(path)
+                        }
+                    } else {
+                        let polyline: [RouteData.Coordinate] = coordinates.compactMap { coordinate in
+                            guard case let .doubleArray(latLng) = coordinate else {
+                                return nil
+                            }
+
+                            return RouteData.Coordinate(latitude: latLng[1], longitude: latLng[0])
                         }
 
-                        polyline.append(.init(latitude: latLng[1], longitude: latLng[0]))
+                        let path: RouteData.Path = .init(polyline: polyline, travelMode: type)
+                        routeData.paths.append(path)
                     }
-
-                    let path: RouteData.Path = .init(polyline: polyline)
-                    routeData.paths.append(path)
+//                    // TOOD: 혼잡도에 따른 라인 색상 변경
+//                    var polyline: [RouteData.Coordinate] = []
+//
+//                    for coordinate in feature.geometry.coordinates {
+//                        guard case let .doubleArray(latLng) = coordinate else {
+//                            continue
+//                        }
+//
+//                        polyline.append(.init(latitude: latLng[1], longitude: latLng[0]))
+//                    }
+//
+//                    let path: RouteData.Path = .init(polyline: polyline)
+//                    routeData.paths.append(path)
                 }
             }
         }

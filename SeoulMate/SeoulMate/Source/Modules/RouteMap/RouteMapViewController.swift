@@ -8,8 +8,11 @@
 import UIKit
 import NMapsMap
 
-// TODO: cameraUpdateWithFitBounds(_:)
-// TODO: Trafic에 따른 색상
+// TODO: TravelMode == .transit 일때, 경로 정보 안내
+
+// TODO: TableView 순서 변경
+// TODO: TravelMode == .transit 일때, 지하철 호선에 따른 색상 변경
+
 struct TempTour {
     var name: String
     var latitude: Double
@@ -17,10 +20,10 @@ struct TempTour {
 }
 
 var dummyData: [TempTour] = [
-//    TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
+    TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
     TempTour(name: "신림역", latitude: 37.484171739, longitude: 126.929784067),
-//    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
-//    TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
+    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
+    TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
     TempTour(name: "옥수역", latitude: 37.540429916, longitude: 127.018709461),
 ]
 
@@ -273,7 +276,8 @@ class RouteMapViewController: UIViewController {
         routeInfoWrapperView.addGestureRecognizer(routeInfoTabGesture)
 
         if let startPoint, let endPoint {
-            moveCamera(location: startPoint)
+//            moveCamera(location: startPoint)
+            moveCameraToFitBounds()
 
             Task {
                 for searchOption in selectedRouteOption.searchOptions ?? [] {
@@ -369,17 +373,28 @@ extension RouteMapViewController {
     }
 
     func moveCamera(location: Location) {
+//        cameraUpdateWithFitBounds
         let scrollTo = NMGLatLng(lat: location.latitude, lng: location.longitude)
-
         let cameraUpdate = NMFCameraUpdate(scrollTo: scrollTo)
         cameraUpdate.animation = .easeIn
-
         naverMapView.mapView.moveCamera(cameraUpdate)
     }
 
-    func calcRoute(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location?, endPoint: Location?, intermediates: [Location]? = nil) async {
+    func moveCameraToFitBounds() {
+        if let southWestLat = dummyData.min(by: { $0.latitude < $1.latitude })?.latitude,
+           let southWestLng = dummyData.min(by: { $0.longitude < $1.longitude })?.longitude,
+           let northEastLat = dummyData.max(by: { $0.latitude < $1.latitude })?.latitude,
+           let northEastLng = dummyData.max(by: { $0.longitude < $1.longitude })?.longitude {
+            let bounds = NMGLatLngBounds(southWestLat: southWestLat, southWestLng: southWestLng, northEastLat: northEastLat, northEastLng: northEastLng)
 
-        resetMapComponents()
+            let cameraUpdate = NMFCameraUpdate(fit: bounds, paddingInsets: UIEdgeInsets(top: 200, left: 50, bottom: 50, right: 50))
+            cameraUpdate.animation = .easeIn
+
+            naverMapView.mapView.moveCamera(cameraUpdate)
+        }
+    }
+
+    func calcRoute(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location?, endPoint: Location?, intermediates: [Location]? = nil) async {
 
         guard let startPoint, let endPoint else {
             print("Parameter error")
@@ -535,19 +550,6 @@ extension RouteMapViewController {
                         let path: RouteData.Path = .init(polyline: polyline, travelMode: type)
                         routeData.paths.append(path)
                     }
-//                    // TOOD: 혼잡도에 따른 라인 색상 변경
-//                    var polyline: [RouteData.Coordinate] = []
-//
-//                    for coordinate in feature.geometry.coordinates {
-//                        guard case let .doubleArray(latLng) = coordinate else {
-//                            continue
-//                        }
-//
-//                        polyline.append(.init(latitude: latLng[1], longitude: latLng[0]))
-//                    }
-//
-//                    let path: RouteData.Path = .init(polyline: polyline)
-//                    routeData.paths.append(path)
                 }
             }
         }
@@ -566,6 +568,8 @@ extension RouteMapViewController {
     }
 
     func drawMapOverlays(routeData: RouteData) {
+        resetMapComponents()
+
         drawPoints(points: routeData.points)
         drawPath(paths: routeData.paths)
     }

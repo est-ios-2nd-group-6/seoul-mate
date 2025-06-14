@@ -17,8 +17,8 @@ struct TempTour {
 
 var dummyData: [TempTour] = [
     TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
-    //    TempTour(name: "신림역", latitude: 37.484171739, longitude: 126.929784067),
-    //    TempTour(name: "신림역", latitude: 37.484171739, longitude: 126.929784067),
+    TempTour(name: "신림역", latitude: 37.484171739, longitude: 126.929784067),
+    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
     TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
 ]
 
@@ -89,6 +89,8 @@ struct RouteData {
         }
     }
 
+    var searchOption: SearchOption? = nil
+
     var totalDistance: Int = 0
     var totalTime: Int = 0
 
@@ -98,9 +100,15 @@ struct RouteData {
 
 class RouteMapViewController: UIViewController {
     // cameraUpdateWithFitBounds(_:)
+    // MARK: - Outlets
     @IBOutlet weak var naverMapView: NMFNaverMapView!
 
+    @IBOutlet weak var routeInfoStackView: UIStackView!
+    @IBOutlet weak var routeInfoTableView: UITableView!
     @IBOutlet weak var routeInfoWrapperView: UIView!
+
+    @IBOutlet weak var wrapperViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var tableViewHeightConstraint: NSLayoutConstraint!
 
     @IBOutlet weak var interStackView: UIStackView!
     @IBOutlet weak var interToEndArrow: UIImageView!
@@ -109,6 +117,7 @@ class RouteMapViewController: UIViewController {
 
     @IBOutlet weak var routeOptionCollectionView: UICollectionView!
 
+    // MARK: - Actions
     @IBAction func route(_ sender: Any) {
         if let btn = sender as? UIButton {
 
@@ -124,26 +133,50 @@ class RouteMapViewController: UIViewController {
                 self?.view.layoutIfNeeded()
             }
 
-            switch btn.tag {
-            case 1:
-                selectedRouteOption = .drive(searchOption: .recommand)
-            case 2:
-                selectedRouteOption = .transit
-            case 3:
-                selectedRouteOption = .walk(searchOption: .recommand)
-            default:
-                return
-            }
 
-//            Task {
-//                await calcRoute(type: selectedRouteOption, startPoint: startPoint, endPoint: endPoint)
-//            }
+            switch btn.tag {
+            case 1: selectedRouteOption = .drive
+            case 2: selectedRouteOption = .transit
+            case 3: selectedRouteOption = .walk
+            default: return
+            }
         }
     }
 
-    var routeCache: [RouteOption: RouteData] = [:]
+    // MARK: - Properties
+    var routeCache: [RouteOption: [RouteData]] = [:]
 
-    var selectedRouteOption = RouteOption.drive(searchOption: .recommand)
+    var selectedRouteOption: RouteOption = .drive {
+        didSet {
+            if routeCache[selectedRouteOption, default: []].isEmpty {
+                Task {
+                    if selectedRouteOption == .drive || selectedRouteOption == .walk {
+                        for searchOption in selectedRouteOption.searchOptions ?? [] {
+                            await calcRoute(type: selectedRouteOption, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
+                        }
+                    } else {
+                        await calcRoute(type: selectedRouteOption, startPoint: startPoint, endPoint: endPoint)
+                    }
+
+                    self.routeOptionCollectionView.reloadData()
+
+                    selectedSearchOption = 0
+                }
+            } else {
+                self.routeOptionCollectionView.reloadData()
+
+                selectedSearchOption = 0
+            }
+        }
+    }
+
+    var selectedSearchOption: Int = 0 {
+        didSet {
+            if let routeData = routeCache[selectedRouteOption]?[selectedSearchOption] {
+                drawMapOverlays(routeData: routeData)
+            }
+        }
+    }
 
     let multipartPath = NMFMultipartPath()
 
@@ -198,24 +231,29 @@ class RouteMapViewController: UIViewController {
 
     var indicatorConstraint: [NSLayoutConstraint] = []
 
+    // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setupLayout()
 
+        let routeInfoTabGesture = UITapGestureRecognizer(target: self, action: #selector(toggleRouteInfo))
+
+        routeInfoWrapperView.addGestureRecognizer(routeInfoTabGesture)
+
         if let startPoint, let endPoint {
             moveCamera(location: startPoint)
 
             Task {
-                await calcRoute(type: .drive(searchOption: .recommand), startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
-                await calcRoute(type: .drive(searchOption: .fastest), startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
-                await calcRoute(type: .drive(searchOption: .shortest), startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
+                for searchOption in selectedRouteOption.searchOptions ?? [] {
+                    await calcRoute(type: .drive, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
+                }
 
-                if let points = routeCache[.drive(searchOption: .recommand)]?.points {
+                if let points = routeCache[.drive]?.first?.points {
                     drawPoints(points: points)
                 }
 
-                if let paths = routeCache[.drive(searchOption: .recommand)]?.paths {
+                if let paths = routeCache[.drive]?.first?.paths {
                     drawPath(paths: paths)
                 }
 
@@ -232,11 +270,27 @@ class RouteMapViewController: UIViewController {
         updateIntermediatesInfo()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    @objc func toggleRouteInfo() {
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self else { return }
+
+            self.routeInfoTableView.isHidden.toggle()
+            self.routeInfoStackView.isHidden.toggle()
+
+            if self.routeInfoStackView.isHidden == true {
+                self.wrapperViewHeightConstraint.constant = routeInfoTableView.contentSize.height + 8
+                self.tableViewHeightConstraint.constant = routeInfoTableView.contentSize.height
+            } else {
+                self.wrapperViewHeightConstraint.constant = 50
+                self.tableViewHeightConstraint.constant = 0 // TableView가 숨겨질 때 높이도 0으로 설정
+            }
+
+            self.view.layoutIfNeeded()
+        }
     }
 }
 
+// MARK: - Extension
 extension RouteMapViewController {
     func setupLayout() {
         naverMapView.showLocationButton = false
@@ -292,7 +346,7 @@ extension RouteMapViewController {
         naverMapView.mapView.moveCamera(cameraUpdate)
     }
 
-    func calcRoute(type: RouteOption, startPoint: Location?, endPoint: Location?, intermediates: [Location]? = nil) async {
+    func calcRoute(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location?, endPoint: Location?, intermediates: [Location]? = nil) async {
 
         resetMapComponents()
 
@@ -302,17 +356,15 @@ extension RouteMapViewController {
             return
         }
 
-        if let routeData = routeCache[type] {
+        if let datas = routeCache[type], let routeData = datas.first(where: { $0.searchOption == searchOption }) {
             drawMapOverlays(routeData: routeData)
 
-			return
+            return
         }
 
         switch type {
-        case .drive(nil), .walk(nil):
-            break
-        case .drive(_), .walk(_):
-            await calcRouteTMap(type: type, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
+        case .drive, .walk:
+            await calcRouteTMap(type: type, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
         case .transit:
             await calcRouteByTransit(startPoint: startPoint, endPoint: endPoint)
         }
@@ -367,10 +419,11 @@ extension RouteMapViewController {
         }
     }
 
-    func calcRouteTMap(type: RouteOption, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
-        let response: TMapRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteTMap(type: type, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
+    func calcRouteTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
+        let response: TMapRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteTMap(type: type, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
 
         var routeData = RouteData()
+        routeData.searchOption = searchOption
 
         if let features = response?.features {
             for feature in features {
@@ -417,7 +470,7 @@ extension RouteMapViewController {
             }
         }
 
-        routeCache[type] = routeData
+        routeCache[type, default: []].append(routeData)
     }
 
     func resetMapComponents() {
@@ -490,37 +543,53 @@ extension RouteMapViewController {
     }
 }
 
-extension RouteMapViewController: UICollectionViewDataSource {
-    var routeOptions: [RouteOption] {
-        switch selectedRouteOption {
-        case .drive:
-            return [.drive(searchOption: .recommand),
-                    .drive(searchOption: .fastest),
-                    .drive(searchOption: .shortest)]
-        case .walk:
-            return [.walk(searchOption: .recommand),
-                    .walk(searchOption: .preferBoulevard),
-                    .walk(searchOption: .avoidStair)]
-        default:
-            return []
-        }
+// MARK: - Extension : UITableViewDataSource
+extension RouteMapViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dummyData.count
     }
 
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "RouteInfoTableViewCell", for: indexPath) as? RouteInfoTableViewCell else { return UITableViewCell() }
+
+        let index = indexPath.row
+        let routeInfo = dummyData[index]
+
+        var image: UIImage? = UIImage(systemName: "target")?.withRenderingMode(.alwaysOriginal)
+
+        if index == 0 {
+            image = image?.withTintColor(.mapGreen)
+        } else if index == dummyData.count - 1 {
+            image = image?.withTintColor(.mapRed)
+        } else {
+            image = image?.withTintColor(.mapGray)
+        }
+
+        cell.cellImageView.image = image
+
+        cell.titleLabel.text = routeInfo.name
+
+        return cell
+    }
+}
+
+// MARK: - Extension : UICollectionViewDataSource
+extension RouteMapViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return routeOptions.count
+        return routeCache[selectedRouteOption]?.count ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RouteOptionCollectionViewCell", for: indexPath) as? RouteOptionCollectionViewCell else {
             return UICollectionViewCell()
         }
+
         let index = indexPath.item
+        let option = selectedRouteOption.searchOptions?[index]
 
-        let option = routeOptions[index]
+        guard let data = routeCache[selectedRouteOption]?.first(where: { $0.searchOption == option }) else { return UICollectionViewCell() }
 
-        let data = routeCache[option]
-
-        if option == selectedRouteOption {
+        if index == selectedSearchOption {
             cell.wrapperView.layer.borderColor = UIColor.label.cgColor
         } else {
             cell.wrapperView.layer.borderColor = UIColor.label.withAlphaComponent(0.3).cgColor
@@ -534,33 +603,39 @@ extension RouteMapViewController: UICollectionViewDataSource {
         cell.wrapperView.layer.shadowRadius = 5
         cell.wrapperView.layer.shadowOffset = CGSize(width: 0, height: 0)
 
-        cell.optionLabel.text = option.title
+        cell.optionLabel.text = option?.title
 
-        if let distance = data?.totalDistance {
-            cell.totalDistance.text = "\(Int(round(Double(distance / 1000))))km"
-        }
+        cell.totalDistance.text = "\(Int(round(Double(data.totalDistance / 1000))))km"
 
-        if let totalTime = data?.totalTime {
-            let hour = totalTime / 3600
-            let minute = (totalTime % 3600) / 60
+        let hour = data.totalTime / 3600
+        let minute = (data.totalTime % 3600) / 60
 
-            cell.estimatedTimeLabel.text = "\(hour > 0 ? String(hour) + "시 " : "")\(minute)분"
+        cell.estimatedTimeLabel.text = "\(hour > 0 ? String(hour) + "시간 " : "")\(minute)분"
 
-            let formatter = DateFormatter()
-            formatter.dateFormat = "HH시 mm분"
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH시 mm분"
 
-            let date = Date(timeIntervalSinceNow: TimeInterval(totalTime))
+        let date = Date(timeIntervalSinceNow: TimeInterval(data.totalTime))
 
-            cell.eTALabel.text = formatter.string(from: date)
-        }
+        cell.eTALabel.text = formatter.string(from: date)
 
         return cell
     }
 }
 
+// MARK: - Extension : UICollectionViewDeletagate
 extension RouteMapViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(#function)
-        collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
+        //        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RouteOptionCollectionViewCell", for: indexPath) as? RouteOptionCollectionViewCell else {
+        //            return
+        //        }
+
+        selectedSearchOption = indexPath.item
+
+        print(selectedSearchOption)
+
+        collectionView.reloadData()
+
+        //        collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
     }
 }

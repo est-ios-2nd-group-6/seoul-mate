@@ -81,9 +81,14 @@ struct RouteData {
             case verySlow = 4
         }
 
+        struct TransitDetailInfo {
+
+        }
+
         let polyline: [Coordinate]
         var travelMode: RouteOption? = nil
         var traffic: Traffic? = nil
+        var detail: TransitDetailInfo? = nil
 
         var lineColor: UIColor? {
             switch travelMode {
@@ -436,12 +441,11 @@ extension RouteMapViewController {
 
         for route in response.routes {
             let leg = route.legs[0]
-
             let steps = leg.steps
 
-            routeData.totalDistance = leg.distanceMeters
+            routeData.totalDistance = route.distanceMeters
 
-            let duration: String = leg.duration.replacing(/[a-zA-Z]/, with: "")
+            let duration: String = route.duration.replacing(/[a-zA-Z]/, with: "")
 
             if let totalTime = Int(duration) {
                 routeData.totalTime = totalTime

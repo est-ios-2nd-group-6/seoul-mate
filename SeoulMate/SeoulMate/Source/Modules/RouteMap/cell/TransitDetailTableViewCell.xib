@@ -21,7 +21,7 @@
                         <rect key="frame" x="16" y="0.0" width="412" height="160"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="F8v-XG-J14">
-                                <rect key="frame" x="0.0" y="0.0" width="40" height="160"/>
+                                <rect key="frame" x="0.0" y="0.0" width="40" height="155"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CIN-OM-9FV">
                                         <rect key="frame" x="10" y="0.0" width="20" height="20"/>
@@ -31,25 +31,31 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9l6-uj-sWy">
-                                        <rect key="frame" x="15" y="18" width="10" height="144"/>
+                                        <rect key="frame" x="16" y="25" width="8" height="130"/>
                                         <color key="backgroundColor" red="0.30980393290519714" green="0.73725497722625732" blue="0.38823530077934265" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="10" id="uhF-ol-DRP"/>
+                                            <constraint firstAttribute="width" constant="8" id="uhF-ol-DRP"/>
                                         </constraints>
                                     </view>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="Nun-Dx-MYA"/>
-                                    <constraint firstAttribute="bottom" secondItem="9l6-uj-sWy" secondAttribute="bottom" constant="-2" id="bfZ-5t-1PH"/>
-                                    <constraint firstItem="9l6-uj-sWy" firstAttribute="top" secondItem="CIN-OM-9FV" secondAttribute="bottom" constant="-2" id="wS1-8s-QlV"/>
+                                    <constraint firstAttribute="bottom" secondItem="9l6-uj-sWy" secondAttribute="bottom" id="bfZ-5t-1PH"/>
+                                    <constraint firstItem="9l6-uj-sWy" firstAttribute="top" secondItem="CIN-OM-9FV" secondAttribute="bottom" constant="5" id="wS1-8s-QlV"/>
                                 </constraints>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="rTp-Dg-QQr">
                                 <rect key="frame" x="56" y="0.0" width="356" height="160"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="248" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7UT-VF-CFM">
-                                        <rect key="frame" x="0.0" y="0.0" width="63.666666666666664" height="160"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="63.666666666666664" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pg2-Pt-2Pv">
+                                        <rect key="frame" x="0.0" y="30" width="41.333333333333336" height="130"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -60,7 +66,7 @@
                             <constraint firstAttribute="trailing" secondItem="rTp-Dg-QQr" secondAttribute="trailing" id="EAV-xW-BzK"/>
                             <constraint firstItem="rTp-Dg-QQr" firstAttribute="centerY" secondItem="shi-dH-afF" secondAttribute="centerY" id="Zyw-vE-QVV"/>
                             <constraint firstItem="F8v-XG-J14" firstAttribute="top" secondItem="shi-dH-afF" secondAttribute="top" id="caE-hm-fY3"/>
-                            <constraint firstAttribute="bottom" secondItem="F8v-XG-J14" secondAttribute="bottom" id="gxB-mw-4g2"/>
+                            <constraint firstAttribute="bottom" secondItem="F8v-XG-J14" secondAttribute="bottom" constant="5" id="gxB-mw-4g2"/>
                             <constraint firstItem="rTp-Dg-QQr" firstAttribute="top" secondItem="shi-dH-afF" secondAttribute="top" id="hxp-x0-KYQ"/>
                             <constraint firstAttribute="height" constant="160" id="qRW-jE-j24"/>
                         </constraints>
@@ -75,6 +81,7 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="circleView" destination="CIN-OM-9FV" id="r1Q-6X-lUH"/>
+                <outlet property="detailLabel" destination="Pg2-Pt-2Pv" id="BDn-3c-nz1"/>
                 <outlet property="titleLabel" destination="7UT-VF-CFM" id="EAH-Mc-I1d"/>
                 <outlet property="transitLineView" destination="9l6-uj-sWy" id="bVn-Ot-i2I"/>
             </connections>

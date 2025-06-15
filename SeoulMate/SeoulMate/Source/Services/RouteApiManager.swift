@@ -126,7 +126,7 @@ class RouteApiManager {
 
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue(googleRoutesApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
-            request.addValue("*", forHTTPHeaderField: "X-Goog-FieldMask")
+            request.addValue("routes.distanceMeters,routes.duration,routes.legs.startLocation,routes.legs.endLocation,routes.legs.steps", forHTTPHeaderField: "X-Goog-FieldMask")
             request.addValue(Bundle.main.bundleIdentifier ?? "", forHTTPHeaderField: "X-Ios-Bundle-Identifier")
 
             let session = URLSession.shared

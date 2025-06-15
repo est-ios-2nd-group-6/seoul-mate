@@ -263,27 +263,6 @@ class RouteMapViewController: UIViewController {
 
     var isMapFullscreend: Bool = false
 
-    var collectionViewLayout: UICollectionViewCompositionalLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.4),
-                                              heightDimension: .fractionalHeight(1))
-
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                               heightDimension: .fractionalHeight(1))
-
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 3)
-
-        let section = NSCollectionLayoutSection(group: group)
-
-        let configuration = UICollectionViewCompositionalLayoutConfiguration()
-        configuration.scrollDirection = .horizontal
-
-        let layout = UICollectionViewCompositionalLayout(section: section, configuration: configuration)
-
-        return layout
-    }
-
     var indicatorConstraint: [NSLayoutConstraint] = []
 
     // MARK: - Methods
@@ -349,12 +328,6 @@ extension RouteMapViewController {
         routeInfoWrapperView.layer.borderWidth = 1
         routeInfoWrapperView.layer.cornerRadius = 12
         routeInfoWrapperView.clipsToBounds = true
-
-        collectionViewLayout.configuration.scrollDirection = .horizontal
-        routeOptionCollectionView.collectionViewLayout = collectionViewLayout
-
-        routeOptionCollectionView.showsVerticalScrollIndicator = false
-        routeOptionCollectionView.showsHorizontalScrollIndicator = false
 
         segmentIndicator.layer.cornerRadius = segmentIndicator.frame.height / 2
         segmentIndicator.backgroundColor = .main.withAlphaComponent(0.5)
@@ -770,6 +743,8 @@ extension RouteMapViewController: UICollectionViewDataSource {
 extension RouteMapViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedSearchOption = indexPath.item
+
+        collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
 
         collectionView.reloadData()
     }

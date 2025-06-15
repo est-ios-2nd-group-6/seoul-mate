@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="t5S-7C-uac">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c0f-KR-nlA">
-                                <rect key="frame" x="0.0" y="167" width="393" height="617"/>
+                                <rect key="frame" x="0.0" y="211" width="393" height="573"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="w92-Da-qqP">
                                         <rect key="frame" x="0.0" y="0.0" width="393" height="703.33333333333337"/>
@@ -178,7 +178,7 @@
                                 <viewLayoutGuide key="frameLayoutGuide" id="dqr-xu-OxY"/>
                             </scrollView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Im6-hH-czj">
-                                <rect key="frame" x="20" y="128" width="63" height="36"/>
+                                <rect key="frame" x="20" y="172" width="63" height="36"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="여행 제목" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gCG-5x-QSd">
                                         <rect key="frame" x="0.0" y="0.0" width="63" height="20.333333333333332"/>
@@ -206,32 +206,20 @@
                             <constraint firstItem="c0f-KR-nlA" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="sYa-rb-3Xi"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="3ch-cS-BIy"/>
                     <connections>
                         <outlet property="daysLabel" destination="Rs5-kG-eEf" id="E8T-zH-gMh"/>
                         <outlet property="myMapView" destination="RPr-3m-7PX" id="E1F-NA-ZcG"/>
+                        <outlet property="stackView" destination="wjN-OJ-MLt" id="rQx-wb-izf"/>
                         <outlet property="tableView" destination="E2f-xU-tcP" id="qIV-Yg-ce9"/>
                         <outlet property="travelPeriodLabel" destination="EBV-NG-GMX" id="OLQ-WY-FRd"/>
+                        <outlet property="travleTitleLabel" destination="gCG-5x-QSd" id="K2o-Lg-8H1"/>
                         <outlet property="upDownButton" destination="gWr-ds-fve" id="hgW-No-A3r"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="139.69465648854961" y="-2.1126760563380285"/>
-        </scene>
-        <!--Page Sheet View Controller-->
-        <scene sceneID="cci-BF-n5A">
-            <objects>
-                <viewController storyboardIdentifier="PageSheetViewController" id="7Yv-UB-2sc" customClass="PageSheetViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Pel-yk-8ZV">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="OTA-cM-4WM"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="EGT-KO-5kv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2857" y="28"/>
+            <point key="canvasLocation" x="2308" y="-2"/>
         </scene>
         <!--Detail Sheet View Controller-->
         <scene sceneID="Zy6-kn-bpz">
@@ -286,13 +274,27 @@
                                     </button>
                                 </subviews>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="miZ-T3-ObW">
+                                <rect key="frame" x="20" y="620.33333333333337" width="353" height="89.333333333333371"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain"/>
+                                <connections>
+                                    <action selector="goToDetail:" destination="IRv-ac-uaC" eventType="touchUpInside" id="KI1-Qp-wGX"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="QuL-Dr-hU0"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="zG9-zT-BLz" firstAttribute="top" secondItem="miZ-T3-ObW" secondAttribute="top" id="2Wm-iu-Pvv"/>
                             <constraint firstItem="QuL-Dr-hU0" firstAttribute="trailing" secondItem="aHv-y7-vA8" secondAttribute="trailing" constant="20" id="B5I-nk-G8N"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="bottom" secondItem="zG9-zT-BLz" secondAttribute="bottom" id="EpH-Bb-HNJ"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="height" secondItem="zG9-zT-BLz" secondAttribute="height" id="Sls-3a-6Bv"/>
                             <constraint firstItem="QuL-Dr-hU0" firstAttribute="bottom" secondItem="aHv-y7-vA8" secondAttribute="bottom" constant="30" id="TwN-W1-sBf"/>
                             <constraint firstItem="aHv-y7-vA8" firstAttribute="leading" secondItem="QuL-Dr-hU0" secondAttribute="leading" constant="20" id="gyW-jH-MEh"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="width" secondItem="zG9-zT-BLz" secondAttribute="width" id="lGf-eb-b8m"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="trailing" secondItem="zG9-zT-BLz" secondAttribute="trailing" id="nTn-a2-UKg"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="leading" secondItem="zG9-zT-BLz" secondAttribute="leading" id="xXs-DG-UhZ"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="TnK-9B-eUZ"/>
@@ -304,7 +306,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fDw-4P-Rcs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1144" y="-2"/>
+            <point key="canvasLocation" x="3425" y="-2"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="SsI-va-5Ro">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="t5S-7C-uac" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Hog-gO-uvC">
+                        <rect key="frame" x="0.0" y="118" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Y6W-OH-hqX" kind="relationship" relationship="rootViewController" id="bvK-HN-5HP"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aar-J6-aCz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1439" y="8"/>
         </scene>
     </scenes>
     <resources>

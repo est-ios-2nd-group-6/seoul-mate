@@ -8,66 +8,17 @@
 import UIKit
 import NMapsMap
 import CoreLocation
+import CoreData
 
 class MapViewController: UIViewController {
-//    class ItemKey: NSObject, NMCClusteringKey {
-//        let identifier: Int
-//        let position: NMGLatLng
-//        
-//        init(identifier: Int, position: NMGLatLng) {
-//            self.identifier = identifier
-//            self.position = position
-//        }
-//        
-//        static func markerKey(withIdentifier identifier: Int, position: NMGLatLng) -> ItemKey {
-//            return ItemKey(identifier: identifier, position: position)
-//        }
-//        
-//        override func isEqual(_ o: Any?) -> Bool {
-//            guard let o = o as? ItemKey else {
-//                return false
-//            }
-//            if self === o {
-//                return true
-//            }
-//            
-//            return o.identifier == self.identifier
-//        }
-//        
-//        override var hash: Int {
-//            return self.identifier
-//        }
-//        
-//        func copy(with zone: NSZone? = nil) -> Any {
-//            return ItemKey(identifier: self.identifier, position: self.position)
-//        }
-//    }
-//    
-//    class ItemData: NSObject {
-//        let name: String
-//        let gu: String
-//        
-//        init(name: String, gu: String) {
-//            self.name = name
-//            self.gu = gu
-//        }
-//    }
+
     
-//    class MarkerManager: NMCDefaultMarkerManager {
-//        override func createMarker() -> NMFMarker {
-//            let marker = super.createMarker()
-//            marker.subCaptionTextSize = 10
-//            marker.subCaptionColor = UIColor.white
-//            marker.subCaptionHaloColor = UIColor.clear
-//            return marker
-//        }
-//    }
-    
-    
+    @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var myMapView: NMFNaverMapView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var upDownButton: UIButton!
     @IBOutlet weak var travelPeriodLabel: UILabel!
+    @IBOutlet weak var travleTitleLabel: UILabel!
     @IBOutlet weak var daysLabel: UILabel!
     
     @IBAction func upDownAction(_ sender: Any) {
@@ -106,6 +57,9 @@ class MapViewController: UIViewController {
          NMGLatLng(lat: 37.646123412676195, lng: 126.99438668092837),
          NMGLatLng(lat: 37.59931823123229, lng: 126.9961095707905)]
     ]
+    private var poisByDay: [[POI]] = []
+//    private var scheduleItemsArray: [[NMGLatLng]] = []
+    
     let latLngOfLastMarker: NMGLatLng? = nil
     let circleColor = UIColor(red: 0.58, green: 0.78, blue: 0.98, alpha: 1.0)
     var opacity: Double = 0
@@ -113,20 +67,14 @@ class MapViewController: UIViewController {
     var counter: Int = 0
     var circleTimer: CADisplayLink?
     let locationManager: CLLocationManager = CLLocationManager()
-    let seoulBounds = NMGLatLngBounds(
-        southWestLat: 37.413294,
-        southWestLng: 126.734086,
-        northEastLat: 37.715133,
-        northEastLng: 127.269311
-    )
+    
     var selectedDays: [String] = []
     
-    let colorArray: [UIColor] = [.blue, .red, .yellow, .green, .main, .purple, .darkGray, .magenta, .systemIndigo]
+    let colorArray: [UIColor] = [.blue, .red, .yellow, .green, .main, .systemTeal, .systemMint, .systemPink, .magenta, .systemIndigo]
     var lastColor: UIColor?
     var colorSequence: [UIColor] = []
     
     let defaultDistanceStrategy = NMCDefaultDistanceStrategy()
-//    var clusterer: NMCClusterer<ItemKey>?
     
     let infoWindow = NMFInfoWindow()
     var customInfoWindowDataSource = CustomInfoWindowDataSource()
@@ -136,7 +84,30 @@ class MapViewController: UIViewController {
     var pendingIndexPath: IndexPath?
     var currentTopIndexPath: IndexPath?
 
+    var tour: Tour!
+    var scehduels: [[Schedule]] = []
+    var context: NSManagedObjectContext {
+        (UIApplication.shared.delegate as! AppDelegate)
+            .persistentContainer
+            .viewContext
+    }
     
+    private let fullFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "ko_KR")
+        f.dateFormat = "yyyy.MM.dd"
+        return f
+    }()
+
+    
+    private let shortFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "ko_KR")
+        // 7.17 형태로
+        f.dateFormat = "M.d"
+        return f
+    }()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -150,6 +121,7 @@ class MapViewController: UIViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
+        
         
         myMapView.showLocationButton = true
         myMapView.showCompass = true
@@ -174,6 +146,13 @@ class MapViewController: UIViewController {
         }
         
         // 지도 제한
+        let seoulBounds = NMGLatLngBounds(
+            southWestLat: 37.413294,
+            southWestLng: 126.734086,
+            northEastLat: 37.715133,
+            northEastLng: 127.269311
+        )
+        
         myMapView.mapView.extent = seoulBounds
         myMapView.mapView.moveCamera(NMFCameraUpdate(fit: seoulBounds, padding: 24))
         let polylineOverlay = NMFPolylineOverlay([seoulBounds.southWest,
@@ -215,8 +194,7 @@ class MapViewController: UIViewController {
         footer.backgroundColor = .clear
         tableView.tableFooterView = footer
         
-       
-     
+//        loadPOIsByDay()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -264,6 +242,7 @@ class MapViewController: UIViewController {
         }
     }
     
+    
     @objc func updateCircle() {
         let locationOverlay = myMapView.mapView.locationOverlay
         let duration = circleTimer?.duration ?? 0
@@ -283,6 +262,46 @@ class MapViewController: UIViewController {
             }
         }
     }
+    
+    private func loadPOIsByDay() {
+        // 1) Tour.pois 관계에서 Set<POI> 꺼내기
+        guard let poiSet = tour.pois as? Set<POI>, !poiSet.isEmpty else {
+          poisByDay = []
+          scheduleItemsArray = []
+          tableView.reloadData()
+          return
+        }
+        
+        // 2) POI 하나하나가 속한 Schedule의 date(하루 단위)로 그룹핑
+        let grouped: [Date: [POI]] = Dictionary(grouping: poiSet) { poi in
+          // Schedule이 to-one 관계라면
+          guard let sched = poi.schedule, let date = sched.date else {
+            // date 없으면 오늘로 치환
+            return Calendar.current.startOfDay(for: Date())
+          }
+          return Calendar.current.startOfDay(for: date)
+        }
+        
+        // 3) 날짜 키(하루 단위) 오름차순 정렬
+        let sortedDays = grouped.keys
+          .sorted(by: { $0 < $1 })
+        
+        // 4) 그 순서대로 2차원 배열로 변환
+        poisByDay = sortedDays.map { grouped[$0]! }
+        
+        // 5) 좌표 배열 생성
+        scheduleItemsArray = poisByDay.map { poiList in
+          poiList.map { poi in
+            NMGLatLng(lat: poi.latitude, lng: poi.longitude)
+          }
+        }
+        
+        // 6) UI 갱신
+        tableView.reloadData()
+        if !scheduleItemsArray.isEmpty {
+          makePath(for: 0)    // section 0 경로 그리기
+        }
+      }
     
     func makePath(for section: Int) {
         pathOverlay.mapView = nil
@@ -346,32 +365,7 @@ class MapViewController: UIViewController {
         }
       
     }
-    
-    //    func makeMarkerComponets() {
-    //        for i in 0 ..< markersArray.count {
-    //            // caption
-    //            markersArray[i].captionTextSize = 30
-    //            markersArray[i].captionText = "\(i + 1)"
-    //            markersArray[i].captionColor = .main
-    //
-    //            // color
-    //            markersArray[i].iconImage = NMF_MARKER_IMAGE_BLACK
-    //            markersArray[i].iconTintColor = getColor(at: i)
-    //
-    //            // touch event
-    //            markersArray[i].touchHandler = { (overlay) in
-    //                if let _ = overlay as? NMFMarker {
-    //                    let cameraUpdate = NMFCameraUpdate(scrollTo: self.markersArray[i].position)
-    //                    cameraUpdate.animation = .easeIn
-    //                    cameraUpdate.animationDuration = 0.2
-    //                    self.myMapView.mapView.moveCamera(cameraUpdate)
-    //                }
-    //                return true
-    //            }
-    //        }
-    //
-    //    }
-    
+  
     func getColor(at index: Int) -> UIColor {
         // 이미 생성된 경우 재사용
         if index < colorSequence.count {
@@ -450,30 +444,6 @@ class MapViewController: UIViewController {
         present(requestLocationServiceAlert, animated: true)
     }
     
-    //    func clustering() {
-    //        let builder = NMCComplexBuilder<ItemKey>()
-    //        builder.minClusteringZoom = 9
-    //        builder.maxClusteringZoom = 16
-    //        builder.maxScreenDistance = 200
-    //        builder.thresholdStrategy = self
-    //        builder.distanceStrategy = self
-    //        builder.tagMergeStrategy = self
-    //        builder.markerManager = MarkerManager()
-    //        builder.leafMarkerUpdater = self
-    //        builder.clusterMarkerUpdater = self
-    //        self.clusterer = builder.build()
-    //
-    //        var keyTagMap = [ItemKey: ItemData]()
-    //        for i in 0 ..< scheduleItemsArray.count {
-    //            let key = ItemKey(identifier: i, position: NMGLatLng(lat: scheduleItemsArray[i].lat, lng: scheduleItemsArray[i].lng))
-    //            keyTagMap[key] = ItemData(name: "ㅇㅇㅇ", gu: "구구구")
-    //        }
-    //
-    //
-    //
-    //        self.clusterer?.addAll(keyTagMap)
-    //        self.clusterer?.mapView = myMapView.mapView
-    //    }
     
     @objc func footerButtonTapped(_ sender: UIButton) {
         let section = sender.tag
@@ -504,17 +474,15 @@ extension MapViewController: NMFMapViewTouchDelegate {
         let latitude = latlng.lat
         let longitutde = latlng.lng
         print("latitude: \(latitude), longitutde: \(longitutde)")
-        //        lastMarker?.mapView = nil
-        //
-        //        let marker = NMFMarker()
-        //        marker.position = latlng
-        //        marker.mapView = mapView
-        //        lastMarker = marker
-        //
-        //        infoWindow.close()
-        //
-        //        infoWindow.position = latlng
-        //        infoWindow.open(with: mapView)
+
+        UIView.animate(withDuration: 0.3) {
+            self.stackView.isHidden.toggle()
+            
+            if self.stackView.isHidden == false {
+                self.tableView.reloadData()
+            }
+
+        }
         
         
         
@@ -586,15 +554,15 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         vc.place = "굽네치킨"
         vc.placeCategory = "식당"
         vc.placeOpenTime = "09:00 ~ 22:00"
-        if let presentationController = vc.presentationController as? UISheetPresentationController {
-            let small = UISheetPresentationController.Detent.custom(identifier: .init(rawValue: "small")) { context in
-                return context.maximumDetentValue * 0.33
-            }
-
-            presentationController.detents = [small]
-        }
+        vc.delegate = self
+//        if let presentationController = vc.presentationController as? UISheetPresentationController {
+//            let small = UISheetPresentationController.Detent.custom(identifier: .init(rawValue: "small")) { context in
+//                return context.maximumDetentValue * 0.33
+//            }
+//
+//            presentationController.detents = [small]
+//        }
 //        vc.isModalInPresentation = true
-        
         self.present(vc, animated: true)
     }
     
@@ -646,6 +614,11 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
 //            print("상단에 가장 가까운 셀: section \(top.section), row \(top.row)")
             makePath(for: top.section)
             daysLabel.text = "Day \(top.section + 1)"
+//            let raw = selectedDays[top.section]
+//            if let d = fullFormatter.date(from: raw) {
+//                let short = shortFormatter.string(from: d)
+//                daysLabel.text = "Day \(top.section + 1) / \(short)"
+//            }
             if scheduleItemsArray[top.section].count == 0 {
                 self.pathOverlay.mapView = nil
             }
@@ -662,105 +635,24 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
             update.animation = .easeIn
             self.myMapView.mapView.moveCamera(update)
 
-//            if section != currentTopSection {
-//                if scheduleItemsArray[top.section].count >= 1 {
-//                    let coord = scheduleItemsArray[top.section][top.row]
-//                    let update = NMFCameraUpdate(scrollTo: coord)
-//                    update.animation = .easeIn
-//                    self.myMapView.mapView.moveCamera(update)
-//
-//                }
-//                
-//            }
-            
         }
         
         
     }
     
-    
-    
-    
 }
 
+extension MapViewController: DetailSheetDelegate {
+    func detailSheetDidTapNavigate(_ sheet: DetailSheetViewController) {
+        let poiStoryboard = UIStoryboard(name: "POIDetail", bundle: nil)
+        guard let poiDetailVC = poiStoryboard
+                .instantiateViewController(withIdentifier: "POIDetail")
+                as? PoiDetailViewController else { return }
 
-//extension MapViewController: NMCThresholdStrategy, NMCDistanceStrategy, NMCTagMergeStrategy, NMCClusterMarkerUpdater, NMCLeafMarkerUpdater {
-//    func getThreshold(_ zoom: Int) -> Double {
-//        if zoom <= 11 {
-//            return 0
-//        } else {
-//            return 70
-//        }
-//    }
-//    
-//    func getDistance(_ zoom: Int, node1: NMCNode, node2: NMCNode) -> Double {
-//        if zoom <= 9 {
-//            return -1
-//        }
-//        assert(node1.tag != nil)
-//        assert(node2.tag != nil)
-//        if let tag1 = node1.tag as? ItemData, let tag2 = node2.tag as? ItemData, tag1.gu == tag2.gu {
-//            if zoom <= 11 {
-//                return -1
-//            } else {
-//                return defaultDistanceStrategy.getDistance(zoom, node1: node1, node2: node2)
-//            }
-//        }
-//        return 10000
-//    }
-//    
-//    func mergeTag(_ cluster: NMCCluster) -> NSObject? {
-//        if cluster.maxZoom > 9 {
-//            if let tag = cluster.children.first?.tag as? ItemData {
-//                return ItemData(name: "", gu: tag.gu)
-//            }
-//        }
-//        return nil;
-//    }
-//    
-//    func updateClusterMarker(_ info: NMCClusterMarkerInfo, _ marker: NMFMarker) {
-//        let size = info.size
-//        if info.minZoom <= 10 {
-//            marker.iconImage = NMF_MARKER_IMAGE_CLUSTER_HIGH_DENSITY
-//        } else if size < 10 {
-//            marker.iconImage = NMF_MARKER_IMAGE_CLUSTER_LOW_DENSITY
-//        } else {
-//            marker.iconImage = NMF_MARKER_IMAGE_CLUSTER_MEDIUM_DENSITY
-//        }
-//        if info.minZoom == 10 {
-//            assert(info.tag != nil)
-//            if let tag = info.tag as? ItemData {
-//                marker.subCaptionText = tag.gu;
-//            }
-//        } else {
-//            marker.subCaptionText = ""
-//        }
-//        marker.anchor = NMF_CLUSTER_ANCHOR_DEFAULT
-//        marker.captionText = String(size)
-//        marker.captionAligns = [NMFAlignType.center]
-//        marker.captionColor = UIColor.white
-//        marker.captionHaloColor = UIColor.clear
-//        marker.touchHandler = { overlay in
-//            if let mapView = overlay.mapView {let position = NMFCameraPosition(info.position, zoom: Double(info.maxZoom + 1))
-//                let cameraUpdate = NMFCameraUpdate(position: position)
-//                cameraUpdate.animation = .easeIn
-//                mapView.moveCamera(cameraUpdate)
-//            }
-//            return true
-//        }
-//    }
-//    
-//    func updateLeafMarker(_ info: NMCLeafMarkerInfo, _ marker: NMFMarker) {
-//        assert(info.tag != nil)
-//        marker.iconImage = NMF_MARKER_IMAGE_DEFAULT
-//        marker.anchor = NMF_MARKER_ANCHOR_DEFAULT
-//        if let tag = info.tag as? ItemData {
-//            marker.captionText = tag.name;
-//        }
-//        marker.captionAligns = [NMFAlignType.bottom]
-//        marker.captionColor = UIColor.black
-//        marker.captionHaloColor = UIColor.white
-//        marker.subCaptionText = ""
-//        marker.touchHandler = nil
-//    }
-//}
+//        poiDetailVC.place = sheet.place
+//        poiDetailVC.placeCategory = sheet.placeCategory
+//        poiDetailVC.placeOpenTime = sheet.placeOpenTime
+
+        navigationController?.pushViewController(poiDetailVC, animated: true)
+    }
+}

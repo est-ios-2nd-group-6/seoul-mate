@@ -77,8 +77,8 @@ struct RouteData {
         enum Traffic: Int {
             case unknown = 0
             case smooth = 1
-           case slow = 2
-           case verySlow = 4
+            case slow = 2
+            case verySlow = 4
         }
 
         let polyline: [Coordinate]
@@ -132,8 +132,10 @@ class RouteMapViewController: UIViewController {
 
     @IBOutlet weak var routeOptionCollectionView: UICollectionView!
 
+    @IBOutlet weak var transitDetailWrapperView: UIStackView!
+    @IBOutlet weak var transitDetailWrapperViewHeightConstraint: NSLayoutConstraint!
+
     @IBOutlet weak var transitDetailTableView: UITableView!
-    @IBOutlet weak var transitDetailTableViewHeightConstraint: NSLayoutConstraint!
 
     // MARK: - Actions
     @IBAction func route(_ sender: Any) {
@@ -162,18 +164,24 @@ class RouteMapViewController: UIViewController {
     }
 
     // MARK: - Properties
+    let transitDetailIndicatorHeight = 50
+    let transitDetailTableViewHeight = 250
+    var transitDetailWrapperViewHeight: Int {
+        self.transitDetailIndicatorHeight + self.transitDetailTableViewHeight
+    }
+
     var routeCache: [RouteOption: [RouteData]] = [:]
 
     var selectedRouteOption: RouteOption? = nil {
         didSet(oldVal) {
             if selectedRouteOption == oldVal {
-				return
+                return
             }
 
             if selectedRouteOption == .transit {
-                transitDetailTableViewHeightConstraint.constant = 300
+                transitDetailWrapperViewHeightConstraint.constant = CGFloat(transitDetailWrapperViewHeight)
             } else {
-                transitDetailTableViewHeightConstraint.constant = 0
+                transitDetailWrapperViewHeightConstraint.constant = 0
             }
 
             UIView.animate(withDuration: 0.3) { [weak self] in
@@ -210,6 +218,10 @@ class RouteMapViewController: UIViewController {
 
             if let routeData = routeCache[selectedRouteOption]?[selectedSearchOption] {
                 drawMapOverlays(routeData: routeData)
+            }
+
+            if selectedRouteOption == .transit {
+                transitDetailTableView.reloadData()
             }
         }
     }
@@ -273,6 +285,9 @@ class RouteMapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // FIXME: 임시
+        self.overrideUserInterfaceStyle = .light
+
         setupLayout()
 
         naverMapView.mapView.touchDelegate = self
@@ -282,6 +297,9 @@ class RouteMapViewController: UIViewController {
             northEastLat: 37.715133,
             northEastLng: 127.269311
         )
+
+        let cell = UINib(nibName: "TransitDetailTableViewCell", bundle: nil)
+        transitDetailTableView.register(cell, forCellReuseIdentifier: "TransitDetailTableViewCell")
 
         let routeInfoTabGesture = UITapGestureRecognizer(target: self, action: #selector(toggleRouteInfo))
         routeInfoWrapperView.addGestureRecognizer(routeInfoTabGesture)
@@ -365,7 +383,7 @@ extension RouteMapViewController {
     }
 
     func moveCamera(location: Location) {
-//        cameraUpdateWithFitBounds
+        //        cameraUpdateWithFitBounds
         let scrollTo = NMGLatLng(lat: location.latitude, lng: location.longitude)
         let cameraUpdate = NMFCameraUpdate(scrollTo: scrollTo)
         cameraUpdate.animation = .easeIn
@@ -449,8 +467,26 @@ extension RouteMapViewController {
 
             routeData.points.append(endPoint)
 
+            var test: [Any] = []
+
             for step in steps {
-                print(step.transitDetails)
+                if let transitDetails = step.transitDetails {
+                    test.append(transitDetails)
+                } else {
+                    if test.isEmpty {
+                        test.append(step.localizedValues)
+
+                        continue
+                    }
+
+                    guard let last = test.last else { continue }
+
+                    if let transitDetail = last as? TransitDetails {
+                        test.append(step.localizedValues)
+                    } else if let locallizedValues = last as? StepLocalizedValues {
+
+                    }
+                }
 
                 var polyline: [RouteData.Coordinate] = []
 
@@ -626,30 +662,49 @@ extension RouteMapViewController {
 // MARK: - Extension : UITableViewDataSource
 extension RouteMapViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dummyData.count
+        if tableView == routeInfoTableView {
+            return dummyData.count
+        } else if tableView == transitDetailTableView {
+            return routeCache[.transit]?[selectedSearchOption].paths.count ?? 0
+        } else {
+            return 0
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "RouteInfoTableViewCell", for: indexPath) as? RouteInfoTableViewCell else { return UITableViewCell() }
+        if tableView == routeInfoTableView {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "RouteInfoTableViewCell", for: indexPath) as? RouteInfoTableViewCell else { return UITableViewCell() }
 
-        let index = indexPath.row
-        let routeInfo = dummyData[index]
+            let index = indexPath.row
+            let routeInfo = dummyData[index]
 
-        var image: UIImage? = UIImage(systemName: "target")?.withRenderingMode(.alwaysOriginal)
+            var image: UIImage? = UIImage(systemName: "target")?.withRenderingMode(.alwaysOriginal)
 
-        if index == 0 {
-            image = image?.withTintColor(.mapPointGreen)
-        } else if index == dummyData.count - 1 {
-            image = image?.withTintColor(.mapPointRed)
+            if index == 0 {
+                image = image?.withTintColor(.mapPointGreen)
+            } else if index == dummyData.count - 1 {
+                image = image?.withTintColor(.mapPointRed)
+            } else {
+                image = image?.withTintColor(.mapPointGray)
+            }
+
+            cell.cellImageView.image = image
+
+            cell.titleLabel.text = routeInfo.name
+
+            return cell
+        } else if tableView == transitDetailTableView {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "TransitDetailTableViewCell", for: indexPath) as? TransitDetailTableViewCell else { return UITableViewCell() }
+
+            cell.circleView.layer.zPosition = 1
+            cell.circleView.layer.cornerRadius = cell.circleView.frame.height / 2
+            cell.circleView.layer.borderColor = UIColor.label.cgColor
+            cell.circleView.layer.borderWidth = 2
+
+            return cell
         } else {
-            image = image?.withTintColor(.mapPointGray)
+            return UITableViewCell()
         }
-
-        cell.cellImageView.image = image
-
-        cell.titleLabel.text = routeInfo.name
-
-        return cell
     }
 }
 
@@ -718,15 +773,19 @@ extension RouteMapViewController: UICollectionViewDelegate {
 
 extension RouteMapViewController: NMFMapViewTouchDelegate {
     func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
-        print(#function)
         isMapFullscreend.toggle()
 
-        self.transitDetailTableViewHeightConstraint.constant = self.isMapFullscreend ? 0 : 300
+        self.transitDetailWrapperViewHeightConstraint.constant = self.isMapFullscreend || self.selectedRouteOption != .transit ? 0 : CGFloat(transitDetailWrapperViewHeight)
 
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
 
-            self.view.subviews.filter { $0 != self.naverMapView }.forEach { $0.isHidden = self.isMapFullscreend }
+            self.view.subviews
+                .filter { $0 != self.naverMapView }
+                .forEach { view in
+                    view.isHidden = self.isMapFullscreend
+                }
+
             self.view.layoutIfNeeded()
         }
     }

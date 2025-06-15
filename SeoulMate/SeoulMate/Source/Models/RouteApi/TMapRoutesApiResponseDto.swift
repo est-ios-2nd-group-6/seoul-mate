@@ -78,9 +78,11 @@ struct Properties: Codable {
 enum PointType: String, Codable {
     case ep = "EP"
     case e = "E"
+    case endLocation = "endLocation"
 
     case sp = "SP"
     case s = "S"
+    case startLocation = "startLocation"
 
     case gp = "GP"
     case n = "N"

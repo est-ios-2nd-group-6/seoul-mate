@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RouteOption:String, Hashable, CaseIterable {
+enum RouteOption: String, Hashable, CaseIterable {
     case drive = "DRIVE"
     case walk = "WALK"
     case transit = "TRANSIT"

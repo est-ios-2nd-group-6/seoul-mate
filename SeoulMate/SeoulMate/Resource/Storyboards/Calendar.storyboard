@@ -35,6 +35,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Button"/>
                                 <connections>
+                                    <action selector="registerScheduleAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="gJd-TK-JqR"/>
                                     <segue destination="kRs-P2-g65" kind="show" identifier="mapSegue" id="QsZ-Va-lfb"/>
                                 </connections>
                             </button>

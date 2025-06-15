@@ -8,8 +8,9 @@
 import UIKit
 import NMapsMap
 
-// TODO: TravelMode == .transit 일때, 경로 정보 안내
+// TODO: 1. TravelMode == .transit 일때, 경로 정보 안내
 
+// TODO: drive, walk 시 대체경로 회색으로 표시
 // TODO: TableView 순서 변경
 // TODO: TravelMode == .transit 일때, 지하철 호선에 따른 색상 변경
 
@@ -20,8 +21,8 @@ struct TempTour {
 }
 
 var dummyData: [TempTour] = [
-    TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
     TempTour(name: "신림역", latitude: 37.484171739, longitude: 126.929784067),
+    TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
     TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
     TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
     TempTour(name: "옥수역", latitude: 37.540429916, longitude: 127.018709461),
@@ -39,10 +40,10 @@ struct RouteData {
 
         var pointColor: UIColor {
             switch self.type {
-            case .sp, .s:
+            case .sp, .s, .startLocation:
                 return .mapPointGreen
 
-            case .ep, .e:
+            case .ep, .e, .endLocation:
                 return .mapPointRed
 
             case .b1, .b2, .b3, .pp, .pp1, .pp2, .pp3, .pp4, .pp5:
@@ -55,9 +56,9 @@ struct RouteData {
 
         var captionText: String? {
             switch self.type {
-            case .sp, .s:
+            case .sp, .s, .startLocation:
                 return "출발"
-            case .ep, .e:
+            case .ep, .e, .endLocation:
                 return "도착"
             case .b1, .b2, .b3, .pp, .pp1, .pp2, .pp3, .pp4, .pp5:
                 return "경유"
@@ -73,12 +74,6 @@ struct RouteData {
     }
 
     struct Path {
-        enum TravelMode {
-            case drive
-            case transit
-            case walk
-        }
-
         enum Traffic: Int {
             case unknown = 0
             case smooth = 1
@@ -137,6 +132,9 @@ class RouteMapViewController: UIViewController {
 
     @IBOutlet weak var routeOptionCollectionView: UICollectionView!
 
+    @IBOutlet weak var transitDetailTableView: UITableView!
+    @IBOutlet weak var transitDetailTableViewHeightConstraint: NSLayoutConstraint!
+
     // MARK: - Actions
     @IBAction func route(_ sender: Any) {
         if let btn = sender as? UIButton {
@@ -166,11 +164,23 @@ class RouteMapViewController: UIViewController {
     // MARK: - Properties
     var routeCache: [RouteOption: [RouteData]] = [:]
 
-    var selectedRouteOption: RouteOption = .drive {
+    var selectedRouteOption: RouteOption? = nil {
         didSet(oldVal) {
             if selectedRouteOption == oldVal {
 				return
             }
+
+            if selectedRouteOption == .transit {
+                transitDetailTableViewHeightConstraint.constant = 300
+            } else {
+                transitDetailTableViewHeightConstraint.constant = 0
+            }
+
+            UIView.animate(withDuration: 0.3) { [weak self] in
+                self?.view.layoutIfNeeded()
+            }
+
+            guard let selectedRouteOption else { return }
 
             if routeCache[selectedRouteOption, default: []].isEmpty {
                 Task {
@@ -196,6 +206,8 @@ class RouteMapViewController: UIViewController {
 
     var selectedSearchOption: Int = 0 {
         didSet {
+            guard let selectedRouteOption else { return }
+
             if let routeData = routeCache[selectedRouteOption]?[selectedSearchOption] {
                 drawMapOverlays(routeData: routeData)
             }
@@ -272,31 +284,11 @@ class RouteMapViewController: UIViewController {
         )
 
         let routeInfoTabGesture = UITapGestureRecognizer(target: self, action: #selector(toggleRouteInfo))
-
         routeInfoWrapperView.addGestureRecognizer(routeInfoTabGesture)
 
-        if let startPoint, let endPoint {
-//            moveCamera(location: startPoint)
-            moveCameraToFitBounds()
+        moveCameraToFitBounds()
 
-            Task {
-                for searchOption in selectedRouteOption.searchOptions ?? [] {
-                    await calcRoute(type: .drive, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
-                }
-
-                if let points = routeCache[.drive]?.first?.points {
-                    drawPoints(points: points)
-                }
-
-                if let paths = routeCache[.drive]?.first?.paths {
-                    drawPath(paths: paths)
-                }
-
-                routeOptionCollectionView.reloadData()
-            }
-        } else {
-            // TODO: 좌표 생성 못했을때 오류 처리
-        }
+        selectedRouteOption = .drive
     }
 
     override func viewIsAppearing(_ animated: Bool) {
@@ -442,7 +434,7 @@ extension RouteMapViewController {
             let startPoint = RouteData.Point(
                 latitude: startLocation.latitude,
                 longitude: startLocation.longitude,
-                type: .s
+                type: .startLocation
             )
 
             routeData.points.append(startPoint)
@@ -452,12 +444,14 @@ extension RouteMapViewController {
             let endPoint = RouteData.Point(
                 latitude: endLocation.latitude,
                 longitude: endLocation.longitude,
-                type: .e
+                type: .endLocation
             )
 
             routeData.points.append(endPoint)
 
             for step in steps {
+                print(step.transitDetails)
+
                 var polyline: [RouteData.Coordinate] = []
 
                 for coordinate in step.polyline.geoJSONLinestring.coordinates {
@@ -662,6 +656,8 @@ extension RouteMapViewController: UITableViewDataSource {
 // MARK: - Extension : UICollectionViewDataSource
 extension RouteMapViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard let selectedRouteOption else { return 0 }
+
         return routeCache[selectedRouteOption]?.count ?? 0
     }
 
@@ -669,6 +665,8 @@ extension RouteMapViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RouteOptionCollectionViewCell", for: indexPath) as? RouteOptionCollectionViewCell else {
             return UICollectionViewCell()
         }
+
+        guard let selectedRouteOption else { return UICollectionViewCell() }
 
         let index = indexPath.item
         let option = selectedRouteOption.searchOptions?[index]
@@ -723,9 +721,13 @@ extension RouteMapViewController: NMFMapViewTouchDelegate {
         print(#function)
         isMapFullscreend.toggle()
 
+        self.transitDetailTableViewHeightConstraint.constant = self.isMapFullscreend ? 0 : 300
+
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
+
             self.view.subviews.filter { $0 != self.naverMapView }.forEach { $0.isHidden = self.isMapFullscreend }
+            self.view.layoutIfNeeded()
         }
     }
 }

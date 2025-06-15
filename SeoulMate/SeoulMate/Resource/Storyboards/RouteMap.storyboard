@@ -21,10 +21,27 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PfX-MS-qNX" customClass="NMFNaverMapView">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="552"/>
                                 <viewLayoutGuide key="safeArea" id="Mjk-s3-H70"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="18I-wx-NKg">
+                                <rect key="frame" x="0.0" y="552" width="393" height="300"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="300" id="26d-EO-smJ"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="U7n-oB-I7t">
+                                        <rect key="frame" x="0.0" y="50" width="393" height="44.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="U7n-oB-I7t" id="29d-em-jpA">
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="44.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bk3-8n-f3I">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="118"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -367,17 +384,20 @@
                             <constraint firstItem="PfX-MS-qNX" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="0QC-Fs-Y6T"/>
                             <constraint firstItem="qPb-Ta-9PV" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="0xv-Mh-sd5"/>
                             <constraint firstItem="PfX-MS-qNX" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="2pD-qe-6Md"/>
+                            <constraint firstAttribute="bottom" secondItem="18I-wx-NKg" secondAttribute="bottom" id="8XT-Ou-SVa"/>
                             <constraint firstItem="wni-It-1HB" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="AWA-Gb-8g1"/>
                             <constraint firstItem="rsL-kG-ucW" firstAttribute="centerX" secondItem="GfZ-Mw-o6E" secondAttribute="centerX" priority="250" id="FgC-J8-nRM"/>
                             <constraint firstItem="Bk3-8n-f3I" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="J7C-pK-veq"/>
                             <constraint firstItem="qPb-Ta-9PV" firstAttribute="top" secondItem="Bk3-8n-f3I" secondAttribute="bottom" id="LAM-G7-nAC"/>
                             <constraint firstItem="PfX-MS-qNX" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" id="Sja-Ca-ISg"/>
+                            <constraint firstItem="18I-wx-NKg" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="TB5-tt-K3e"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="18I-wx-NKg" secondAttribute="trailing" id="VHZ-tO-Jea"/>
                             <constraint firstItem="wni-It-1HB" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="Y86-cd-4PX"/>
                             <constraint firstItem="Bk3-8n-f3I" firstAttribute="bottom" secondItem="vDu-zF-Fre" secondAttribute="top" id="YMx-Ot-le4"/>
                             <constraint firstItem="wni-It-1HB" firstAttribute="top" secondItem="qPb-Ta-9PV" secondAttribute="bottom" id="Zfz-Jg-a4t"/>
                             <constraint firstItem="rsL-kG-ucW" firstAttribute="centerX" secondItem="t2U-uj-cPe" secondAttribute="centerX" priority="250" id="gwk-bF-QkB"/>
                             <constraint firstItem="rsL-kG-ucW" firstAttribute="centerX" secondItem="6hQ-IK-ZeD" secondAttribute="centerX" id="lx9-Ch-Xi8"/>
-                            <constraint firstAttribute="bottom" secondItem="PfX-MS-qNX" secondAttribute="bottom" id="nG9-hr-35x"/>
+                            <constraint firstItem="PfX-MS-qNX" firstAttribute="bottom" secondItem="18I-wx-NKg" secondAttribute="top" id="nG9-hr-35x"/>
                             <constraint firstItem="rsL-kG-ucW" firstAttribute="bottom" secondItem="6hQ-IK-ZeD" secondAttribute="bottom" id="oD7-s9-sEt"/>
                             <constraint firstItem="Bk3-8n-f3I" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" id="puV-pd-7Y2"/>
                             <constraint firstItem="Bk3-8n-f3I" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="rCS-NZ-HNB"/>
@@ -395,6 +415,8 @@
                         <outlet property="routeOptionCollectionView" destination="wni-It-1HB" id="BBC-v7-ZJt"/>
                         <outlet property="segmentIndicator" destination="rsL-kG-ucW" id="dVQ-ir-ITi"/>
                         <outlet property="tableViewHeightConstraint" destination="i4W-bm-JC7" id="cpV-X5-ccQ"/>
+                        <outlet property="transitDetailTableView" destination="18I-wx-NKg" id="Nxe-bV-izQ"/>
+                        <outlet property="transitDetailTableViewHeightConstraint" destination="26d-EO-smJ" id="6fH-NB-LjL"/>
                         <outlet property="wrapperViewHeightConstraint" destination="xCK-D9-7Gb" id="kCX-8b-Jnf"/>
                     </connections>
                 </viewController>

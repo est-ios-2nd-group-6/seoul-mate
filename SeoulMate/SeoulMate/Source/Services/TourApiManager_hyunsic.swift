@@ -8,6 +8,7 @@
 import Foundation
 
 struct SearchResult {
+    var id:String
     var title:String
     var rating:Double
     var category:[String]
@@ -51,7 +52,7 @@ class TourApiManager_hs {
         
         request.httpMethod = "POST"
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
-        request.setValue("places.displayName,places.types,places.photos,places.primaryTypeDisplayName,places.rating", forHTTPHeaderField: "X-Goog-FieldMask")
+        request.setValue("places.id,places.displayName,places.types,places.photos,places.primaryTypeDisplayName,places.rating", forHTTPHeaderField: "X-Goog-FieldMask")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         do {
@@ -71,7 +72,7 @@ class TourApiManager_hs {
             let json = try decoder.decode(TourApiGoogleResponse.self, from: data)
             searchByTitleResultList.removeAll()
             for (key,value) in json.places.enumerated() {
-                var result = SearchResult(title: value.displayName.text,rating: value.rating, category: value.types,profileImage: value.photos.first?.name,photos: value.photos,primaryTypeDisplayName: value.primaryTypeDisplayName)
+                var result = SearchResult(id:value.id,title: value.displayName.text,rating: value.rating, category: value.types,profileImage: value.photos.first?.name,photos: value.photos,primaryTypeDisplayName: value.primaryTypeDisplayName)
                 searchByTitleResultList.append(result)
             }
         } catch {

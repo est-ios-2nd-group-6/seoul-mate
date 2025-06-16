@@ -19,17 +19,14 @@ class POIDetailViewController: UIViewController {
     
     @IBOutlet weak var detailTableView: UITableView!
 
-    @IBAction func dismissView(_ sender: Any) {
-        self.navigationController?.popViewController(animated: true)
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         detailTableView.dataSource = self
         detailTableView.delegate = self
-        var testItem:[POICellType] = []
-        testItem.append(.Location)
-        testItem.append(.Recommandation)
-        POIItems = testItem
+        var cellItem:[POICellType] = []
+        cellItem.append(.Location)
+        cellItem.append(.Recommandation)
+        POIItems = cellItem
         self.detailTableView.reloadData()
     }
     

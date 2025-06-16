@@ -40,6 +40,7 @@ struct TourApiGoogleResponse: Codable {
     let places:[Place]
     
     struct Place: Codable {
+        var id:String
         var types:[String]
         var displayName:DisplayName
         var primaryTypeDisplayName:PrimaryTypeDisplayName?

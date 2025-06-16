@@ -25,8 +25,8 @@ extension PoiDetailViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: PoiInfoCell.self)) as! PoiInfoCell
-        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: PoiNearbyCell.self)) as! PoiNearbyCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: PoiInfoCell.self)) as! PoiInfoCell
+//        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: PoiNearbyCell.self)) as! PoiNearbyCell
         return cell
     }
 }

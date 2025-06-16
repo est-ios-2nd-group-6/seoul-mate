@@ -23,7 +23,8 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
 
     var vcSourceType: SourceType?
-
+    var nameString:String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         searchResultTableView.dataSource = self
@@ -42,6 +43,22 @@ class SearchViewController: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 5, left: 2, bottom: 5, right: 3)
         tagCollectionView.collectionViewLayout = layout
         tagCollectionView.backgroundColor = .systemBackground
+        Task {
+            items.removeAll()
+            await TourApiManager_hs.shared.fetchGooglePlaceAPI(keyword: "서울 맛집")
+            items = TourApiManager_hs.shared.searchByTitleResultList
+            self.searchResultTableView.reloadData()
+            self.searchBar.text = "서울 맛집"
+        }
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "POIDetail" {
+            if let nav = segue.destination as? UINavigationController,
+               let detailVC = nav.topViewController as? POIDetailViewController {
+                detailVC.nameLabel = nameString ?? ""
+            }
+        }
     }
 
     @IBAction func searchItemButton(_ sender: Any) {
@@ -55,7 +72,6 @@ class SearchViewController: UIViewController {
             items = TourApiManager_hs.shared.searchByTitleResultList
             self.searchResultTableView.reloadData()
         }
-        searchBar.text = ""
     }
 
 }
@@ -113,7 +129,6 @@ extension SearchViewController: UITableViewDataSource {
                     withIdentifier: String(describing: SearchResultTableViewCell.self),
                     for: indexPath
                 ) as! SearchResultTableViewCell
-                print(#line,items.count)
             if items.count != 0 {
                 cell.titleLabel.text = items[indexPath.row].title
                 cell.subTitleLabel.text = items[indexPath.row].primaryTypeDisplayName?.text
@@ -144,6 +159,8 @@ extension SearchViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        nameString = items[indexPath.row].title
+        performSegue(withIdentifier: "POIDetail", sender: nameString)
     }
 
 }
@@ -156,7 +173,6 @@ protocol SearchViewControllerDelegate: AnyObject {
 extension SearchViewController: SearchViewControllerDelegate {
     func didRemoveButtonTapped(cell: UITableViewCell) {
         guard let item = self.searchResultTableView.indexPath(for: cell) else { return }
-        print(item)
         items.remove(at: item.row)
         DispatchQueue.main.async {
             self.searchResultTableView.deleteRows(at: [item], with: .fade)

@@ -9,9 +9,10 @@ import UIKit
 
 class PoiNearbyCell: UITableViewCell {
 
+    @IBOutlet weak var PoiNearbyDetailTableView: UITableView!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        PoiNearbyDetailTableView.dataSource = self
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -23,4 +24,14 @@ class PoiNearbyCell: UITableViewCell {
         
     }
     
+}
+
+extension PoiNearbyCell: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 6
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: POINearbyDetailCell.self)) as! POINearbyDetailCell
+        return cell
+    }
 }

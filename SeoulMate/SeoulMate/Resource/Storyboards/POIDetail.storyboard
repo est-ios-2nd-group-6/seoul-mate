@@ -9,19 +9,19 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Poi Detail View Controller-->
+        <!--Detail View Controller-->
         <scene sceneID="OIC-sV-Ufy">
             <objects>
-                <viewController storyboardIdentifier="POIDetail" useStoryboardIdentifierAsRestorationIdentifier="YES" id="VFB-Gz-2EN" customClass="PoiDetailViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="VFB-Gz-2EN" customClass="POIDetailViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rbO-2G-cZz">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" sectionIndexMinimumDisplayRowCount="5" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="geY-gY-pio">
                                 <rect key="frame" x="0.0" y="118" width="393" height="734"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="PoiInfoCell" rowHeight="365" id="AkD-u6-Kc3" customClass="PoiInfoCell" customModule="SeoulMate" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="PoiInfoCell" rowHeight="365" id="AkD-u6-Kc3" customClass="PoiInfoCell" customModule="SeoulMate" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="55.333332061767578" width="393" height="365"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AkD-u6-Kc3" id="qC0-zD-Vxc">
@@ -178,7 +178,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="PoiNearbyCell" rowHeight="314" id="oTI-MG-TtC" customClass="PoiNearbyCell" customModule="SeoulMate" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="PoiNearbyCell" rowHeight="314" id="oTI-MG-TtC" customClass="PoiNearbyCell" customModule="SeoulMate" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="420.33333206176758" width="393" height="314"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oTI-MG-TtC" id="YgH-4Z-Uwr">
@@ -201,11 +201,11 @@
                                                         <action selector="changeCategorySegment:" destination="oTI-MG-TtC" eventType="valueChanged" id="Njl-S7-OfM"/>
                                                     </connections>
                                                 </segmentedControl>
-                                                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="tqP-R9-iaV">
+                                                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="tqP-R9-iaV">
                                                     <rect key="frame" x="35" y="107.33333333333333" width="323" height="206.66666666666669"/>
                                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     <prototypes>
-                                                        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="88" id="4Pg-Vy-4tK">
+                                                        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="POINearbyDetailCell" rowHeight="88" id="4Pg-Vy-4tK" customClass="POINearbyDetailCell" customModule="SeoulMate" customModuleProvider="target">
                                                             <rect key="frame" x="0.0" y="50" width="323" height="88"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4Pg-Vy-4tK" id="Ynd-gl-Jws">
@@ -216,7 +216,6 @@
                                                                         <rect key="frame" x="253" y="8" width="60" height="72"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="60" id="Ge0-pc-iDT"/>
-                                                                            <constraint firstAttribute="height" constant="70" id="Uam-JA-fQ1"/>
                                                                         </constraints>
                                                                     </imageView>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="DdG-Le-B7g">
@@ -307,6 +306,13 @@
                                                                     <constraint firstItem="DdG-Le-B7g" firstAttribute="top" secondItem="Ynd-gl-Jws" secondAttribute="top" constant="5" id="tuk-Xd-J7M"/>
                                                                 </constraints>
                                                             </tableViewCellContentView>
+                                                            <connections>
+                                                                <outlet property="categoryLabel" destination="CGj-gT-j9p" id="TgI-Xm-EqE"/>
+                                                                <outlet property="detailLabel" destination="qQn-g0-9Mv" id="VG8-au-mhi"/>
+                                                                <outlet property="distanceLabel" destination="SyJ-dk-AYs" id="7Gy-Eh-czI"/>
+                                                                <outlet property="locationImageView" destination="DES-lj-2sJ" id="EFw-jY-stQ"/>
+                                                                <outlet property="titleLabel" destination="VV6-eF-bgX" id="jJe-JA-frE"/>
+                                                            </connections>
                                                         </tableViewCell>
                                                     </prototypes>
                                                 </tableView>
@@ -324,6 +330,9 @@
                                                 <constraint firstAttribute="trailing" secondItem="tqP-R9-iaV" secondAttribute="trailing" constant="35" id="oyD-PT-FqE"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="PoiNearbyDetailTableView" destination="tqP-R9-iaV" id="NXm-By-37P"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
@@ -349,7 +358,7 @@
         <!--Navigation Controller-->
         <scene sceneID="JIe-9U-rAO">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="B57-UH-jZW" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="POIDetail" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" navigationBarHidden="YES" id="B57-UH-jZW" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ohz-oh-NPA">
                         <autoresizingMask key="autoresizingMask"/>

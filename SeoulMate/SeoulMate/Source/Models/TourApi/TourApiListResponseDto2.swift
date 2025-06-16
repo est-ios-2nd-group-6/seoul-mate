@@ -44,6 +44,7 @@ struct TourApiGoogleResponse: Codable {
         var displayName:DisplayName
         var primaryTypeDisplayName:PrimaryTypeDisplayName?
         var photos:[Photo]
+        var rating:Double
     }
     struct Photo: Codable {
         var name: String

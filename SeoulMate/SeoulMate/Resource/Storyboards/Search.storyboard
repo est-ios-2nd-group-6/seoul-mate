@@ -140,7 +140,7 @@
                                             <outlet property="deleteAllButton" destination="3rn-pH-DOD" id="rR1-bu-DOu"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="0.0" reuseIdentifier="SearchResultTableViewCell" rowHeight="100" translatesAutoresizingMaskIntoConstraints="NO" id="zOv-uO-LSI" customClass="SearchResultTableViewCell" customModule="SeoulMate" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" selectionStyle="none" indentationWidth="0.0" reuseIdentifier="SearchResultTableViewCell" rowHeight="100" translatesAutoresizingMaskIntoConstraints="NO" id="zOv-uO-LSI" customClass="SearchResultTableViewCell" customModule="SeoulMate" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="85" width="363" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zOv-uO-LSI" id="DMl-Ii-HxI">
@@ -202,7 +202,6 @@
                                             <outlet property="searchImageView" destination="XW6-Ue-Nkb" id="ycG-jy-kXH"/>
                                             <outlet property="subTitleLabel" destination="YGu-c2-Zft" id="mth-Nq-A6d"/>
                                             <outlet property="titleLabel" destination="UVo-8i-7Vk" id="R2o-s4-hjz"/>
-                                            <segue destination="Oon-eJ-qw7" kind="show" id="Fzm-Un-g6q"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -241,6 +240,7 @@
                         <outlet property="searchResultTableView" destination="oqK-yO-mxr" id="bIW-gC-bss"/>
                         <outlet property="searchbarView" destination="Rda-O9-MWb" id="eSa-j4-KXA"/>
                         <outlet property="tagCollectionView" destination="S56-yh-Qu9" id="5hB-Eu-6OX"/>
+                        <segue destination="Oon-eJ-qw7" kind="show" identifier="POIDetail" id="gXs-pA-WSL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QA7-XX-Orj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -250,12 +250,12 @@
         <!--POIDetail-->
         <scene sceneID="g9Q-z7-f69">
             <objects>
-                <viewControllerPlaceholder storyboardName="POIDetail" referencedIdentifier="POIDetail" id="Oon-eJ-qw7" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardIdentifier="POIDetail" storyboardName="POIDetail" referencedIdentifier="POIDetail" id="Oon-eJ-qw7" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="zW6-AD-5w2"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NbD-IU-vOg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1708" y="21"/>
+            <point key="canvasLocation" x="1718" y="18"/>
         </scene>
     </scenes>
     <resources>

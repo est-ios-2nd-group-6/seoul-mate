@@ -63,14 +63,7 @@ class ScheduleListViewController: UIViewController {
                 let item = viewModel.tripItems[indexPath.row]
                 guard case .trip(let tour) = item else { return }
 
-                let alert = UIAlertController(title: "여행 옵션", message: nil, preferredStyle: .actionSheet)
-
-                alert.addAction(UIAlertAction(title: "일정 보기", style: .default) { _ in
-                })
-
-                alert.addAction(UIAlertAction(title: "수정", style: .default) { _ in
-                    
-                })
+                let alert = UIAlertController(title: "옵션", message: nil, preferredStyle: .actionSheet)
 
                 alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
                     Task {

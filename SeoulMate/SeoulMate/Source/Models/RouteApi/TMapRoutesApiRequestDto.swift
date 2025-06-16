@@ -12,42 +12,12 @@ struct TMapRoutesApiRequestDto: Codable {
     let startName: String
     let endX, endY: Double
     let endName: String
+
+    var trafficInfo = "Y"
+
     var passList: String? = nil
     var searchOption: SearchOption = .recommand
-}
 
-enum DriveOption: Int, Codable, CaseIterable {
-    case recommand = 0
-    case fastest = 2
-    case shortest = 10
-
-    var title: String {
-        switch self {
-        case .recommand:
-            return "추천경로"
-        case .fastest:
-            return "최소시간"
-        case .shortest:
-            return "최단거리"
-        }
-    }
-}
-
-enum WalkOption: Int, Codable, CaseIterable {
-    case recommand = 0
-    case preferBoulevard = 4
-    case avoidStair = 30
-
-    var title: String {
-        switch self {
-        case .recommand:
-            return "추천경로"
-        case .preferBoulevard:
-            return "큰길우선"
-        case .avoidStair:
-            return "계단회피"
-        }
-    }
 }
 
 enum SearchOption: Int, Codable, CaseIterable {

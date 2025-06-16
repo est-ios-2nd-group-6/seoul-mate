@@ -14,4 +14,6 @@ class RouteOptionCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var estimatedTimeLabel: UILabel!
     @IBOutlet weak var totalDistance: UILabel!
     @IBOutlet weak var eTALabel: UILabel!
+
+    var routeOption: RouteOption?
 }

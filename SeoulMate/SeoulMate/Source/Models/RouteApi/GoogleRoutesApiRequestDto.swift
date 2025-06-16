@@ -13,7 +13,7 @@ struct GoogleRoutesApiRequestDto: Encodable {
     let intermediates: [Destination]?
     
     let travelMode: String = "TRANSIT"
-    let computeAlternativeRoutes: Bool = false
+    var computeAlternativeRoutes: Bool = false
     let languageCode = "ko-KR"
     let units = "METRIC"
     let polylineEncoding = "GEO_JSON_LINESTRING"

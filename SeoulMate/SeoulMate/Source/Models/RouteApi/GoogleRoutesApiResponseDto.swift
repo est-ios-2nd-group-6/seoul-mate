@@ -11,7 +11,7 @@ struct GoogleRoutesApiResponseDto: Codable {
     }
 
     let routes: [Route]
-    let geocodingResults: GeocodingResults
+//    let geocodingResults: GeocodingResults
 }
 
 struct GeocodingResults: Codable {
@@ -20,22 +20,23 @@ struct GeocodingResults: Codable {
 struct Route: Codable {
     let legs: [Leg]
     let distanceMeters: Int
-    let duration, staticDuration: String
-    let polyline: Polyline
-    let viewport: Viewport
-    let travelAdvisory: TravelAdvisory
-    let localizedValues: LegLocalizedValues
-    let routeLabels: [String]
+    let duration: String
+//    let staticDuration: String
+//    let polyline: Polyline
+//    let viewport: Viewport
+//    let travelAdvisory: TravelAdvisory
+//    let localizedValues: LegLocalizedValues
+//    let routeLabels: [String]
 }
 
 struct Leg: Codable {
-    let distanceMeters: Int
-    let duration, staticDuration: String
-    let polyline: Polyline
+//    let distanceMeters: Int?
+//    let duration, staticDuration: String?
+//    let polyline: Polyline?
     let startLocation, endLocation: GoogleRoutesApiResponseDto.Location
     let steps: [Step]
-    let localizedValues: LegLocalizedValues
-    let stepsOverview: StepsOverview
+//    let localizedValues: LegLocalizedValues
+//    let stepsOverview: StepsOverview
 }
 
 

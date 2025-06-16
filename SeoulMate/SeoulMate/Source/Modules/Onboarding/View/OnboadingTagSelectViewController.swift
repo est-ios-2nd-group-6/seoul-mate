@@ -13,20 +13,25 @@ class OnboadingTagSelectViewController: UIViewController {
     @IBOutlet weak var tagListViewHeight: NSLayoutConstraint!
     @IBOutlet weak var startButton: UIButton!
 
-    private var viewModel = OnboardingTagModel()
+    var viewModel = OnboardingTagModel()
     private var didSetUpTag = false
 
     var tags: [Tag] = []
     var tagButtons: [UIButton] = []
 
     @IBAction func startButtonTapped(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let homeTabBarController = storyboard.instantiateInitialViewController() else { return }
+        if viewModel.isFromSetting {
+            navigationController?.popViewController(animated: true)
+            return
+        } else {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            guard let homeTabBarController = storyboard.instantiateInitialViewController() else { return }
 
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            window.rootViewController = homeTabBarController
-            window.makeKeyAndVisible()
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                window.rootViewController = homeTabBarController
+                window.makeKeyAndVisible()
+            }
         }
     }
 
@@ -57,8 +62,13 @@ class OnboadingTagSelectViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         title = "관심있는 곳"
-        navigationItem.hidesBackButton = true
+        navigationItem.hidesBackButton = !viewModel.isFromSetting
 
+        if viewModel.isFromSetting {
+            startButton.setTitle("설정 완료", for: .normal)
+        } else {
+            startButton.setTitle("여행 시작하기", for: .normal)
+        }
         startButton.isEnabled = false
     }
     

@@ -9,7 +9,12 @@ import Foundation
 
 final class OnboardingTagModel {
     private(set) var tags: [Tag] = []
+    var isFromSetting: Bool
 
+    init(isFromSetting: Bool = false) {
+        self.isFromSetting = isFromSetting
+    }
+    
     func loadTags() async {
         await CoreDataManager.shared.firstFetchTagsAsync()
         tags = await CoreDataManager.shared.fetchTagsAsync()

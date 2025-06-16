@@ -4,39 +4,50 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddToScheduleTableViewCell" rowHeight="218" id="LQG-Iq-av3" customClass="AddToScheduleTableViewCell" customModule="SeoulMate" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="440" height="218"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddToScheduleTableViewCell" rowHeight="195" id="LQG-Iq-av3" customClass="AddToScheduleTableViewCell" customModule="SeoulMate" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="440" height="195"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="LQG-Iq-av3" id="MU2-E6-392">
-                <rect key="frame" x="0.0" y="0.0" width="440" height="218"/>
+                <rect key="frame" x="0.0" y="0.0" width="440" height="195"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="svs-W0-9Qb">
-                        <rect key="frame" x="16" y="16" width="408" height="150"/>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="svs-W0-9Qb">
+                        <rect key="frame" x="16" y="16" width="408" height="170"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" text="서울 여행" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AqD-ue-8BK">
-                                <rect key="frame" x="0.0" y="0.0" width="408" height="19.666666666666668"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <rect key="frame" x="0.0" y="0.0" width="408" height="47.666666666666664"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="25.06.11 - 25.06.19" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pd5-sf-1MG">
-                                <rect key="frame" x="0.0" y="19.666666666666657" width="408" height="20.333333333333343"/>
+                                <rect key="frame" x="0.0" y="55.666666666666679" width="408" height="20.333333333333336"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TkH-6G-RPU">
-                                <rect key="frame" x="0.0" y="40" width="408" height="110"/>
-                            </stackView>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="249" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="lx0-dY-34h">
+                                <rect key="frame" x="0.0" y="84" width="408" height="86"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="86" id="i3l-0c-ja2"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="foc-fi-uf1">
+                                    <size key="itemSize" width="128" height="70"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                            </collectionView>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="height" constant="150" id="imS-YW-bYf"/>
+                            <constraint firstAttribute="height" constant="170" id="imS-YW-bYf"/>
                         </constraints>
                     </stackView>
                 </subviews>
@@ -49,9 +60,15 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="periodLabel" destination="Pd5-sf-1MG" id="b4E-vx-mXI"/>
+                <outlet property="scheduleListCollectionView" destination="lx0-dY-34h" id="8vB-4v-t2g"/>
                 <outlet property="titleLabel" destination="AqD-ue-8BK" id="6Fx-TZ-qmV"/>
             </connections>
-            <point key="canvasLocation" x="-328.24427480916029" y="-0.70422535211267612"/>
+            <point key="canvasLocation" x="-328.24427480916029" y="-8.8028169014084519"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

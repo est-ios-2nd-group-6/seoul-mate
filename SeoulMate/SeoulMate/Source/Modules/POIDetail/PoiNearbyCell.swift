@@ -1,0 +1,26 @@
+//
+//  PoiNearbyCell.swift
+//  SeoulMate
+//
+//  Created by DEV on 6/16/25.
+//
+
+import UIKit
+
+class PoiNearbyCell: UITableViewCell {
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+    }
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+
+        // Configure the view for the selected state
+    }
+    @IBAction func changeCategorySegment(_ sender: UISegmentedControl) {
+        
+    }
+    
+}

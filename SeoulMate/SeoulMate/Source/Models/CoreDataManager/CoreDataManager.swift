@@ -114,7 +114,6 @@ final class CoreDataManager {
         }
     }
 
-
     func deleteTourAsync(_ tour: Tour) async {
         await context.perform {
             if let schedules = tour.days as? Set<Schedule> {
@@ -124,13 +123,10 @@ final class CoreDataManager {
                 }
             }
 
-            tour.course = nil
             self.context.delete(tour)
-
             try? self.context.save()
         }
     }
-
 
     func fetchSchedules(for tour: Tour) -> [Schedule] {
         let request: NSFetchRequest<Schedule> = Schedule.fetchRequest()
@@ -145,21 +141,9 @@ final class CoreDataManager {
         return arr.compactMap { $0 as? POI }
     }
 
-    func togglePOISaved(_ poi: POI) {
-        poi.isSaved.toggle()
-        saveContext()
-    }
-
-    func fetchSavedPOIs() -> [POI] {
-        let request: NSFetchRequest<POI> = POI.fetchRequest()
-        request.predicate = NSPredicate(format: "isSaved == true")
-        return (try? context.fetch(request)) ?? []
-    }
-
     // MARK: - Delete
     func delete(_ object: NSManagedObject) {
         context.delete(object)
         saveContext()
     }
-
 }

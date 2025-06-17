@@ -14,4 +14,12 @@ extension DateFormatter {
 
         return formatter
     }
+
+    static var monthDayWeekdayFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_kr")
+        formatter.dateFormat = "M.d (E)"
+
+        return formatter
+    }
 }

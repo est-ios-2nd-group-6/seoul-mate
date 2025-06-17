@@ -17,7 +17,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         guard let googleAPIKey = Bundle.main.googleApiKey else { return false }
         GMSPlacesClient.provideAPIKey(googleAPIKey)
-        NMFAuthManager.shared().ncpKeyId = Bundle.main.naverMapApiKey
+
+        if let naverMapApiKey = Bundle.main.naverMapApiKey {
+            NMFAuthManager.shared().ncpKeyId = naverMapApiKey
+        }
+
         return true
     }
 

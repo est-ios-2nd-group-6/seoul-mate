@@ -11,7 +11,7 @@ class ScheduleListTripTableViewCell: UITableViewCell {
     @IBOutlet weak var tripImageView: UIImageView!
     @IBOutlet weak var tripNameLabel: UILabel!
     @IBOutlet weak var tripDateLabel: UILabel!
-    @IBOutlet weak var cityCountLabel: UILabel!
+    @IBOutlet weak var placeCountLabel: UILabel!
     @IBAction func moreButton(_ sender: Any) {
     }
     override func awakeFromNib() {

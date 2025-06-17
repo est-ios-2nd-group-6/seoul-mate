@@ -32,7 +32,6 @@
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="startButtonTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Mae-Mh-fDi"/>
-                                    <segue destination="kXQ-4I-RnQ" kind="show" id="C32-vq-Ooh"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -56,16 +55,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="26.717557251908396" y="-28.169014084507044"/>
-        </scene>
-        <!--Home-->
-        <scene sceneID="bVE-TQ-6hv">
-            <objects>
-                <viewControllerPlaceholder storyboardName="Home" id="kXQ-4I-RnQ" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="EnA-4w-lEf"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="kWT-rE-gY6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="973" y="-28"/>
         </scene>
     </scenes>
     <resources>

@@ -10,7 +10,6 @@ import UIKit
 class RecommandCourseListViewController: UIViewController {
     @IBOutlet weak var RecommandCourseListTableView: UITableView!
 
-	// TODO: 임시 기본값
     var by: fetchCourseListType? = .area
 
     var courses: [RecommandCourse] = []
@@ -23,8 +22,14 @@ class RecommandCourseListViewController: UIViewController {
         }
     }
 
+    @IBAction func back(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.tabBarController?.tabBar.isHidden = true
 
         switch by {
         case .area:
@@ -33,16 +38,6 @@ class RecommandCourseListViewController: UIViewController {
             courses = TourApiManager.shared.rcmCourseListByLocation
         case nil:
             courses = []
-        }
-
-        Task {
-            for (index, course) in courses.enumerated() {
-                let image = await ImageManager.shared.getImage(course.firstImageUrl)
-
-                courses[index].image = image
-            }
-
-            RecommandCourseListTableView.reloadData()
         }
     }
 }

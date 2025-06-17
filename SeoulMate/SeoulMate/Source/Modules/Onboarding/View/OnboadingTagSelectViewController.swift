@@ -13,25 +13,72 @@ class OnboadingTagSelectViewController: UIViewController {
     @IBOutlet weak var tagListViewHeight: NSLayoutConstraint!
     @IBOutlet weak var startButton: UIButton!
 
+    var viewModel = OnboardingTagModel()
+    private var didSetUpTag = false
+
     var tags: [Tag] = []
     var tagButtons: [UIButton] = []
 
     @IBAction func startButtonTapped(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        guard let homeTabBarController = storyboard.instantiateInitialViewController() else { return }
+        if viewModel.isFromSetting {
+            navigationController?.popViewController(animated: true)
+            return
+        } else {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            guard let homeTabBarController = storyboard.instantiateInitialViewController() else { return }
 
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            window.rootViewController = homeTabBarController
-            window.makeKeyAndVisible()
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                window.rootViewController = homeTabBarController
+                window.makeKeyAndVisible()
+            }
         }
     }
-    private func initTagView() {
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        guard !didSetUpTag else { return }
+        Task {
+            await viewModel.loadTags()
+            await initTagView()
+            didSetUpTag = true
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        title = "관심있는 곳"
+        navigationItem.hidesBackButton = !viewModel.isFromSetting
+
+        if viewModel.isFromSetting {
+            startButton.setTitle("설정 완료", for: .normal)
+        } else {
+            startButton.setTitle("여행 시작하기", for: .normal)
+        }
+        startButton.isEnabled = false
+    }
+    
+    private func initTagView() async {
         tagButtons.forEach { $0.removeFromSuperview() }
         tagButtons = []
 
-        let pickedNames = Set(CoreDataManager.shared.fetchSelectedTags().compactMap { $0.name })
+        let pickedNames = await viewModel.selectedTagNames()
 
+        let tags = viewModel.tags
         tags.forEach { tag in
             let title = tag.name ?? ""
             let btn = createButton(with: title, selected: pickedNames.contains(title))
@@ -107,18 +154,16 @@ class OnboadingTagSelectViewController: UIViewController {
     }
 
     @objc private func touchTagButton(_ sender: UIButton) {
-        guard let title = sender.currentTitle,
-              let tag = tags.first(where: { $0.name == title }) else { return }
+        guard let title = sender.currentTitle else { return }
 
-        CoreDataManager.shared.tagSelectToggle(tag: tag)
-
-        let isSelected = tag.selected
-        sender.isSelected = isSelected
-        sender.backgroundColor = isSelected ? .main : .clear
-        sender.setTitleColor(isSelected ? .white : .label, for: .normal)
-        sender.layer.borderColor = isSelected ? UIColor.main.cgColor : UIColor.systemGray4.cgColor
-        let hasPicked = CoreDataManager.shared.fetchSelectedTags().count > 0
-        startButton.isEnabled = hasPicked
+        Task {
+            let isSelected = await viewModel.toggleSelection(for: title)
+            sender.isSelected = isSelected
+            sender.backgroundColor = isSelected ? .main : .clear
+            sender.setTitleColor(isSelected ? .white : .label, for: .normal)
+            sender.layer.borderColor = isSelected ? UIColor.main.cgColor : UIColor.systemGray4.cgColor
+            startButton.isEnabled = await viewModel.hasSelectedTags()
+        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -129,39 +174,5 @@ class OnboadingTagSelectViewController: UIViewController {
         }
 
         refreshButtonAppearances()
-    }
-
-    private var didSetUpTag = false
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        guard !didSetUpTag else { return }
-        initTagView()
-        didSetUpTag = true
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .always
-        title = "관심있는 곳"
-        navigationItem.hidesBackButton = true
-
-        CoreDataManager.shared.firstFetchTag()
-        tags = CoreDataManager.shared.fetchTags()
-
-        startButton.isEnabled = false
     }
 }

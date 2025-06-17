@@ -8,7 +8,6 @@
 import UIKit
 
 class PoiNearbyCell: UITableViewCell {
-    
     var segmentedIndex:Int = 0 {
         didSet {
             self.PoiNearbyDetailTableView.reloadData()

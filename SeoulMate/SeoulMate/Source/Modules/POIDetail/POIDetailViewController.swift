@@ -15,29 +15,29 @@ enum POICellType {
 class POIDetailViewController: UIViewController {
 
     var POIItems: [POICellType] = []
-    var nameLabel:String = ""
-    var location:PlaceInfo?
-    
+    var nameLabel: String = ""
+    var location: PlaceInfo?
+    var nearybyPlaceList: [TourNearybyAPIGoogleResponse.Place] = [TourNearybyAPIGoogleResponse.Place]()
+
     @IBOutlet weak var detailTableView: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         detailTableView.dataSource = self
         detailTableView.delegate = self
-        var cellItem:[POICellType] = []
+        var cellItem: [POICellType] = []
         cellItem.append(.Location)
         cellItem.append(.Recommandation)
         POIItems = cellItem
         self.detailTableView.reloadData()
-        
         Task {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: nameLabel)
             location = TourApiManager_hs.shared.placeInfo
             await TourApiManager_hs.shared.fetchPOIDetailNearbyPlace(latitude: 37.7937, longitude: -122.3965)
+            nearybyPlaceList = TourApiManager_hs.shared.nearybyPlaceList
             self.detailTableView.reloadData()
         }
     }
-    
 }
 
 extension POIDetailViewController: UITableViewDataSource {
@@ -50,26 +50,26 @@ extension POIDetailViewController: UITableViewDataSource {
         case .Location:
             let cell =
                 tableView.dequeueReusableCell(withIdentifier: String(describing: PoiInfoCell.self)) as! PoiInfoCell
-                if let location = location {
-                    cell.titleLabel.text = location.title
-                    cell.reviewNumberLabel.text = "\(location.rating)"
-                    cell.addressLabel.text = location.address
-                    if let url = location.profileImage {
-                        URLSession.shared.dataTask(with: url) { data,_,error in
-                            if let data = data {
-                                DispatchQueue.main.async {
-                                    cell.placeImageView.image = UIImage(data: data)
-                                }
-                                print(String(data: data, encoding: .utf8))
+            if let location = location {
+                cell.titleLabel.text = location.title
+                cell.reviewNumberLabel.text = "\(location.rating)"
+                cell.addressLabel.text = location.address
+                if let url = location.profileImage {
+                    URLSession.shared.dataTask(with: url) { data, _, error in
+                        if let data = data {
+                            DispatchQueue.main.async {
+                                cell.placeImageView.image = UIImage(data: data)
                             }
-                        }.resume()
-                    }
+                        }
+                    }.resume()
                 }
-                return cell
+            }
+            return cell
         case .Recommandation:
             let cell =
                 tableView.dequeueReusableCell(withIdentifier: String(describing: PoiNearbyCell.self)) as! PoiNearbyCell
-                return cell
+                cell.nearybyPlaceList = nearybyPlaceList
+            return cell
         }
     }
 }
@@ -77,10 +77,10 @@ extension POIDetailViewController: UITableViewDataSource {
 extension POIDetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch POIItems[indexPath.row] {
-            case .Location:
-                return 400
-            case .Recommandation:
-                return 675
+        case .Location:
+            return 400
+        case .Recommandation:
+            return 675
         }
     }
 }

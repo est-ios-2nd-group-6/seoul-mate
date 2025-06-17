@@ -43,6 +43,7 @@ class SearchViewController: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 5, left: 2, bottom: 5, right: 3)
         tagCollectionView.collectionViewLayout = layout
         tagCollectionView.backgroundColor = .systemBackground
+        
         Task {
             items.removeAll()
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: "서울 맛집")

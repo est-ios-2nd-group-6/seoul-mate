@@ -108,7 +108,7 @@ struct TourNearybyAPIGoogleRequest: Codable {
     
     init(latitude: Double, longitude: Double) {
         self.includedTypes = ["tourist_attraction","restaurant"]
-        self.maxResultCount = 10
+        self.maxResultCount = 20
         self.locationRestriction = LocationRestriction(
             circle: Circle(
                 center: Center(latitude: latitude, longitude: longitude),
@@ -119,12 +119,16 @@ struct TourNearybyAPIGoogleRequest: Codable {
 }
 
 struct TourNearybyAPIGoogleResponse: Codable {
-    let places:[Place]?
+    let places:[Place]
     struct Place: Codable {
         let id:String
+        let formattedAddress: String?
         let location: Location
         let types: [String]
         let rating:Double
+        let displayName:DisplayName
+        let primaryTypeDisplayName:PrimaryTypeDisplayName?
+        let photos:[Photo]
         struct DisplayName: Codable {
             var text: String
             var languageCode: String

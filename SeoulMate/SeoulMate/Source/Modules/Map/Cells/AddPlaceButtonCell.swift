@@ -9,14 +9,20 @@ import UIKit
 
 protocol AddPlaceButtonCellDelegate: AnyObject {
     func addPlace(_ cell: AddPlaceButtonCell)
+    func goToRoute(_ cell: AddPlaceButtonCell)
 }
 
 class AddPlaceButtonCell: UITableViewCell {
+    @IBOutlet weak var addButton: UIButton!
+    @IBOutlet weak var routeButton: UIButton!
+    
     weak var delegate: AddPlaceButtonCellDelegate?
     
-    @IBOutlet weak var addButton: UIButton!
     @IBAction func addPlaceAction(_ sender: Any) {
         delegate?.addPlace(self)
+    }
+    @IBAction func goToRouteAction(_ sender: Any) {
+        delegate?.goToRoute(self)
     }
     
     override func awakeFromNib() {

@@ -421,9 +421,15 @@
                     <navigationItem key="navigationItem" id="h7q-k1-fip">
                         <barButtonItem key="leftBarButtonItem" image="chevron.left" catalog="system" id="cQp-NO-H1q">
                             <color key="tintColor" systemColor="labelColor"/>
+                            <connections>
+                                <action selector="back:" destination="Y6W-OH-hqX" id="Gwi-oG-fbW"/>
+                            </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="ellipsis" catalog="system" id="UdI-4s-UMT">
                             <color key="tintColor" systemColor="labelColor"/>
+                            <connections>
+                                <action selector="more:" destination="Y6W-OH-hqX" id="8kH-Mg-67z"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>

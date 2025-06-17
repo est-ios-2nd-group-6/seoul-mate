@@ -8,7 +8,7 @@
 import UIKit
 
 class ScheduleListViewController: UIViewController {
-    var tripItems: [TripItem] = []
+    private var tripItems: [TripItem] = []
 
     @IBOutlet weak var scheduleListTableView: UITableView!
     @IBOutlet weak var floatingButton: UIButton!
@@ -119,7 +119,7 @@ extension ScheduleListViewController: UITableViewDataSource {
                 cell.tripImageView.tintColor = UIColor(named: "Main")
             }
 
-            cell.cityCountLabel.text = "\(tour.title?.count.description ?? "0") 개의 장소"
+            cell.placeCountLabel.text = viewModel.locationCountText(for: tour)
             return cell
         }
     }

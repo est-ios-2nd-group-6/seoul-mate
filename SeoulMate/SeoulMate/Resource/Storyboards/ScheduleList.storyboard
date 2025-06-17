@@ -120,7 +120,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="cityCountLabel" destination="Nh5-vZ-nr3" id="o8d-lm-l78"/>
+                                            <outlet property="placeCountLabel" destination="Nh5-vZ-nr3" id="o8d-lm-l78"/>
                                             <outlet property="tripDateLabel" destination="6xd-HI-qyJ" id="8ZU-Xd-gNZ"/>
                                             <outlet property="tripImageView" destination="aNK-Fz-DoT" id="5Op-ka-NBJ"/>
                                             <outlet property="tripNameLabel" destination="brB-Ff-kOv" id="TP3-vi-ffx"/>
@@ -216,7 +216,7 @@
             <color red="0.92941176891326904" green="0.47450977563858032" blue="0.38431376218795776" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

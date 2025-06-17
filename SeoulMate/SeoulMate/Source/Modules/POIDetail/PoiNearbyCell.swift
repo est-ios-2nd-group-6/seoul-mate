@@ -5,6 +5,7 @@
 //  Created by DEV on 6/16/25.
 //
 
+import CoreLocation
 import UIKit
 
 class PoiNearbyCell: UITableViewCell {
@@ -14,7 +15,7 @@ class PoiNearbyCell: UITableViewCell {
             self.PoiNearbyDetailTableView.reloadData()
         }
     }
-
+    var currentLocation:CurrentLocation = CurrentLocation(longitude: 0.0, latitude: 0.0)
     var segmentedIndex: Int = 0 {
         didSet {
             self.PoiNearbyDetailTableView.reloadData()
@@ -25,7 +26,7 @@ class PoiNearbyCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         PoiNearbyDetailTableView.dataSource = self
-
+        PoiNearbyDetailTableView.delegate = self
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -34,18 +35,21 @@ class PoiNearbyCell: UITableViewCell {
     }
 
     @IBAction func changeCategorySegment(_ sender: UISegmentedControl) {
+        print(sender.selectedSegmentIndex)
         segmentedIndex = sender.selectedSegmentIndex
+        self.PoiNearbyDetailTableView.reloadData()
     }
 
 }
 
 extension PoiNearbyCell: UITableViewDataSource {
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch segmentedIndex {
         case 0:
             return nearbyPlaceList.filter { !$0.types.contains("restaurant") }.count
         case 1:
-            return nearbyPlaceList.filter { !$0.types.contains("tourist-attraction") }.count
+            return nearbyPlaceList.filter { !$0.types.contains("tourist_attraction") }.count
         default:
             break
         }
@@ -68,20 +72,26 @@ extension PoiNearbyCell: UITableViewDataSource {
                         "https://places.googleapis.com/v1/\(profileURL)/media?maxHeightPx=75&maxWidthPx=75&key=\(apiKey)"
                 )
             {
-                URLSession.shared.dataTask(with: url) { data, _, error in
-                    if let data = data {
+                Task {
+                    do {
+                        let (data, _) = try await URLSession.shared.data(from: url)
                         DispatchQueue.main.async {
                             cell.locationImageView.image = UIImage(data: data)
                         }
+                    } catch {
+                        print(error)
                     }
-                }.resume()
+                }
             }
+                let meterDistance = CLLocation(latitude: list[indexPath.row].location.latitude, longitude: list[indexPath.row].location.longitude).distance(from: CLLocation(latitude: currentLocation.latitude, longitude: currentLocation.longitude))
+                let killoDistance = meterDistance/1000
+                cell.distanceLabel.text = "\(String(format: "%.2f", killoDistance)) KM"
             return cell
         case 1:
             let cell =
                 tableView.dequeueReusableCell(withIdentifier: String(describing: POINearbyDetailCell.self))
                 as! POINearbyDetailCell
-            var list = nearbyPlaceList.filter { !$0.types.contains("tourist-attraction") }
+            var list = nearbyPlaceList.filter { !$0.types.contains("tourist_attraction") }
             guard indexPath.row < list.count else { return UITableViewCell() }
             cell.titleLabel.text = list[indexPath.row].displayName.text
             cell.detailLabel.text = list[indexPath.row].primaryTypeDisplayName?.text
@@ -92,17 +102,23 @@ extension PoiNearbyCell: UITableViewDataSource {
                         "https://places.googleapis.com/v1/\(profileURL)/media?maxHeightPx=75&maxWidthPx=75&key=\(apiKey)"
                 )
             {
-                URLSession.shared.dataTask(with: url) { data, _, error in
-                    if let data = data {
+                Task {
+                    do {
+                        let (data, _) = try await URLSession.shared.data(from: url)
                         DispatchQueue.main.async {
                             cell.locationImageView.image = UIImage(data: data)
                         }
+                    } catch {
+                        print(error)
                     }
-                }.resume()
+                }
             }
             return cell
         default:
             return UITableViewCell()
         }
     }
+}
+extension PoiNearbyCell: UITableViewDelegate {
+
 }

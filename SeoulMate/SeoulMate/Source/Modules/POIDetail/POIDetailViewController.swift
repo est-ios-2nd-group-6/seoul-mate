@@ -32,7 +32,8 @@ class POIDetailViewController: UIViewController {
         Task {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: nameLabel)
             location = TourApiManager_hs.shared.placeInfo
-            await TourApiManager_hs.shared.fetchPOIDetailNearbyPlace(latitude: 37.7937, longitude: -122.3965)
+            guard let longitude = location?.longitude,let latitude = location?.latitude else {return}
+            await TourApiManager_hs.shared.fetchPOIDetailNearbyPlace(latitude: latitude, longitude: longitude)
             self.detailTableView.reloadData()
         }
     }
@@ -50,7 +51,7 @@ extension POIDetailViewController: UITableViewDataSource {
                 tableView.dequeueReusableCell(withIdentifier: String(describing: PoiInfoCell.self)) as! PoiInfoCell
             if let location = location {
                 cell.titleLabel.text = location.title
-                cell.reviewNumberLabel.text = "\(location.rating)"
+                cell.reviewNumberLabel.text = "\(String(describing: location.rating!))"
                 cell.addressLabel.text = location.address
                 if let url = location.profileImage {
                     URLSession.shared.dataTask(with: url) { data, _, error in
@@ -67,6 +68,9 @@ extension POIDetailViewController: UITableViewDataSource {
             let cell =
                 tableView.dequeueReusableCell(withIdentifier: String(describing: PoiNearbyCell.self)) as! PoiNearbyCell
                 cell.nearbyPlaceList = TourApiManager_hs.shared.nearybyPlaceList
+                if let longitude = location?.longitude,let latitude = location?.latitude {
+                    cell.currentLocation = CurrentLocation(longitude: longitude, latitude: latitude)
+                }
             return cell
         }
     }

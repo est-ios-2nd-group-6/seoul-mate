@@ -16,6 +16,7 @@ struct SearchResult {
     var photos: [TourApiGoogleResponse.Photo]?
     var primaryTypeDisplayName: TourApiGoogleResponse.PrimaryTypeDisplayName?
     var address: String?
+    var location: TourApiGoogleResponse.Location
     struct DisplayName: Codable {
         var text: String
         var languageCode: String
@@ -24,21 +25,25 @@ struct SearchResult {
         var text: String
         var lagnuageCode: String
     }
-
 }
 
 struct PlaceInfo {
     var id: String
     var title: String
-    var rating: Double
+    var rating: Double?
     var address: String
     var profileImage: URL?
     var photosName: String?
     var width: Int?
     var height: Int?
-    var longgitude: Double?
+    var longitude: Double?
     var latitude: Double?
     var types: [String]?
+}
+
+struct CurrentLocation {
+    var longitude: Double
+    var latitude: Double
 }
 
 class TourApiManager_hs {
@@ -71,7 +76,7 @@ class TourApiManager_hs {
         request.httpMethod = "POST"
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
         request.setValue(
-            "places.id,places.displayName,places.types,places.photos,places.primaryTypeDisplayName,places.rating",
+            "places.id,places.displayName,places.types,places.photos,places.primaryTypeDisplayName,places.rating,places.location",
             forHTTPHeaderField: "X-Goog-FieldMask"
         )
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -96,11 +101,12 @@ class TourApiManager_hs {
                 let result = SearchResult(
                     id: value.id,
                     title: value.displayName.text,
-                    rating: value.rating,
+                    rating: value.rating ?? 0,
                     category: value.types,
                     profileImage: value.photos.first?.name,
                     photos: value.photos,
-                    primaryTypeDisplayName: value.primaryTypeDisplayName
+                    primaryTypeDisplayName: value.primaryTypeDisplayName,
+                    location: value.location
                 )
                 searchByTitleResultList.append(result)
             }
@@ -127,7 +133,7 @@ class TourApiManager_hs {
         guard let googleApiKey = Bundle.main.googleApiKey else { return }
 
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
-        request.setValue("id,formattedAddress,rating,displayName,photos", forHTTPHeaderField: "X-Goog-FieldMask")
+        request.setValue("id,formattedAddress,rating,displayName,photos,location", forHTTPHeaderField: "X-Goog-FieldMask")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         do {
@@ -145,7 +151,9 @@ class TourApiManager_hs {
                 id: json.id,
                 title: json.displayName.text,
                 rating: json.rating,
-                address: json.formattedAddress
+                address: json.formattedAddress,
+                longitude: json.location.longitude,
+                latitude: json.location.latitude,
             )
             guard
                 let url = URL(
@@ -175,7 +183,7 @@ class TourApiManager_hs {
         var request = URLRequest(url: url)
         guard let googleApiKey = Bundle.main.googleApiKey else { return }
         request.httpMethod = "POST"
-        let requestBody = TourNearybyAPIGoogleRequest(latitude: 37.581890, longitude: 127.054080)
+        let requestBody = TourNearybyAPIGoogleRequest(latitude: latitude, longitude: longitude)
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
         request.setValue(
             "places.id,places.formattedAddress,places.rating,places.displayName,places.primaryTypeDisplayName,places.location,places.photos,places.types",

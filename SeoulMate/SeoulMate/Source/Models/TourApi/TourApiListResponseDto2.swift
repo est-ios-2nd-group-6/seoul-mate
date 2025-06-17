@@ -45,21 +45,16 @@ struct TourApiGoogleResponse: Codable {
         var displayName:DisplayName
         var primaryTypeDisplayName:PrimaryTypeDisplayName?
         var photos:[Photo]
-        var rating:Double
+        var rating:Double?
+        var location:Location
     }
     struct Photo: Codable {
         var name: String
         var widthPx: Int
         var heightPx: Int
-//        var authorAttributions:[Author]
         var flagContentUri: String
         var googleMapsUri: String
     }
-//    struct Author: Codable {
-//        var displayName: String
-//        var uri: String
-//        var photoUri: String
-//    }
     struct DisplayName: Codable {
         var text: String
         var languageCode: String
@@ -67,6 +62,10 @@ struct TourApiGoogleResponse: Codable {
     struct PrimaryTypeDisplayName: Codable {
         var text: String
         var languageCode: String
+    }
+    struct Location: Codable {
+        let latitude: Double
+        let longitude: Double
     }
 }
 
@@ -76,6 +75,7 @@ struct TourAPIGoogleResponseShort: Codable {
     var rating:Double
     var displayName:DisplayName
     var photos:[Photo]
+    var location:Location
     struct DisplayName: Codable {
         var text: String
         var languageCode: String
@@ -84,6 +84,10 @@ struct TourAPIGoogleResponseShort: Codable {
         var name:String
         var widthPx:Int
         var heightPx:Int
+    }
+    struct Location: Codable {
+        let latitude: Double
+        let longitude: Double
     }
 }
 

@@ -27,7 +27,7 @@ var dummyData: [TempTour] = [
     TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
     TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
     TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
-    TempTour(name: "옥수역", latitude: 37.540429916, longitude: 127.018709461),
+    TempTour(name: "옥수역", latitude: 37.468502, longitude: 126.906699),
 ]
 
 struct RouteData {
@@ -96,8 +96,8 @@ struct RouteData {
                 }
             }
 
-            let departureName: String?
-            let arrivalName: String?
+            var departureName: String?
+            var arrivalName: String?
 
             let vehicle: Vehicle?
             let stopCount: Int?
@@ -116,11 +116,24 @@ struct RouteData {
                     if let stopCount {
                         text += " (\(stopCount)개 역 이동)"
                     }
+                } else if vehicle?.type == "BUS" {
+                    guard let name = vehicle?.name else { return nil }
 
-                    return text
+                    text = "\(name)\n약 \(Int(round(Double(duration / 60))))분"
+
+                    if let stopCount {
+                        text += " (정류장 \(stopCount)개)"
+                    }
+                } else {
+					text = "도보\n"
+                    text += "\(Int(round(Double(duration / 60))))분, \(distance) 미터\n"
+
+                    if let instructions {
+                        text += instructions.joined(separator: "\n")
+                    }
                 }
 
-                return nil
+                return text
             }
 
             init?(step: Step) {
@@ -186,21 +199,21 @@ struct RouteData {
             self.detail = detail
         }
 
-//        init(step: Step) {
-//            var polyline: [RouteData.Coordinate] = []
-//
-//
-//
-//            for coordinate in step.polyline.geoJSONLinestring.coordinates {
-//                let latitude: Double = coordinate[1]
-//                let longitude: Double = coordinate[0]
-//
-//                polyline.append(.init(latitude: latitude, longitude: longitude))
-//            }
-//
-//            self.polyline = polyline
-//            self.travelMode = RouteOption(rawValue: step.travelMode)
-//        }
+        //        init(step: Step) {
+        //            var polyline: [RouteData.Coordinate] = []
+        //
+        //
+        //
+        //            for coordinate in step.polyline.geoJSONLinestring.coordinates {
+        //                let latitude: Double = coordinate[1]
+        //                let longitude: Double = coordinate[0]
+        //
+        //                polyline.append(.init(latitude: latitude, longitude: longitude))
+        //            }
+        //
+        //            self.polyline = polyline
+        //            self.travelMode = RouteOption(rawValue: step.travelMode)
+        //        }
 
     }
 
@@ -277,8 +290,14 @@ class RouteMapViewController: UIViewController {
 
             if selectedRouteOption == .transit {
                 transitDetailWrapperViewHeightConstraint.constant = CGFloat(transitDetailWrapperViewHeight)
+
+                interStackView.isHidden = true
+                interToEndArrow.isHidden = true
             } else {
                 transitDetailWrapperViewHeightConstraint.constant = 0
+
+                interStackView.isHidden = false
+                interToEndArrow.isHidden = false
             }
 
             UIView.animate(withDuration: 0.3) { [weak self] in
@@ -367,6 +386,7 @@ class RouteMapViewController: UIViewController {
         setupLayout()
         setupMapView()
         setupTableViews()
+        updateIntermediatesInfo()
 
         moveCameraToFitBounds()
 
@@ -375,24 +395,31 @@ class RouteMapViewController: UIViewController {
 
     override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
-
-        updateIntermediatesInfo()
     }
 
-    @objc func toggleRouteInfo() {
+    @objc func showRouteInfoTableView() {
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
 
-            self.routeInfoTableView.isHidden.toggle()
-            self.routeInfoStackView.isHidden.toggle()
+            self.routeInfoTableView.isHidden = false
+            self.routeInfoStackView.isHidden = true
 
-            if self.routeInfoStackView.isHidden == true {
-                self.wrapperViewHeightConstraint.constant = routeInfoTableView.contentSize.height + 8
-                self.tableViewHeightConstraint.constant = routeInfoTableView.contentSize.height
-            } else {
-                self.wrapperViewHeightConstraint.constant = 50
-                self.tableViewHeightConstraint.constant = 0 // TableView가 숨겨질 때 높이도 0으로 설정
-            }
+            self.wrapperViewHeightConstraint.constant = routeInfoTableView.contentSize.height + 8
+            self.tableViewHeightConstraint.constant = routeInfoTableView.contentSize.height
+
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    @objc func showRouteInfoStackView() {
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self else { return }
+
+            self.routeInfoTableView.isHidden = true
+            self.routeInfoStackView.isHidden = false
+
+            self.wrapperViewHeightConstraint.constant = 50
+            self.tableViewHeightConstraint.constant = 0 // TableView가 숨겨질 때 높이도 0으로 설정
 
             self.view.layoutIfNeeded()
         }
@@ -441,8 +468,17 @@ extension RouteMapViewController {
         transitDetailTableView.showsVerticalScrollIndicator = false
         transitDetailTableView.showsHorizontalScrollIndicator = false
 
-        let routeInfoTabGesture = UITapGestureRecognizer(target: self, action: #selector(toggleRouteInfo))
-        routeInfoWrapperView.addGestureRecognizer(routeInfoTabGesture)
+        let showInfoTableTapGesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(showRouteInfoTableView)
+        )
+        routeInfoStackView.addGestureRecognizer(showInfoTableTapGesture)
+
+        let showInfoStackTapGesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(showRouteInfoStackView)
+        )
+        routeInfoTableView.addGestureRecognizer(showInfoStackTapGesture)
     }
 
     func updateIntermediatesInfo() {
@@ -554,7 +590,7 @@ extension RouteMapViewController {
 
             var acc: RouteData.Path? = nil
 
-            for step in steps {
+            for (index, step) in steps.enumerated() {
                 if step.distanceMeters == nil && step.staticDuration == "0s" {
                     continue
                 }
@@ -603,13 +639,21 @@ extension RouteMapViewController {
                             polyline: polyline,
                             travelMode: RouteOption(rawValue: step.travelMode),
                             detail: TransitDetailInfo(step: step))
+
+                        if index == 0, let departureName = dummyData.first?.name {
+                            acc?.detail?.departureName = departureName
+                        }
+
+                        if index == steps.count - 1, let arrivalName = dummyData.last?.name {
+                            acc?.detail?.arrivalName = arrivalName
+
+                            routeData.paths.append(acc!)
+                        }
                     }
                 }
             }
 
             routeCache[.transit, default: []].append(routeData)
-
-            transitDetailTableView.reloadData()
         }
     }
 
@@ -799,30 +843,37 @@ extension RouteMapViewController: UITableViewDataSource {
 
             return cell
         } else if tableView == transitDetailTableView {
-            let path = routeCache[selectedRouteOption!]?[selectedSearchOption].paths[indexPath.row]
-
-            if path?.travelMode == .transit {
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: TransitDetailTableViewCell.identifier, for: indexPath) as? TransitDetailTableViewCell else { return UITableViewCell() }
-
-                let isSubway = path?.detail?.vehicle?.type == "SUBWAY"
-
-                cell.departureTitleLabel.text = path?.detail?.departureName
-
-                cell.segueLineView.backgroundColor = path?.lineColor
-
-                cell.descriptionLabel.text = path?.detail?.descriptionText
-
-                cell.arrivalTitleLabel.text = path?.detail?.arrivalName
-
-                return cell
-            } else {
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: TransitDetailSegueTableViewCell.identifier, for: indexPath) as? TransitDetailSegueTableViewCell else { return UITableViewCell() }
-
-                cell.transitLineView.backgroundColor = path?.lineColor
-                cell.detailLabel.text = path?.detail?.instructions?.joined(separator: "\n")
-
-                return cell
+            guard let selectedRouteOption, selectedRouteOption == .transit else {
+                return UITableViewCell()
             }
+
+            let path = routeCache[selectedRouteOption]?[selectedSearchOption].paths[indexPath.row]
+
+            print(path?.detail?.departureName)
+            print(path?.detail?.arrivalName)
+            print("--------------")
+
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: TransitDetailTableViewCell.identifier, for: indexPath) as? TransitDetailTableViewCell else { return UITableViewCell() }
+
+            if let departureName = path?.detail?.departureName {
+                cell.departureTitleLabel.text = departureName
+                cell.departureStackView.isHidden = false
+            } else {
+                cell.departureStackView.isHidden = true
+            }
+
+            cell.segueLineView.backgroundColor = path?.lineColor
+
+            cell.descriptionLabel.text = path?.detail?.descriptionText
+
+            if let arrivalName = path?.detail?.arrivalName {
+                cell.arrivalTitleLabel.text = arrivalName
+                cell.arrivalStackView.isHidden = false
+            } else {
+                cell.arrivalStackView.isHidden = true
+            }
+
+            return cell
         } else {
             return UITableViewCell()
         }

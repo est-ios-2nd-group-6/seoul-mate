@@ -153,7 +153,6 @@ class MapViewController: UIViewController {
     private let shortFormatter: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "ko_KR")
-        // 7.17 형태로
         f.dateFormat = "M.d"
         return f
     }()
@@ -161,24 +160,24 @@ class MapViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        guard let tour = tour else { return }
         fetchedResultsController = {
-                let request: NSFetchRequest<POI> = POI.fetchRequest()
-                request.predicate = NSPredicate(format: "schedule.tour == %@", tour!)
-                request.sortDescriptors = [
-                  NSSortDescriptor(key: "schedule.date", ascending: true),
-                  NSSortDescriptor(key: "name", ascending: true)
-                ]
-                let frc = NSFetchedResultsController(
-                  fetchRequest: request,
-                  managedObjectContext: context,
-                  sectionNameKeyPath: "schedule.date",
-                  cacheName: nil
-                )
-                frc.delegate = self
-                return frc
-            }()
-
+            let request: NSFetchRequest<POI> = POI.fetchRequest()
+            request.predicate = NSPredicate(format: "schedule.tour == %@", tour)
+            request.sortDescriptors = [
+                NSSortDescriptor(key: "schedule.date", ascending: true),
+                NSSortDescriptor(key: "name", ascending: true)
+            ]
+            let frc = NSFetchedResultsController(
+                fetchRequest: request,
+                managedObjectContext: context,
+                sectionNameKeyPath: "schedule.date",
+                cacheName: nil
+            )
+            frc.delegate = self
+            return frc
+        }()
+        
         do {
             try fetchedResultsController.performFetch()
         } catch {
@@ -198,8 +197,6 @@ class MapViewController: UIViewController {
         
         
         debugPrintFRC()
-
-
         
         myMapView.showLocationButton = true
         myMapView.showCompass = true

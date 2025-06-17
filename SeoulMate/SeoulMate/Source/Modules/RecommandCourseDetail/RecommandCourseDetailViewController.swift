@@ -7,6 +7,14 @@
 
 import UIKit
 
+struct fetchGooglePlaceNameResponoseDto: Codable {
+    struct Place: Codable {
+        let name: String
+    }
+
+    let places: [Place]
+}
+
 class RecommandCourseDetailViewController: UIViewController {
     @IBOutlet weak var thumbnailImageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -68,8 +76,6 @@ class RecommandCourseDetailViewController: UIViewController {
                     let commonDetailInfo = await TourApiManager.shared.fetchCommonDetailInfo(courseSubItem.subcontentid)
 
                     var place = RecommandCoursePlace(courseSubItem: courseSubItem)
-
-//                    await TourApiManager_hs.shared.fetchGooglePlaceAPI(keyword: place.name)
 
                     place.description = place.description
                         .replacingOccurrences(of: "&lt;", with: "<")

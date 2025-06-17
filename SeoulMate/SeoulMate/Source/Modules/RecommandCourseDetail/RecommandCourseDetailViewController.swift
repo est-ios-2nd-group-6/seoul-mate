@@ -7,18 +7,47 @@
 
 import UIKit
 
+struct fetchGooglePlaceNameResponoseDto: Codable {
+    struct Place: Codable {
+        let name: String
+    }
+
+    let places: [Place]
+}
+
 class RecommandCourseDetailViewController: UIViewController {
     @IBOutlet weak var thumbnailImageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var courseListTableView: UITableView!
-
 
     @IBAction func back(_ sender: Any) {
         navigationController?.popViewController(animated: true)
     }
 
     @IBAction func addToSchedule(_ sender: Any) {
-		present(AddToScheduleSheetViewController(), animated: true)
+        Task {
+//            var pois: [POI] = []
+//
+//            for place in places {
+//                let name = await fetchGooglePlaceName(textQuery: place.name)
+//
+//                let poi = POI(context: CoreDataManager.shared.context)
+//                poi.name = place.name
+//                poi.placeID = name
+//
+//                pois.append(poi)
+//            }
+
+            let tours = await CoreDataManager.shared.fetchToursAsync()
+
+            let pois = tours[0].pois?.allObjects as! [POI]
+
+            let sheet = AddToScheduleSheetViewController()
+            sheet.pois = pois
+
+            present(sheet, animated: true)
+        }
+
     }
     
     var course: RecommandCourse?
@@ -28,9 +57,10 @@ class RecommandCourseDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.tabBarController?.tabBar.isHidden = true
+
         let cell = UINib(nibName: "RecommandCourseItemListTableViewCell", bundle: nil)
         courseListTableView.register(cell, forCellReuseIdentifier: "RecommandCourseItemListTableViewCell")
-
 
         Task {
             if let url = course?.firstImageUrl {
@@ -74,6 +104,63 @@ class RecommandCourseDetailViewController: UIViewController {
         titleLabel.text = course?.title
     }
 
+}
+
+extension RecommandCourseDetailViewController {
+    func fetchGooglePlaceName(textQuery: String) async -> String? {
+        let baseUrl: String = "https://places.googleapis.com/v1/places:searchText"
+
+        var queryItems: [URLQueryItem]
+
+        queryItems = [
+            URLQueryItem(name: "textQuery", value: textQuery),
+            URLQueryItem(name: "languageCode", value: "ko")
+        ]
+
+        guard var url = URL(string: baseUrl) else {
+            return nil
+        }
+
+        url.append(queryItems: queryItems)
+
+        var request = URLRequest(url: url)
+
+        guard let googleApiKey = Bundle.main.googleApiKey else {
+            return nil
+        }
+
+        let fieldMasks: [String] = [
+            "places.name",
+        ]
+
+        request.httpMethod = "POST"
+
+        request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
+        request.setValue(Bundle.main.bundleIdentifier, forHTTPHeaderField: "X-Ios-Bundle-Identifier")
+        request.setValue(fieldMasks.joined(separator: ","), forHTTPHeaderField: "X-Goog-FieldMask")
+
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        do {
+            let (data, urlResponse) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = urlResponse as? HTTPURLResponse else {
+                return nil
+            }
+
+            guard 200...299 ~= httpResponse.statusCode else {
+                return nil
+            }
+
+            let json = try JSONDecoder().decode(fetchGooglePlaceNameResponoseDto.self, from: data)
+
+            return json.places[0].name
+        } catch {
+            print("Fetcing is Failed!!", error, separator: "\n")
+
+            return nil
+        }
+    }
 }
 
 extension RecommandCourseDetailViewController: UITableViewDataSource {

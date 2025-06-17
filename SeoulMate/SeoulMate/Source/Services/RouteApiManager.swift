@@ -7,17 +7,19 @@
 
 import Foundation
 
-enum RouteOption: Hashable {
-    case drive(searchOption: SearchOption?)
-    case walk(searchOption: SearchOption?)
-    case transit
+enum RouteOption: String, Hashable, CaseIterable {
+    case drive = "DRIVE"
+    case walk = "WALK"
+    case transit = "TRANSIT"
 
-    var title: String {
+    var searchOptions: [SearchOption]? {
         switch self {
-        case .drive(let searchOption), .walk(let searchOption):
-            return searchOption?.title ?? ""
+        case .drive:
+            return [.recommand, .fastest, .shortest]
+        case .walk:
+            return [.recommand, .preferBoulevard, .avoidStair]
         case .transit:
-            return ""
+            return nil
         }
     }
 }
@@ -42,7 +44,7 @@ class RouteApiManager {
         return URL(string: baseUrl)
     }
 
-    public func calcRouteTMap(type: RouteOption, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
+    public func calcRouteByTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
         guard let url = getApiUrl(type: type) else {
             fatalError("URL Initialization is Failed")
         }
@@ -57,7 +59,8 @@ class RouteApiManager {
             startName: "test",
             endX: endPoint.longitude,
             endY: endPoint.latitude,
-            endName: "test"
+            endName: "test",
+            trafficInfo: "Y",
         )
 
         if let intermediates {
@@ -66,13 +69,8 @@ class RouteApiManager {
             routeReqDto.passList = passList
         }
 
-        switch type {
-        case .drive(let searchOption), .walk(let searchOption):
-            if let searchOption {
-                routeReqDto.searchOption = searchOption
-            }
-        case .transit:
-            break
+        if let searchOption {
+            routeReqDto.searchOption = searchOption
         }
 
         do {
@@ -81,16 +79,12 @@ class RouteApiManager {
             request.httpMethod = "POST"
             request.httpBody = try JSONEncoder().encode(routeReqDto)
 
-            //            print(String(data: request.httpBody ?? Data(), encoding: .utf8))
-
             request.addValue(tMapRoutesApiKey, forHTTPHeaderField: "appKey")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
             let session = URLSession.shared
 
             let (data, _) = try await session.data(for: request)
-
-            //            print(String(data: data, encoding: .utf8))
 
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
@@ -105,7 +99,7 @@ class RouteApiManager {
         return nil
     }
 
-    public func calcRouteByTransit(startPoint: Location, endPoint: Location) async -> GoogleRoutesApiResponseDto? {
+    public func calcRouteTransitByGoogle(startPoint: Location, endPoint: Location) async -> GoogleRoutesApiResponseDto? {
         guard let url = URL(string: "https://routes.googleapis.com/directions/v2:computeRoutes") else {
             fatalError("URL Initialization is Failed")
         }
@@ -120,7 +114,8 @@ class RouteApiManager {
         let routeReqDto = GoogleRoutesApiRequestDto(
             origin: origin,
             destination: destination,
-            intermediates: nil
+            intermediates: nil,
+            computeAlternativeRoutes: false
         )
 
         do {
@@ -131,7 +126,7 @@ class RouteApiManager {
 
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue(googleRoutesApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
-            request.addValue("*", forHTTPHeaderField: "X-Goog-FieldMask")
+            request.addValue("routes.distanceMeters,routes.duration,routes.legs.startLocation,routes.legs.endLocation,routes.legs.steps", forHTTPHeaderField: "X-Goog-FieldMask")
             request.addValue(Bundle.main.bundleIdentifier ?? "", forHTTPHeaderField: "X-Ios-Bundle-Identifier")
 
             let session = URLSession.shared

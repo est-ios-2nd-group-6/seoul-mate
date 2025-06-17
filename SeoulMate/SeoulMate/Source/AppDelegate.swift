@@ -8,6 +8,7 @@
 import UIKit
 import CoreData
 import GooglePlaces
+import NMapsMap
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         guard let googleAPIKey = Bundle.main.googleApiKey else { return false }
         GMSPlacesClient.provideAPIKey(googleAPIKey)
+
+        if let naverMapApiKey = Bundle.main.naverMapApiKey {
+            NMFAuthManager.shared().ncpKeyId = naverMapApiKey
+        }
+
         return true
     }
 

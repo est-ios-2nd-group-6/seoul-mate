@@ -50,6 +50,7 @@ class TourApiManager {
                 URLQueryItem(name: "mapX", value: String(x)),
                 URLQueryItem(name: "mapY", value: String(y)),
                 URLQueryItem(name: "radius", value: "20000"), // 반경 20km(20000m)
+                URLQueryItem(name: "contentTypeId", value: "25"),
             ]
         }
 
@@ -98,7 +99,12 @@ class TourApiManager {
             	let image = await ImageManager.shared.getImage(course.firstimage)
                 rcmCourse.image = image
 
-                rcmCourseListByArea.append(rcmCourse)
+                if by == .area {
+                    rcmCourseListByArea.append(rcmCourse)
+                } else {
+                    rcmCourseListByLocation.append(rcmCourse)
+                }
+
             }
 
         } catch {

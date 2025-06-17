@@ -22,6 +22,7 @@ struct Feature: Codable {
 struct Geometry: Codable {
     let type: GeometryType
     let coordinates: [Coordinate]
+    let traffic: [[Int]]?
 }
 
 enum Coordinate: Codable {
@@ -77,9 +78,11 @@ struct Properties: Codable {
 enum PointType: String, Codable {
     case ep = "EP"
     case e = "E"
+    case endLocation = "endLocation"
 
     case sp = "SP"
     case s = "S"
+    case startLocation = "startLocation"
 
     case gp = "GP"
     case n = "N"

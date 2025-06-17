@@ -1,22 +1,21 @@
 //
-//  TransitDetailTableViewCell.swift
+//  TransitDetailPointTableViewCell.swift
 //  SeoulMate
 //
-//  Created by JuHyeon Seong on 6/15/25.
+//  Created by JuHyeon Seong on 6/17/25.
 //
 
 import UIKit
 
 class TransitDetailTableViewCell: UITableViewCell {
-
     @IBOutlet weak var circleView: UIView!
-    @IBOutlet weak var transitLineView: UIView!
-
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var detailLabel: UILabel!
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+
+        circleView.layer.cornerRadius = circleView.frame.height / 2
+        circleView.layer.borderColor = UIColor.label.cgColor
+        circleView.layer.borderWidth = 2
     }
 }

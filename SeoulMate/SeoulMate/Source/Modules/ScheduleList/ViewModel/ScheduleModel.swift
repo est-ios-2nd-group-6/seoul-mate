@@ -77,6 +77,24 @@ final class ScheduleModel: ObservableObject {
         return url
     }
 
+    func thumbnailPOI(for tour: Tour) -> POI? {
+        guard
+            let scheduleSet = tour.days as? Set<Schedule>,
+            !scheduleSet.isEmpty
+        else { return nil }
+
+        let sortedSchedules = scheduleSet.sorted {
+            ($0.date ?? .distantPast) < ($1.date ?? .distantPast)
+        }
+
+        for schedule in sortedSchedules {
+            if let pois = schedule.pois?.array as? [POI], let first = pois.first {
+                return first
+            }
+        }
+        return nil
+    }
+    
     func locationCountText(for tour: Tour) -> String {
         let count = (tour.pois as? Set<POI>)?.count ?? 0
         return "\(count)개의 장소"

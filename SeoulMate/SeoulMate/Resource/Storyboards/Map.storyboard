@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c0f-KR-nlA">
-                                <rect key="frame" x="0.0" y="211" width="393" height="573"/>
+                                <rect key="frame" x="0.0" y="167" width="393" height="617"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="w92-Da-qqP">
                                         <rect key="frame" x="0.0" y="0.0" width="393" height="703.33333333333337"/>
@@ -54,21 +54,34 @@
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XGE-ut-URq">
-                                                                        <rect key="frame" x="327.33333333333331" y="5" width="53.666666666666686" height="34.333333333333336"/>
-                                                                        <state key="normal" title="Button"/>
-                                                                        <buttonConfiguration key="configuration" style="filled" title="편집"/>
-                                                                        <connections>
-                                                                            <action selector="editAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="R8W-xQ-fqz"/>
-                                                                        </connections>
-                                                                    </button>
+                                                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="FeT-eU-SW0">
+                                                                        <rect key="frame" x="265.66666666666669" y="5" width="115.33333333333331" height="34.333333333333336"/>
+                                                                        <subviews>
+                                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G74-gT-X09">
+                                                                                <rect key="frame" x="0.0" y="0.0" width="53.666666666666664" height="34.333333333333336"/>
+                                                                                <state key="normal" title="Button"/>
+                                                                                <buttonConfiguration key="configuration" style="filled" title="저장"/>
+                                                                                <connections>
+                                                                                    <action selector="saveAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Msf-u1-O6Z"/>
+                                                                                </connections>
+                                                                            </button>
+                                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XGE-ut-URq">
+                                                                                <rect key="frame" x="61.666666666666629" y="0.0" width="53.666666666666657" height="34.333333333333336"/>
+                                                                                <state key="normal" title="Button"/>
+                                                                                <buttonConfiguration key="configuration" style="filled" title="편집"/>
+                                                                                <connections>
+                                                                                    <action selector="editAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="R8W-xQ-fqz"/>
+                                                                                </connections>
+                                                                            </button>
+                                                                        </subviews>
+                                                                    </stackView>
                                                                 </subviews>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="44" id="D2t-g7-GHf"/>
                                                                     <constraint firstItem="Rs5-kG-eEf" firstAttribute="leading" secondItem="rBL-y5-hhk" secondAttribute="leading" constant="12" id="JVu-yG-gHo"/>
                                                                     <constraint firstItem="Rs5-kG-eEf" firstAttribute="centerY" secondItem="rBL-y5-hhk" secondAttribute="centerY" id="Zes-Sw-c0s"/>
-                                                                    <constraint firstAttribute="trailing" secondItem="XGE-ut-URq" secondAttribute="trailing" constant="12" id="frJ-h4-9ND"/>
-                                                                    <constraint firstItem="XGE-ut-URq" firstAttribute="centerY" secondItem="rBL-y5-hhk" secondAttribute="centerY" id="k8r-sg-osf"/>
+                                                                    <constraint firstItem="FeT-eU-SW0" firstAttribute="centerY" secondItem="Rs5-kG-eEf" secondAttribute="centerY" constant="3.5527136788005009e-15" id="hbb-yw-948"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="FeT-eU-SW0" secondAttribute="trailing" constant="12" id="nDd-iq-X5c"/>
                                                                 </constraints>
                                                             </view>
                                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="E2f-xU-tcP">
@@ -142,6 +155,9 @@
                                                                                     <rect key="frame" x="153" y="5.3333333333333321" width="87.333333333333314" height="34.333333333333343"/>
                                                                                     <state key="normal" title="Button"/>
                                                                                     <buttonConfiguration key="configuration" style="filled" title="장소 추가"/>
+                                                                                    <connections>
+                                                                                        <action selector="addPlaceAction:" destination="V1e-Sr-7MG" eventType="touchUpInside" id="dmG-it-NzD"/>
+                                                                                    </connections>
                                                                                 </button>
                                                                             </subviews>
                                                                             <constraints>
@@ -149,6 +165,9 @@
                                                                                 <constraint firstItem="yfQ-Yi-J11" firstAttribute="centerY" secondItem="uIb-Wp-gWl" secondAttribute="centerY" id="gY8-df-j2z"/>
                                                                             </constraints>
                                                                         </tableViewCellContentView>
+                                                                        <connections>
+                                                                            <outlet property="addButton" destination="yfQ-Yi-J11" id="E2o-cg-GSe"/>
+                                                                        </connections>
                                                                     </tableViewCell>
                                                                 </prototypes>
                                                             </tableView>
@@ -178,7 +197,7 @@
                                 <viewLayoutGuide key="frameLayoutGuide" id="dqr-xu-OxY"/>
                             </scrollView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Im6-hH-czj">
-                                <rect key="frame" x="20" y="172" width="63" height="36"/>
+                                <rect key="frame" x="20" y="128" width="63" height="36"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="여행 제목" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gCG-5x-QSd">
                                         <rect key="frame" x="0.0" y="0.0" width="63" height="20.333333333333332"/>
@@ -209,7 +228,9 @@
                     <navigationItem key="navigationItem" id="3ch-cS-BIy"/>
                     <connections>
                         <outlet property="daysLabel" destination="Rs5-kG-eEf" id="E8T-zH-gMh"/>
+                        <outlet property="editButton" destination="XGE-ut-URq" id="8FO-iK-Xtk"/>
                         <outlet property="myMapView" destination="RPr-3m-7PX" id="E1F-NA-ZcG"/>
+                        <outlet property="saveButton" destination="G74-gT-X09" id="BFV-5H-Qy7"/>
                         <outlet property="stackView" destination="wjN-OJ-MLt" id="rQx-wb-izf"/>
                         <outlet property="tableView" destination="E2f-xU-tcP" id="qIV-Yg-ce9"/>
                         <outlet property="travelPeriodLabel" destination="EBV-NG-GMX" id="OLQ-WY-FRd"/>
@@ -219,7 +240,17 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2308" y="-2"/>
+            <point key="canvasLocation" x="2307.6335877862593" y="-2.1126760563380285"/>
+        </scene>
+        <!--Search-->
+        <scene sceneID="QsW-FY-kw2">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Search" id="eQp-y4-GLI" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="ihf-6j-7Oj"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sgX-8w-5Qp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3240" y="-2"/>
         </scene>
         <!--Detail Sheet View Controller-->
         <scene sceneID="Zy6-kn-bpz">
@@ -306,15 +337,14 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fDw-4P-Rcs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3425" y="-2"/>
+            <point key="canvasLocation" x="2308" y="713"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="SsI-va-5Ro">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="t5S-7C-uac" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="t5S-7C-uac" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Hog-gO-uvC">
-                        <rect key="frame" x="0.0" y="118" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -324,7 +354,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aar-J6-aCz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1439" y="8"/>
+            <point key="canvasLocation" x="1439" y="-2"/>
         </scene>
     </scenes>
     <resources>

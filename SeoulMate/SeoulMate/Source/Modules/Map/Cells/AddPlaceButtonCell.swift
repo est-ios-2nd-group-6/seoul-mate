@@ -7,8 +7,18 @@
 
 import UIKit
 
-class AddPlaceButtonCell: UITableViewCell {
+protocol AddPlaceButtonCellDelegate: AnyObject {
+    func addPlace(_ cell: AddPlaceButtonCell)
+}
 
+class AddPlaceButtonCell: UITableViewCell {
+    weak var delegate: AddPlaceButtonCellDelegate?
+    
+    @IBOutlet weak var addButton: UIButton!
+    @IBAction func addPlaceAction(_ sender: Any) {
+        delegate?.addPlace(self)
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

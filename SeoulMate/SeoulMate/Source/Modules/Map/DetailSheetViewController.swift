@@ -7,7 +7,6 @@
 
 import UIKit
 protocol DetailSheetDelegate: AnyObject {
-    /// 사용자가 '이동' 버튼을 눌렀을 때 호출됩니다.
     func detailSheetDidTapNavigate(_ sheet: DetailSheetViewController)
 }
 

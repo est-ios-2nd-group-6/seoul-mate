@@ -51,7 +51,7 @@ extension POIDetailViewController: UITableViewDataSource {
                 tableView.dequeueReusableCell(withIdentifier: String(describing: PoiInfoCell.self)) as! PoiInfoCell
             if let location = location {
                 cell.titleLabel.text = location.title
-                cell.reviewNumberLabel.text = "\(String(describing: location.rating!))"
+                cell.reviewNumberLabel.text = "\(String(describing: location.rating ?? 0))"
                 cell.addressLabel.text = location.address
                 if let url = location.profileImage {
                     URLSession.shared.dataTask(with: url) { data, _, error in

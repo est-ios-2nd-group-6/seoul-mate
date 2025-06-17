@@ -109,39 +109,8 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="0.0" reuseIdentifier="SearchResultTableHeaderCell" rowHeight="35" id="8sD-mc-7XE" customClass="SearchResultTableHeaderCell" customModule="SeoulMate" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="50" width="363" height="35"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="8sD-mc-7XE" id="QKR-O2-2b5">
-                                            <rect key="frame" x="0.0" y="0.0" width="363" height="35"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="최근 검색" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MxT-Oe-Scg">
-                                                    <rect key="frame" x="0.0" y="4.3333333333333339" width="81" height="26.333333333333329"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3rn-pH-DOD">
-                                                    <rect key="frame" x="287.66666666666669" y="0.33333333333333215" width="87.333333333333314" height="34.333333333333343"/>
-                                                    <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <state key="normal" title="Button"/>
-                                                    <buttonConfiguration key="configuration" style="plain" title="모두 삭제"/>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="MxT-Oe-Scg" firstAttribute="centerY" secondItem="QKR-O2-2b5" secondAttribute="centerY" id="RFD-Sf-JGN"/>
-                                                <constraint firstItem="3rn-pH-DOD" firstAttribute="centerY" secondItem="QKR-O2-2b5" secondAttribute="centerY" id="WXM-k0-ggF"/>
-                                                <constraint firstAttribute="trailing" secondItem="3rn-pH-DOD" secondAttribute="trailing" constant="-12" id="qwg-xq-wnK"/>
-                                                <constraint firstItem="MxT-Oe-Scg" firstAttribute="leading" secondItem="QKR-O2-2b5" secondAttribute="leading" id="vqY-Yx-i7U"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="deleteAllButton" destination="3rn-pH-DOD" id="rR1-bu-DOu"/>
-                                        </connections>
-                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="0.0" reuseIdentifier="SearchResultTableViewCell" rowHeight="100" translatesAutoresizingMaskIntoConstraints="NO" id="zOv-uO-LSI" customClass="SearchResultTableViewCell" customModule="SeoulMate" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="85" width="363" height="100"/>
+                                        <rect key="frame" x="0.0" y="50" width="363" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zOv-uO-LSI" id="DMl-Ii-HxI">
                                             <rect key="frame" x="0.0" y="0.0" width="363" height="100"/>
@@ -205,7 +174,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="0.0" reuseIdentifier="SearchViewFromMapTableViewCell" rowHeight="100" id="I3C-Va-tyn" customClass="SearchViewFromMapTableViewCell" customModule="SeoulMate" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="185" width="363" height="100"/>
+                                        <rect key="frame" x="0.0" y="150" width="363" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="I3C-Va-tyn" id="Ekf-bE-7by">
                                             <rect key="frame" x="0.0" y="0.0" width="363" height="100"/>

@@ -1,5 +1,5 @@
 //
-//  TransitDetailPointTableViewCell.swift
+//  TransitDetailTableViewCell.swift
 //  SeoulMate
 //
 //  Created by JuHyeon Seong on 6/17/25.
@@ -8,14 +8,25 @@
 import UIKit
 
 class TransitDetailTableViewCell: UITableViewCell {
-    @IBOutlet weak var circleView: UIView!
-    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var departureCircleView: UIView!
+    @IBOutlet weak var departureTitleLabel: UILabel!
 
+    @IBOutlet weak var segueLineView: UIView!
+    @IBOutlet weak var descriptionLabel: UILabel!
+
+    @IBOutlet weak var arrivalCircleView: UIView!
+    @IBOutlet weak var arrivalTitleLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        circleView.layer.cornerRadius = circleView.frame.height / 2
-        circleView.layer.borderColor = UIColor.label.cgColor
-        circleView.layer.borderWidth = 2
+        makeCircle(departureCircleView)
+        makeCircle(arrivalCircleView)
+    }
+
+    func makeCircle(_ view: UIView) {
+        view.layer.cornerRadius = view.frame.height / 2
+        view.layer.borderColor = UIColor.label.cgColor
+        view.layer.borderWidth = 2
     }
 }

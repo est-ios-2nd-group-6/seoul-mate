@@ -102,9 +102,12 @@ class MapViewController: UIViewController {
     
     var selectedDays: [String] = []
     
-    let colorArray: [UIColor] = [.blue, .red, .yellow, .green, .main, .systemTeal, .systemMint, .systemPink, .magenta, .systemIndigo]
+    let colorArray: [UIColor] = [.mapPointGreen, .mapPointGray, .mapPointRed]
     var lastColor: UIColor?
     var colorSequence: [UIColor] = []
+    
+    private var poisByDay: [[POI]] = []
+    private var coordsByDay: [[NMGLatLng]] = []
     
     let defaultDistanceStrategy = NMCDefaultDistanceStrategy()
     
@@ -253,11 +256,9 @@ class MapViewController: UIViewController {
         
 
         
-        fetchSchedules()
         updateTravelPeriodLabel()
         updateTravelTitleLabel()
-//        loadDatas()
-//        reloadMapData()
+        loadTourData()
         tableView.reloadData()
 
     }
@@ -278,6 +279,33 @@ class MapViewController: UIViewController {
 //        // 4) 지도에 경로·마커 다시 그리기
 //        makePath(for: dayIndex)
 //    }
+    
+    private func loadTourData() {
+        guard let tour = tour else { return }
+        print("tourunwrapping")
+        // 1) Tour.days에서 Schedule을 날짜 순으로 추출
+           let schedules = (tour.days as? Set<Schedule> ?? [])
+               .compactMap { $0.date != nil ? $0 : nil }
+               .sorted { $0.date! < $1.date! }
+        print(schedules)
+           // 2) 섹션용 날짜 배열
+           sortedDates = schedules.map { Calendar.current.startOfDay(for: $0.date!) }
+
+           // 3) 각 Schedule별 POI 배열 (NSOrderedSet 처리)
+           poisByDay = schedules.map { schedule in
+               // Core Data 관계가 NSOrderedSet이므로 array로 변환
+               let ordered = schedule.pois
+               let poiArray = (ordered?.array as? [POI]) ?? []
+               return poiArray.sorted { ($0.name ?? "") < ($1.name ?? "") }
+           }
+
+           // 4) 좌표 2차원 배열로 변환
+           coordsByDay = poisByDay.map { poiList in
+               poiList.map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
+           }
+    }
+
+    
     func addPOI(_ poi: POI, toDay dayIndex: Int) {
         // 1) 인덱스 체크
         guard dayIndex >= 0 && dayIndex < scheduleItemsArray.count else {
@@ -330,8 +358,9 @@ class MapViewController: UIViewController {
             marker.captionColor = .main
 
             // 아이콘 색상
+            let color = getColor(at: i, totalCount: coords.count)
             marker.iconImage = NMF_MARKER_IMAGE_BLACK
-            marker.iconTintColor = getColor(at: i)
+            marker.iconTintColor = color
 
             // 터치 시 테이블/카메라 동기화
             marker.touchHandler = { _ in
@@ -694,22 +723,16 @@ class MapViewController: UIViewController {
 //        
 //    }
     
-    func getColor(at index: Int) -> UIColor {
-        // 이미 생성된 경우 재사용
-        if index < colorSequence.count {
-            return colorSequence[index]
+    func getColor(at index: Int, totalCount: Int) -> UIColor {
+        if index == 0 {
+            return .mapPointGreen
+        } else if index == totalCount - 1 {
+            return .mapPointRed
+        } else {
+            return .mapPointGray
         }
-        
-        // 필요한 색을 계속 생성해서 채우기
-        while colorSequence.count <= index {
-            let availableColors = colorArray.filter { $0 != lastColor }
-            let newColor = availableColors.randomElement() ?? colorArray.first!
-            colorSequence.append(newColor)
-            lastColor = newColor
-        }
-        
-        return colorSequence[index]
     }
+
     
     
     func checkUserCurrentLocationAuthorization(_ status: CLAuthorizationStatus) {
@@ -842,14 +865,14 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
 //        print(fetchedResultsController.sections?.count)
 //        return fetchedResultsController.sections?.count ?? 0
 //        return allSchedules.count
-        print(scheduleItemsArray.count)
-        return scheduleItemsArray.count
+        print(sortedDates.count)
+        return sortedDates.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 //        guard let sectionInfo = fetchedResultsController.sections?[section] else { return 1 }
 //        return sectionInfo.numberOfObjects + 1
-        return scheduleItemsArray[section].count + 1
+        return poisByDay[section].count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -875,7 +898,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
 //        return cell
 
         
-        let isLastRow = indexPath.row == scheduleItemsArray[indexPath.section].count
+        let isLastRow = indexPath.row == poisByDay[indexPath.section].count
         
         if isLastRow {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "addButtonCell", for: indexPath) as? AddPlaceButtonCell else { return UITableViewCell() }
@@ -885,7 +908,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "placeInfoCell", for: indexPath) as? MapTableViewCell else { return UITableViewCell() }
             
             cell.numberLabel.text = "\(indexPath.row + 1)"
-            cell.placeTitleLabel.text = String(format: "%.3f", scheduleItemsArray[indexPath.section][indexPath.row].latitude)
+            cell.placeTitleLabel.text = String(format: "%.3f", poisByDay[indexPath.section][indexPath.row].latitude)
             cell.numberView.backgroundColor = .main
             return cell
             
@@ -894,16 +917,16 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.row < scheduleItemsArray[indexPath.section].count
+        return indexPath.row < poisByDay[indexPath.section].count
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
-            scheduleItemsArray[indexPath.section].remove(at: indexPath.row)
+            poisByDay[indexPath.section].remove(at: indexPath.row)
             tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
             
-            let coords = scheduleItemsArray[indexPath.section]
+            let coords = poisByDay[indexPath.section]
                 .map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
 
             makePath(for: indexPath.section, with: coords)
@@ -928,10 +951,10 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let itemToMove = scheduleItemsArray[sourceIndexPath.section].remove(at: sourceIndexPath.row)
-        scheduleItemsArray[destinationIndexPath.section].insert(itemToMove, at: destinationIndexPath.row)
+        let itemToMove = poisByDay[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+        poisByDay[destinationIndexPath.section].insert(itemToMove, at: destinationIndexPath.row)
         //        tableView.reloadSections(IndexSet(integer: destinationIndexPath.section), with: .automatic)
-        let coords = scheduleItemsArray[destinationIndexPath.section]
+        let coords = poisByDay[destinationIndexPath.section]
             .map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
 
         makePath(for: destinationIndexPath.section, with: coords)
@@ -939,7 +962,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
         let section = proposedDestinationIndexPath.section
-        let maxRow = scheduleItemsArray[section].count - 1
+        let maxRow = poisByDay[section].count - 1
         let row = min(proposedDestinationIndexPath.row, maxRow)
         return IndexPath(row: row, section: section)
     }
@@ -951,7 +974,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         pendingIndexPath = nil
         
         // 이때 한 번만 카메라 이동
-        let poi = scheduleItemsArray[top.section][top.row]
+        let poi = poisByDay[top.section][top.row]
         let coord = NMGLatLng(lat: poi.latitude, lng: poi.longitude)
 
         let update = NMFCameraUpdate(scrollTo: coord)
@@ -977,7 +1000,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         })
         
         if let top = topIndexPath {
-            let coords = scheduleItemsArray[top.section]
+            let coords = poisByDay[top.section]
                 .map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
 
             //print("상단에 가장 가까운 셀: section \(top.section), row \(top.row)")
@@ -990,13 +1013,13 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
             
             guard let top = topIndexPath,
                   top != currentTopIndexPath else { return }
-            let lastRowIndex = scheduleItemsArray[top.section].count
+            let lastRowIndex = poisByDay[top.section].count
             guard top.row < lastRowIndex else {
                 currentTopIndexPath = top
                 return
             }
             currentTopIndexPath = top
-            let poi = scheduleItemsArray[top.section][top.row]
+            let poi = poisByDay[top.section][top.row]
             let coord = NMGLatLng(lat: poi.latitude, lng: poi.longitude)
             let update = NMFCameraUpdate(scrollTo: coord)
             update.animation = .easeIn
@@ -1017,7 +1040,7 @@ extension MapViewController: AddPlaceButtonCellDelegate {
             let dayIndex = cell.addButton.tag
             // TODO: - 데이터 받아오기
             let newPoi = POI(context: context)
-            let selectedLatLng = NMGLatLng(lat: 37.6877, lng: 126.8381)
+//            let selectedLatLng = NMGLatLng(lat: 37.6877, lng: 126.8381)
 //            newPoi.id = UUID()
 //            newPoi.latitude = selectedLatLng.lat
 //            newPoi.longitude = selectedLatLng.lng

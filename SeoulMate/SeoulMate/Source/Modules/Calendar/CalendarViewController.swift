@@ -8,7 +8,6 @@
 import UIKit
 import CoreData
 
-//TODO: - 이미 등록된 일정은 다르게 표시하기
 class CalendarViewController: UIViewController {
     
     
@@ -34,7 +33,7 @@ class CalendarViewController: UIViewController {
         
         do {
             try context.save()
-            //            performSegue(withIdentifier: "MapViewController", sender: tour)
+            performSegue(withIdentifier: "MapViewController", sender: tour)
         } catch {
             print(error)
         }
@@ -118,10 +117,14 @@ class CalendarViewController: UIViewController {
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? MapViewController,
-           let tour = sender as? Tour {
-            vc.tour = tour
+
+        if segue.identifier == "MapViewController" {
+            if let vc = segue.destination as? MapViewController,
+               let tour = sender as? Tour {
+                vc.tour = tour
+            }
         }
+        
     }
     
     private func generateDates(from start: Date, to end: Date) -> [Date] {
@@ -150,10 +153,9 @@ extension CalendarViewController: UICalendarViewDelegate {
            savedTourDates.contains(where: {
                Calendar.current.isDate($0, equalTo: savedDate, toGranularity: .day)
            }) {
-
             
             return .default(color: .systemBlue, size: .medium)
-
+            
             
         }
         

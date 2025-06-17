@@ -41,7 +41,9 @@ class CalendarViewController: UIViewController {
     var selectedDays: [String] = []
     var rangeStart: Date?
     var selectedDateObjects: [Date] = []
+    
     private var savedTourDates: Set<Date> = []
+    private var sortedSavedDates: [Date] = []
     private var SavedDates: [Date] = []
     
     private let formatter: DateFormatter = {
@@ -51,6 +53,13 @@ class CalendarViewController: UIViewController {
         return f
     }()
     
+    
+    private var context: NSManagedObjectContext {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError()
+        }
+        return appDelegate.persistentContainer.viewContext
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -67,52 +76,43 @@ class CalendarViewController: UIViewController {
         let dateSelection = UICalendarSelectionMultiDate(delegate: self)
         calendarView.selectionBehavior = dateSelection
         
-        fetch()
+        loadSavedTourDates()
         
     }
     
-    func fetch() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
-        
-        let context = appDelegate.persistentContainer.viewContext
-        
-        let fetchRequest: NSFetchRequest<Tour> = Tour.fetchRequest()
-        do {
-            let tours = try context.fetch(fetchRequest)
-            print("총 Tour 개수: \(tours.count)")
-            var allDates = Set<Date>()
-            
-            for tour in tours {
-                if let days = tour.days as? Set<Schedule> {
-                    for day in days {
-                        if let d = day.date {
-                            allDates.insert(d)
+    func fetchAllSchedules() -> [Schedule] {
+        let req: NSFetchRequest<Schedule> = Schedule.fetchRequest()
+        req.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        return (try? context.fetch(req)) ?? []
+    }
+
+    
+    
+    private func loadSavedTourDates() {
+            let toursRequest: NSFetchRequest<Tour> = Tour.fetchRequest()
+            do {
+                let tours = try context.fetch(toursRequest)
+                print(tours)
+                var allDates = Set<Date>()
+                for tour in tours {
+                    if let days = tour.days as? Set<Schedule> {
+                        for day in days {
+                            if let date = day.date {
+                                allDates.insert(Calendar.current.startOfDay(for: date))
+                            }
                         }
                     }
                 }
+                savedTourDates = allDates
+                sortedSavedDates = allDates.sorted()
+                let comps = sortedSavedDates.map { date in
+                    Calendar.current.dateComponents([.year, .month, .day], from: date)
+                }
+                calendarView.reloadDecorations(forDateComponents: comps, animated: true)
+            } catch {
+                print("Error fetching tours: \(error)")
             }
-            
-            savedTourDates = allDates
-            SavedDates = allDates.sorted()
-            
-            let comps = savedTourDates.map {
-                Calendar.current.dateComponents([.year, .month, .day], from: $0)
-            }
-            calendarView.reloadDecorations(forDateComponents: comps, animated: true)
-            
-            for t in tours {
-                let title = t.title ?? ""
-                let start = t.startDate?.description ?? ""
-                let end   = t.endDate?.description   ?? ""
-                let dayCount = t.days?.count ?? 0
-                print("\(title) / \(start) ~ \(end) / \(dayCount)일")
-            }
-            
-        } catch {
-            print(error)
         }
-        
-    }
     
     
     

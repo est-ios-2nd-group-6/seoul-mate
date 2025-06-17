@@ -115,7 +115,8 @@ class RouteApiManager {
             origin: origin,
             destination: destination,
             intermediates: nil,
-            computeAlternativeRoutes: false
+            computeAlternativeRoutes: false,
+            polylineQuality: "HIGH_QUALITY"
         )
 
         do {

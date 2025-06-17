@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D73AD54E2DF96170000EA79B /* GooglePlaces in Frameworks */ = {isa = PBXBuildFile; productRef = D73AD54D2DF96170000EA79B /* GooglePlaces */; };
 		D73AD5502DF96170000EA79B /* GooglePlacesSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D73AD54F2DF96170000EA79B /* GooglePlacesSwift */; };
+		E629952D2DFBAF7400FA8C9A /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = E629952C2DFBAF7400FA8C9A /* NMapsMap */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D73AD54E2DF96170000EA79B /* GooglePlaces in Frameworks */,
+				E629952D2DFBAF7400FA8C9A /* NMapsMap in Frameworks */,
 				D73AD5502DF96170000EA79B /* GooglePlacesSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				D73AD54D2DF96170000EA79B /* GooglePlaces */,
 				D73AD54F2DF96170000EA79B /* GooglePlacesSwift */,
+				E629952C2DFBAF7400FA8C9A /* NMapsMap */,
 			);
 			productName = SeoulMate;
 			productReference = E683A0CB2DF1900400496D06 /* SeoulMate.app */;
@@ -118,6 +121,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D73AD54C2DF96170000EA79B /* XCRemoteSwiftPackageReference "ios-places-sdk" */,
+				E629952B2DFBAF7400FA8C9A /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E683A0CC2DF1900400496D06 /* Products */;
@@ -361,6 +365,14 @@
 				minimumVersion = 10.0.0;
 			};
 		};
+		E629952B2DFBAF7400FA8C9A /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.21.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -373,6 +385,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D73AD54C2DF96170000EA79B /* XCRemoteSwiftPackageReference "ios-places-sdk" */;
 			productName = GooglePlacesSwift;
+		};
+		E629952C2DFBAF7400FA8C9A /* NMapsMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E629952B2DFBAF7400FA8C9A /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
+			productName = NMapsMap;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

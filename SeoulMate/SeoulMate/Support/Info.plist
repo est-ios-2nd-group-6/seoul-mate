@@ -4,6 +4,8 @@
 <dict>
 	<key>GoogleApiKey</key>
 	<string>${GOOGLE_API_KEY}</string>
+	<key>GoogleRoutesApiKey</key>
+	<string>${GOOGLE_ROUTES_API_KEY}</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -24,6 +26,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>TMapRoutesApiKey</key>
+	<string>${TMAP_ROUTES_API_KEY}</string>
 	<key>TourApiKey</key>
 	<string>${TOUR_API_KEY}</string>
 	<key>UIApplicationSceneManifest</key>
@@ -40,10 +44,12 @@
 					<key>UISceneDelegateClassName</key>
 					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
 					<key>UISceneStoryboardFile</key>
-					<string>Search</string>
+					<string>Onboarding</string>
 				</dict>
 			</array>
 		</dict>
 	</dict>
+	<key>NaverMapApiKey</key>
+	<string>${NaverMap_API_KEY}</string>
 </dict>
 </plist>

@@ -37,12 +37,17 @@ class AddToScheduleSheetViewController: UIViewController {
     @IBAction func addToSchedule(_ sender: Any) {
         guard let selectedTour = cellItems.first(where: { $0.isSelected }) else { return }
         guard let selectedSchedule = selectedTour.days.first(where: { $0.isSelected }) else { return }
-
         guard let tourOriginal = ToursOriginal.first(where: { $0.id == selectedTour.id }) else { return }
-
-        guard let schedulesOriginal = tourOriginal.days as? [Schedule] else { return }
-
+        guard let schedulesOriginal = tourOriginal.days?.allObjects as? [Schedule] else { return }
         guard let targetSchedule = schedulesOriginal.first(where: { $0.id == selectedSchedule.id }) else { return }
+
+        for poi in pois {
+            targetSchedule.addToPois(poi)
+        }
+
+        CoreDataManager.shared.saveContext()
+
+        dismiss(animated: true)
     }
 
     public var cellItems: [CellItem] = []
@@ -78,8 +83,6 @@ class AddToScheduleSheetViewController: UIViewController {
                 guard let schedules = tour.days?.allObjects as? [Schedule] else {
 					continue
                 }
-
-            	print(schedules)
 
                 var item = CellItem(tour: tour)
 

@@ -23,17 +23,21 @@ class RecommandCourseDetailViewController: UIViewController {
 //            for place in places {
 //                let name = await fetchGooglePlaceName(textQuery: place.name)
 //
-//				let poi = POI()
+//                let poi = POI(context: CoreDataManager.shared.context)
 //                poi.name = place.name
 //                poi.placeID = name
 //
 //                pois.append(poi)
 //            }
-//
-//            let sheet = AddToScheduleSheetViewController()
-//            sheet.pois = pois
 
-            present(AddToScheduleSheetViewController(), animated: true)
+            let tours = await CoreDataManager.shared.fetchToursAsync()
+
+            let pois = tours[0].pois?.allObjects as! [POI]
+
+            let sheet = AddToScheduleSheetViewController()
+            sheet.pois = pois
+
+            present(sheet, animated: true)
         }
 
     }

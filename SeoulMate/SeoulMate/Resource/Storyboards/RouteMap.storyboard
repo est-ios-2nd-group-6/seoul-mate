@@ -363,29 +363,30 @@
                                     <constraint firstAttribute="height" constant="3" id="ffK-ZJ-rnw"/>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="8i1-00-g69">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="8i1-00-g69">
                                 <rect key="frame" x="0.0" y="552" width="393" height="300"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IHu-zj-tC6">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="50"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="경로 상세" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fAQ-cM-ML6">
+                                        <rect key="frame" x="159.66666666666666" y="0.0" width="73.666666666666657" height="50"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="79H-D3-Onq"/>
+                                            <constraint firstAttribute="height" constant="50" id="UPY-kk-4k6"/>
                                         </constraints>
-                                    </view>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="18I-wx-NKg">
-                                        <rect key="frame" x="0.0" y="50" width="393" height="250"/>
+                                        <rect key="frame" x="32" y="66" width="329" height="234"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="250" id="Xha-Cs-hE0"/>
-                                        </constraints>
                                         <connections>
                                             <outlet property="dataSource" destination="Y6W-OH-hqX" id="kFu-3u-HPN"/>
                                         </connections>
                                     </tableView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="18I-wx-NKg" secondAttribute="trailing" constant="32" id="VIz-2g-XUq"/>
                                     <constraint firstAttribute="height" constant="300" id="W0M-DY-qcF"/>
+                                    <constraint firstItem="18I-wx-NKg" firstAttribute="leading" secondItem="8i1-00-g69" secondAttribute="leading" constant="32" id="eaL-Wy-vWJ"/>
                                 </constraints>
                             </stackView>
                         </subviews>
@@ -429,7 +430,7 @@
                         <outlet property="tableViewHeightConstraint" destination="i4W-bm-JC7" id="cpV-X5-ccQ"/>
                         <outlet property="transitDetailTableView" destination="18I-wx-NKg" id="Nxe-bV-izQ"/>
                         <outlet property="transitDetailWrapperView" destination="8i1-00-g69" id="Nbf-HF-l0U"/>
-                        <outlet property="transitDetailWrapperViewHeightConstraint" destination="W0M-DY-qcF" id="W4f-Bm-464"/>
+                        <outlet property="transitDetailWrapperViewHeightConstraint" destination="W0M-DY-qcF" id="21C-Tz-TK7"/>
                         <outlet property="wrapperViewHeightConstraint" destination="xCK-D9-7Gb" id="kCX-8b-Jnf"/>
                     </connections>
                 </viewController>

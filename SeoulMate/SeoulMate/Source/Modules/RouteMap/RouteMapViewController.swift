@@ -14,6 +14,8 @@ import NMapsMap
 // TODO: TableView 순서 변경
 // TODO: TravelMode == .transit 일때, 지하철 호선에 따른 색상 변경
 
+typealias TransitDetailInfo = RouteData.Path.TransitDetailInfo
+
 struct TempTour {
     var name: String
     var latitude: Double
@@ -82,10 +84,78 @@ struct RouteData {
         }
 
         struct TransitDetailInfo {
+            struct Vehicle {
+                let name: String
+                let color: UIColor
+                let type: String
 
+                init(transitLine: TransitLine) {
+                    self.name = transitLine.nameShort
+                    self.color = UIColor(hexString: transitLine.color) ?? .mapLineBasic
+                    self.type = transitLine.vehicle.type
+                }
+            }
+
+            let departureName: String?
+            let arrivalName: String?
+
+            let vehicle: Vehicle?
+            let stopCount: Int?
+            var distance: Int
+            var duration: Int
+            var instructions: [String]? = nil
+
+            var descriptionText: String? {
+                var text = ""
+
+                if vehicle?.type == "SUBWAY" {
+                    guard let name = vehicle?.name else { return nil }
+
+                    text = "\(name)\n약 \(Int(round(Double(duration / 60))))분"
+
+                    if let stopCount {
+                        text += " (\(stopCount)개 역 이동)"
+                    }
+
+                    return text
+                }
+
+                return nil
+            }
+
+            init?(step: Step) {
+                let transitDetails = step.transitDetails
+
+                let transitLine = transitDetails?.transitLine
+                let stopDetails = transitDetails?.stopDetails
+
+                self.departureName = stopDetails?.departureStop.name
+                self.arrivalName = stopDetails?.arrivalStop.name
+
+                if let transitLine {
+                    self.vehicle = .init(transitLine: transitLine)
+                } else {
+                    self.vehicle = nil
+                }
+
+                self.stopCount = transitDetails?.stopCount
+                self.distance = step.distanceMeters ?? 0
+
+                self.instructions = []
+
+                if let instruction = step.navigationInstruction.instructions {
+                    self.instructions?.append(instruction)
+                }
+
+                if let duration: Int = Int(step.staticDuration.replacing(/[a-zA-Z]/, with: "")) {
+                    self.duration = duration
+                } else {
+                    self.duration = 0
+                }
+            }
         }
 
-        let polyline: [Coordinate]
+        var polyline: [Coordinate]
         var travelMode: RouteOption? = nil
         var traffic: Traffic? = nil
         var detail: TransitDetailInfo? = nil
@@ -93,7 +163,7 @@ struct RouteData {
         var lineColor: UIColor? {
             switch travelMode {
             case .transit:
-                return .mapLineGreen
+                return detail?.vehicle?.color
             case .walk, nil:
                 // drive -> traffic에 따른 분기 필요
                 return .mapLineBasic
@@ -108,6 +178,30 @@ struct RouteData {
                 }
             }
         }
+
+        init(polyline: [Coordinate], travelMode: RouteOption? = nil, traffic: Traffic? = nil, detail: TransitDetailInfo? = nil) {
+            self.polyline = polyline
+            self.travelMode = travelMode
+            self.traffic = traffic
+            self.detail = detail
+        }
+
+//        init(step: Step) {
+//            var polyline: [RouteData.Coordinate] = []
+//
+//
+//
+//            for coordinate in step.polyline.geoJSONLinestring.coordinates {
+//                let latitude: Double = coordinate[1]
+//                let longitude: Double = coordinate[0]
+//
+//                polyline.append(.init(latitude: latitude, longitude: longitude))
+//            }
+//
+//            self.polyline = polyline
+//            self.travelMode = RouteOption(rawValue: step.travelMode)
+//        }
+
     }
 
     var searchOption: SearchOption? = nil
@@ -169,11 +263,9 @@ class RouteMapViewController: UIViewController {
     }
 
     // MARK: - Properties
-    let transitDetailIndicatorHeight = 50
-    let transitDetailTableViewHeight = 250
-    var transitDetailWrapperViewHeight: Int {
-        self.transitDetailIndicatorHeight + self.transitDetailTableViewHeight
-    }
+    var pois: [POI] = []
+
+    var transitDetailWrapperViewHeight: Int = 300
 
     var routeCache: [RouteOption: [RouteData]] = [:]
 
@@ -226,7 +318,7 @@ class RouteMapViewController: UIViewController {
             }
 
             if selectedRouteOption == .transit {
-                transitDetailTableView.reloadData()
+                self.transitDetailTableView.reloadData()
             }
         }
     }
@@ -273,20 +365,8 @@ class RouteMapViewController: UIViewController {
         self.overrideUserInterfaceStyle = .light
 
         setupLayout()
-
-        naverMapView.mapView.touchDelegate = self
-        naverMapView.mapView.extent = NMGLatLngBounds(
-            southWestLat: 37.413294,
-            southWestLng: 126.734086,
-            northEastLat: 37.715133,
-            northEastLng: 127.269311
-        )
-
-        let cell = UINib(nibName: "TransitDetailTableViewCell", bundle: nil)
-        transitDetailTableView.register(cell, forCellReuseIdentifier: "TransitDetailTableViewCell")
-
-        let routeInfoTabGesture = UITapGestureRecognizer(target: self, action: #selector(toggleRouteInfo))
-        routeInfoWrapperView.addGestureRecognizer(routeInfoTabGesture)
+        setupMapView()
+        setupTableViews()
 
         moveCameraToFitBounds()
 
@@ -335,6 +415,34 @@ extension RouteMapViewController {
         indicatorConstraint = view.constraints.filter({
             ($0.firstItem as? UIView) == segmentIndicator && $0.firstAttribute == .centerX
         })
+    }
+
+    func setupMapView() {
+        naverMapView.mapView.touchDelegate = self
+        naverMapView.mapView.extent = NMGLatLngBounds(
+            southWestLat: 37.413294,
+            southWestLng: 126.734086,
+            northEastLat: 37.715133,
+            northEastLng: 127.269311
+        )
+    }
+
+    func setupTableViews() {
+        transitDetailTableView.register(
+            TransitDetailTableViewCell.nib,
+            forCellReuseIdentifier: TransitDetailTableViewCell.identifier
+        )
+
+        transitDetailTableView.register(
+            TransitDetailSegueTableViewCell.nib,
+            forCellReuseIdentifier: TransitDetailSegueTableViewCell.identifier
+        )
+
+        transitDetailTableView.showsVerticalScrollIndicator = false
+        transitDetailTableView.showsHorizontalScrollIndicator = false
+
+        let routeInfoTabGesture = UITapGestureRecognizer(target: self, action: #selector(toggleRouteInfo))
+        routeInfoWrapperView.addGestureRecognizer(routeInfoTabGesture)
     }
 
     func updateIntermediatesInfo() {
@@ -444,25 +552,11 @@ extension RouteMapViewController {
 
             routeData.points.append(endPoint)
 
-            var test: [Any] = []
+            var acc: RouteData.Path? = nil
 
             for step in steps {
-                if let transitDetails = step.transitDetails {
-                    test.append(transitDetails)
-                } else {
-                    if test.isEmpty {
-                        test.append(step.localizedValues)
-
-                        continue
-                    }
-
-                    guard let last = test.last else { continue }
-
-                    if let transitDetail = last as? TransitDetails {
-                        test.append(step.localizedValues)
-                    } else if let locallizedValues = last as? StepLocalizedValues {
-
-                    }
+                if step.distanceMeters == nil && step.staticDuration == "0s" {
+                    continue
                 }
 
                 var polyline: [RouteData.Coordinate] = []
@@ -474,14 +568,48 @@ extension RouteMapViewController {
                     polyline.append(.init(latitude: latitude, longitude: longitude))
                 }
 
-                var path: RouteData.Path = .init(polyline: polyline)
+                if step.travelMode == "TRANSIT" {
+                    if acc != nil {
+                        routeData.paths.append(acc!)
 
-                path.travelMode = RouteOption(rawValue: step.travelMode)
+                        acc = nil
+                    }
 
-                routeData.paths.append(path)
+                    let path = RouteData.Path(
+                        polyline: polyline,
+                        travelMode: RouteOption(rawValue: step.travelMode),
+                        detail: TransitDetailInfo(step: step)
+                    )
+
+                    routeData.paths.append(path)
+
+                } else if step.travelMode == "WALK" {
+                    if acc != nil {
+                        acc?.detail?.distance += step.distanceMeters ?? 0
+
+                        if let duration = Int(step.staticDuration.replacing(/[a-zA-Z]/, with: "")) {
+                            acc?.detail?.duration = duration
+                        } else {
+                            acc?.detail?.duration = 0
+                        }
+
+                        if let instructions = step.navigationInstruction.instructions {
+                            acc?.detail?.instructions?.append(instructions)
+                        }
+
+                        acc?.polyline.append(contentsOf: polyline)
+                    } else {
+                        acc = RouteData.Path(
+                            polyline: polyline,
+                            travelMode: RouteOption(rawValue: step.travelMode),
+                            detail: TransitDetailInfo(step: step))
+                    }
+                }
             }
 
             routeCache[.transit, default: []].append(routeData)
+
+            transitDetailTableView.reloadData()
         }
     }
 
@@ -671,14 +799,30 @@ extension RouteMapViewController: UITableViewDataSource {
 
             return cell
         } else if tableView == transitDetailTableView {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "TransitDetailTableViewCell", for: indexPath) as? TransitDetailTableViewCell else { return UITableViewCell() }
+            let path = routeCache[selectedRouteOption!]?[selectedSearchOption].paths[indexPath.row]
 
-            cell.circleView.layer.zPosition = 1
-            cell.circleView.layer.cornerRadius = cell.circleView.frame.height / 2
-            cell.circleView.layer.borderColor = UIColor.label.cgColor
-            cell.circleView.layer.borderWidth = 2
+            if path?.travelMode == .transit {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: TransitDetailTableViewCell.identifier, for: indexPath) as? TransitDetailTableViewCell else { return UITableViewCell() }
 
-            return cell
+                let isSubway = path?.detail?.vehicle?.type == "SUBWAY"
+
+                cell.departureTitleLabel.text = path?.detail?.departureName
+
+                cell.segueLineView.backgroundColor = path?.lineColor
+
+                cell.descriptionLabel.text = path?.detail?.descriptionText
+
+                cell.arrivalTitleLabel.text = path?.detail?.arrivalName
+
+                return cell
+            } else {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: TransitDetailSegueTableViewCell.identifier, for: indexPath) as? TransitDetailSegueTableViewCell else { return UITableViewCell() }
+
+                cell.transitLineView.backgroundColor = path?.lineColor
+                cell.detailLabel.text = path?.detail?.instructions?.joined(separator: "\n")
+
+                return cell
+            }
         } else {
             return UITableViewCell()
         }

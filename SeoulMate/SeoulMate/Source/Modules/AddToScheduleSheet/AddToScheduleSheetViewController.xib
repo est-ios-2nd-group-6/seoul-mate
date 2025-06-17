@@ -11,6 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AddToScheduleSheetViewController" customModule="SeoulMate" customModuleProvider="target">
             <connections>
+                <outlet property="addToScheduleBtn" destination="egI-M3-V1Y" id="2Dt-uw-qpW"/>
                 <outlet property="addToScheduleTableView" destination="Oug-a8-AWd" id="kND-Gi-FZe"/>
                 <outlet property="view" destination="iN0-l3-epB" id="UaQ-1A-RIB"/>
             </connections>

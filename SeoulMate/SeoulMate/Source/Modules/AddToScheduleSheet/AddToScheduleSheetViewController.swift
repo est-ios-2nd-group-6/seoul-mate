@@ -34,6 +34,8 @@ struct CellItem {
 class AddToScheduleSheetViewController: UIViewController {
     @IBOutlet weak var addToScheduleTableView: UITableView!
 
+    @IBOutlet weak var addToScheduleBtn: UIButton!
+
     @IBAction func addToSchedule(_ sender: Any) {
         guard let selectedTour = cellItems.first(where: { $0.isSelected }) else { return }
         guard let selectedSchedule = selectedTour.days.first(where: { $0.isSelected }) else { return }
@@ -50,7 +52,11 @@ class AddToScheduleSheetViewController: UIViewController {
         dismiss(animated: true)
     }
 
-    public var cellItems: [CellItem] = []
+    public var cellItems: [CellItem] = [] {
+        didSet {
+            validateButton()
+        }
+    }
 
     var ToursOriginal: [Tour] = []
 
@@ -107,6 +113,14 @@ class AddToScheduleSheetViewController: UIViewController {
             cellItems[0].days[0].isSelected = true
 
             addToScheduleTableView.reloadData()
+        }
+    }
+
+    func validateButton() {
+        if cellItems.count(where: { $0.days.count(where: { $0.isSelected == true }) > 0 }) != 0 {
+            addToScheduleBtn.isEnabled = true
+        } else {
+            addToScheduleBtn.isEnabled = false
         }
     }
 }

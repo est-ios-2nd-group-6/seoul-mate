@@ -7,10 +7,53 @@
 
 import UIKit
 
+struct CellItem {
+    struct Day {
+        var dayText: String
+        var dateText: String
+        var isSelected: Bool = false
+    }
+
+    let id = UUID()
+    var title: String?
+    var period: String?
+    var days: [Day] = []
+    var isSelected: Bool = false
+
+    init(tour: Tour) {
+        title = tour.title
+
+        if let startDate = tour.startDate?.summary, let endDate = tour.endDate?.summary {
+            period = "\(startDate) ~ \(endDate)"
+        }
+    }
+}
+
 class AddToScheduleSheetViewController: UIViewController {
     @IBOutlet weak var addToScheduleTableView: UITableView!
 
+    @IBAction func addToSchedule(_ sender: Any) {
+//        print("#function", #function, cellItems)
+
+        print("#function", #function, cellItems.first(where: { $0.isSelected }))
+    }
+
+    public var cellItems: [CellItem] = []
+
     var tours: [Tour] = []
+
+    var pois: [POI] = []
+
+    var selectedRow: Int? = nil {
+        didSet(oldVal) {
+            if let oldVal, let selectedRow {
+                let old = IndexPath(row: oldVal, section: 0)
+                let new = IndexPath(row: selectedRow, section: 0)
+
+                addToScheduleTableView.reloadRows(at: [old, new], with: .automatic)
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +67,32 @@ class AddToScheduleSheetViewController: UIViewController {
         Task {
             tours = await CoreDataManager.shared.fetchToursAsync()
 
+            for tour in tours {
+                guard let schedules = tour.days?.allObjects as? [Schedule] else {
+					continue
+                }
+
+            	print(schedules)
+
+                var item = CellItem(tour: tour)
+
+                var days: [CellItem.Day] = []
+
+                for (index, schedule) in schedules.enumerated() {
+                    let dayText = "Day \(index + 1)"
+
+                    guard let dateText = schedule.date?.monthDayWeekday else { continue }
+
+                    let day = CellItem.Day(dayText: dayText, dateText: dateText)
+
+                    days.append(day)
+                }
+
+                item.days = days
+
+                cellItems.append(item)
+            }
+
             addToScheduleTableView.reloadData()
         }
     }
@@ -31,7 +100,7 @@ class AddToScheduleSheetViewController: UIViewController {
 
 extension AddToScheduleSheetViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tours.count
+        return cellItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -39,27 +108,48 @@ extension AddToScheduleSheetViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        let tour = tours[indexPath.item]
+        let item = cellItems[indexPath.row]
 
-        if let schedules = tour.days?.allObjects as? [Schedule] {
-            cell.schedules = schedules
-
-            cell.reloadCollectionView()
-        }
-
-        cell.contentView.layer.cornerRadius = 8
-        cell.contentView.clipsToBounds = true
-
-        cell.contentView.backgroundColor = .lightGray.withAlphaComponent(0.1)
-
-        cell.titleLabel.text = tour.title
-
-        if let startDate = tour.startDate?.summary, let endDate = tour.endDate?.summary {
-            cell.periodLabel.text = "\(startDate) ~ \(endDate)"
-        }
+        cell.delegate = self
+        cell.configure(with: item)
 
         return cell
     }
-    
+}
 
+extension AddToScheduleSheetViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let targetIndex = indexPath.row
+
+        var reloadIndexs = [indexPath]
+
+        if let selected = cellItems.firstIndex(where: { $0.isSelected == true }) {
+            if selected != targetIndex {
+                cellItems[selected].isSelected = false
+                cellItems[targetIndex].isSelected = true
+
+                for (i, _) in cellItems[selected].days.enumerated() {
+                    cellItems[selected].days[i].isSelected = false
+                }
+
+                reloadIndexs.append(IndexPath(row: selected, section: 0))
+            }
+        } else {
+            cellItems[targetIndex].isSelected = true
+        }
+
+        tableView.reloadRows(at: reloadIndexs, with: .automatic)
+    }
+
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        print(#function, indexPath)
+    }
+}
+
+extension AddToScheduleSheetViewController: AddToScheduleTableViewCellDelegate {
+    func AddToScheduleTableViewCell(_ cell: AddToScheduleTableViewCell, didUpdateItem item: CellItem) {
+        if let index = cellItems.firstIndex(where: { $0.id == item.id }) {
+			cellItems[index] = item
+        }
+    }
 }

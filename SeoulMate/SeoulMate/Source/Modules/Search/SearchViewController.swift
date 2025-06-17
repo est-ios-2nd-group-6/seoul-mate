@@ -45,10 +45,12 @@ class SearchViewController: UIViewController {
         tagCollectionView.backgroundColor = .systemBackground
         Task {
             items.removeAll()
-            await TourApiManager_hs.shared.fetchGooglePlaceAPI(keyword: "서울 맛집")
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: "서울 맛집")
             items = TourApiManager_hs.shared.searchByTitleResultList
             self.searchResultTableView.reloadData()
             self.searchBar.text = "서울 맛집"
+            guard let placeName = nameString else { return }
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: placeName)
         }
     }
 
@@ -68,7 +70,7 @@ class SearchViewController: UIViewController {
             self.searchResultTableView.isHidden = false
             items.removeAll()
             //            await TourApiManager_hs.shared.fetchRcmCourseList(keyword: keyword)
-            await TourApiManager_hs.shared.fetchGooglePlaceAPI(keyword: keyword)
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: keyword)
             items = TourApiManager_hs.shared.searchByTitleResultList
             self.searchResultTableView.reloadData()
         }
@@ -159,7 +161,7 @@ extension SearchViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        nameString = items[indexPath.row].title
+        nameString = items[indexPath.row].id
         performSegue(withIdentifier: "POIDetail", sender: nameString)
     }
 

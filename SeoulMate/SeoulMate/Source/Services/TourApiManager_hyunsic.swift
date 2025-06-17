@@ -11,10 +11,11 @@ struct SearchResult {
     var id:String
     var title:String
     var rating:Double
-    var category:[String]
+    var category:[String]?
     var profileImage:String?
     var photos:[TourApiGoogleResponse.Photo]?
     var primaryTypeDisplayName:TourApiGoogleResponse.PrimaryTypeDisplayName?
+    var address:String?
     struct DisplayName: Codable {
         var text: String
         var languageCode: String
@@ -26,14 +27,26 @@ struct SearchResult {
     
 }
 
+struct PlaceInfo {
+    var id: String
+    var title: String
+    var rating: Double
+    var address: String
+    var profileImage: URL?
+    var photosName: String?
+    var width: Int?
+    var height: Int?
+}
+
 class TourApiManager_hs {
     
     static let shared = TourApiManager_hs()
     var searchByTitleResultList = [SearchResult]()
+    var placeInfo: PlaceInfo?
 
     private init() {}
     
-    func fetchGooglePlaceAPI(keyword:String) async {
+    func fetchGooglePlaceAPIByKeyword(keyword:String) async {
         var baseUrl: String
         var queryItems: [URLQueryItem]
         
@@ -75,6 +88,44 @@ class TourApiManager_hs {
                 var result = SearchResult(id:value.id,title: value.displayName.text,rating: value.rating, category: value.types,profileImage: value.photos.first?.name,photos: value.photos,primaryTypeDisplayName: value.primaryTypeDisplayName)
                 searchByTitleResultList.append(result)
             }
+        } catch {
+            print("Fetcing is Failed!!", error, separator: "\n")
+        }
+    }
+    
+    func fetchGooglePlaceAPIByName(name:String) async {
+        var baseUrl: String
+        var queryItems: [URLQueryItem]
+        
+        baseUrl = "https://places.googleapis.com/v1/places/\(name)"
+        queryItems = [
+            URLQueryItem(name: "languageCode", value: "ko")
+        ]
+        guard var url = URL(string: baseUrl) else { print("invalida URL")
+            return }
+        url.append(queryItems: queryItems)
+        
+        var request = URLRequest(url: url)
+        guard let googleApiKey = Bundle.main.googleApiKey else { return }
+        
+        request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
+        request.setValue("id,formattedAddress,rating,displayName,photos", forHTTPHeaderField: "X-Goog-FieldMask")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        do {
+            var (data, urlResponse) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = urlResponse as? HTTPURLResponse else {
+                return
+            }
+            
+            guard 200...299 ~= httpResponse.statusCode else {
+                return
+            }
+            let decoder = JSONDecoder()
+            let json = try decoder.decode(TourAPIGoogleResponseShort.self, from: data)
+            placeInfo = PlaceInfo(id: json.id, title: json.displayName.text, rating: json.rating, address: json.formattedAddress)
+            guard let url = URL(string: "https://places.googleapis.com/v1/\(json.photos.first!.name)/media?maxHeightPx=2000&maxWidthPx=3000&key=\(googleApiKey)") else { return }
+            placeInfo?.profileImage = url
         } catch {
             print("Fetcing is Failed!!", error, separator: "\n")
         }

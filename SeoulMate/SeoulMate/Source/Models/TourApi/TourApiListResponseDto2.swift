@@ -69,3 +69,20 @@ struct TourApiGoogleResponse: Codable {
         var languageCode: String
     }
 }
+
+struct TourAPIGoogleResponseShort: Codable {
+    var id:String
+    var formattedAddress:String
+    var rating:Double
+    var displayName:DisplayName
+    var photos:[Photo]
+    struct DisplayName: Codable {
+        var text: String
+        var languageCode: String
+    }
+    struct Photo: Codable {
+        var name:String
+        var widthPx:Int
+        var heightPx:Int
+    }
+}

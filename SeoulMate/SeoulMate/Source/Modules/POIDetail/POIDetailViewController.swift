@@ -16,6 +16,7 @@ class POIDetailViewController: UIViewController {
 
     var POIItems: [POICellType] = []
     var nameLabel:String = ""
+    var location:PlaceInfo?
     
     @IBOutlet weak var detailTableView: UITableView!
 
@@ -28,12 +29,15 @@ class POIDetailViewController: UIViewController {
         cellItem.append(.Recommandation)
         POIItems = cellItem
         self.detailTableView.reloadData()
+        
+        Task {
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: nameLabel)
+            location = TourApiManager_hs.shared.placeInfo
+            print(location)
+            self.detailTableView.reloadData()
+        }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        print(#line,nameLabel)
-    }
 }
 
 extension POIDetailViewController: UITableViewDataSource {
@@ -46,6 +50,21 @@ extension POIDetailViewController: UITableViewDataSource {
         case .Location:
             let cell =
                 tableView.dequeueReusableCell(withIdentifier: String(describing: PoiInfoCell.self)) as! PoiInfoCell
+                if let location = location {
+                    cell.titleLabel.text = location.title
+                    cell.reviewNumberLabel.text = "\(location.rating)"
+                    cell.addressLabel.text = location.address
+                    if let url = location.profileImage {
+                        URLSession.shared.dataTask(with: url) { data,_,error in
+                            if let data = data {
+                                DispatchQueue.main.async {
+                                    cell.placeImageView.image = UIImage(data: data)
+                                }
+                                print(String(data: data, encoding: .utf8))
+                            }
+                        }.resume()
+                    }
+                }
                 return cell
         case .Recommandation:
             let cell =

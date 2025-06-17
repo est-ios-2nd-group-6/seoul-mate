@@ -43,7 +43,9 @@ class RecommandCourseDetailViewController: UIViewController {
             let pois = tours[0].pois?.allObjects as! [POI]
 
             let sheet = AddToScheduleSheetViewController()
+            
             sheet.pois = pois
+            sheet.delegate = self
 
             present(sheet, animated: true)
         }
@@ -177,8 +179,6 @@ extension RecommandCourseDetailViewController: UITableViewDataSource {
 
         let subItem = places[indexPath.item]
 
-        print(subItem)
-
         cell.contentWrapperView.layer.cornerRadius = 8
 
         cell.contentWrapperView.layer.borderWidth = 1
@@ -208,5 +208,15 @@ extension RecommandCourseDetailViewController: UITableViewDataSource {
         cell.typeLabel.text = subItem.type?.name
 
         return cell
+    }
+}
+
+extension RecommandCourseDetailViewController: AddToScheduleSheetViewControllerDelegate {
+    func sheetViewControllerDidDismiss(_ viewController: AddToScheduleSheetViewController) {
+        self.showInAppNotification(
+            message: "일정에 성공적으로 추가했어요!",
+            duration: 2,
+            backgroundColor: .main
+        )
     }
 }

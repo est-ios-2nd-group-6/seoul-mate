@@ -125,7 +125,7 @@ struct RouteData {
                         text += " (정류장 \(stopCount)개)"
                     }
                 } else {
-					text = "도보\n"
+                    text = "도보\n"
                     text += "\(Int(round(Double(duration / 60))))분, \(distance) 미터\n"
 
                     if let instructions {
@@ -273,6 +273,14 @@ class RouteMapViewController: UIViewController {
             default: return
             }
         }
+    }
+
+    @IBAction func back(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+    }
+
+    @IBAction func more(_ sender: Any) {
+        print(#function)
     }
 
     // MARK: - Properties
@@ -848,10 +856,6 @@ extension RouteMapViewController: UITableViewDataSource {
             }
 
             let path = routeCache[selectedRouteOption]?[selectedSearchOption].paths[indexPath.row]
-
-            print(path?.detail?.departureName)
-            print(path?.detail?.arrivalName)
-            print("--------------")
 
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TransitDetailTableViewCell.identifier, for: indexPath) as? TransitDetailTableViewCell else { return UITableViewCell() }
 

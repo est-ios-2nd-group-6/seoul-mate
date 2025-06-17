@@ -8,7 +8,7 @@
 import UIKit
 
 class ScheduleListViewController: UIViewController {
-    var tripItems: [TripItem] = []
+    private var tripItems: [TripItem] = []
 
     @IBOutlet weak var scheduleListTableView: UITableView!
     @IBOutlet weak var floatingButton: UIButton!

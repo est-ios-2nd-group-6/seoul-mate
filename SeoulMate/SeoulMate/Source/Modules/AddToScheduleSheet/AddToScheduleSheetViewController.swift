@@ -9,18 +9,20 @@ import UIKit
 
 struct CellItem {
     struct Day {
+        var id: UUID?
         var dayText: String
         var dateText: String
         var isSelected: Bool = false
     }
 
-    let id = UUID()
+    var id: UUID?
     var title: String?
     var period: String?
     var days: [Day] = []
     var isSelected: Bool = false
 
     init(tour: Tour) {
+        id = tour.id
         title = tour.title
 
         if let startDate = tour.startDate?.summary, let endDate = tour.endDate?.summary {
@@ -33,14 +35,19 @@ class AddToScheduleSheetViewController: UIViewController {
     @IBOutlet weak var addToScheduleTableView: UITableView!
 
     @IBAction func addToSchedule(_ sender: Any) {
-//        print("#function", #function, cellItems)
+        guard let selectedTour = cellItems.first(where: { $0.isSelected }) else { return }
+        guard let selectedSchedule = selectedTour.days.first(where: { $0.isSelected }) else { return }
 
-        print("#function", #function, cellItems.first(where: { $0.isSelected }))
+        guard let tourOriginal = ToursOriginal.first(where: { $0.id == selectedTour.id }) else { return }
+
+        guard let schedulesOriginal = tourOriginal.days as? [Schedule] else { return }
+
+        guard let targetSchedule = schedulesOriginal.first(where: { $0.id == selectedSchedule.id }) else { return }
     }
 
     public var cellItems: [CellItem] = []
 
-    var tours: [Tour] = []
+    var ToursOriginal: [Tour] = []
 
     var pois: [POI] = []
 
@@ -65,9 +72,9 @@ class AddToScheduleSheetViewController: UIViewController {
         addToScheduleTableView.register(cell, forCellReuseIdentifier: "AddToScheduleTableViewCell")
 
         Task {
-            tours = await CoreDataManager.shared.fetchToursAsync()
+            ToursOriginal = await CoreDataManager.shared.fetchToursAsync()
 
-            for tour in tours {
+            for tour in ToursOriginal {
                 guard let schedules = tour.days?.allObjects as? [Schedule] else {
 					continue
                 }
@@ -83,7 +90,7 @@ class AddToScheduleSheetViewController: UIViewController {
 
                     guard let dateText = schedule.date?.monthDayWeekday else { continue }
 
-                    let day = CellItem.Day(dayText: dayText, dateText: dateText)
+                    let day = CellItem.Day(id: schedule.id, dayText: dayText, dateText: dateText)
 
                     days.append(day)
                 }
@@ -92,6 +99,9 @@ class AddToScheduleSheetViewController: UIViewController {
 
                 cellItems.append(item)
             }
+
+            cellItems[0].isSelected = true
+            cellItems[0].days[0].isSelected = true
 
             addToScheduleTableView.reloadData()
         }

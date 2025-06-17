@@ -49,9 +49,10 @@ class RecommandCourseDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.tabBarController?.tabBar.isHidden = true
+
         let cell = UINib(nibName: "RecommandCourseItemListTableViewCell", bundle: nil)
         courseListTableView.register(cell, forCellReuseIdentifier: "RecommandCourseItemListTableViewCell")
-
 
         Task {
             if let url = course?.firstImageUrl {

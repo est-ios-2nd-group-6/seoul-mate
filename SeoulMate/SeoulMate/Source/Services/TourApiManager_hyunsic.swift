@@ -84,8 +84,8 @@ class TourApiManager_hs {
             decoder.dateDecodingStrategy = .formatted(formatter)
             let json = try decoder.decode(TourApiGoogleResponse.self, from: data)
             searchByTitleResultList.removeAll()
-            for (key,value) in json.places.enumerated() {
-                var result = SearchResult(id:value.id,title: value.displayName.text,rating: value.rating, category: value.types,profileImage: value.photos.first?.name,photos: value.photos,primaryTypeDisplayName: value.primaryTypeDisplayName)
+            for (_,value) in json.places.enumerated() {
+                let result = SearchResult(id:value.id,title: value.displayName.text,rating: value.rating, category: value.types,profileImage: value.photos.first?.name,photos: value.photos,primaryTypeDisplayName: value.primaryTypeDisplayName)
                 searchByTitleResultList.append(result)
             }
         } catch {
@@ -113,7 +113,7 @@ class TourApiManager_hs {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         do {
-            var (data, urlResponse) = try await URLSession.shared.data(for: request)
+            let (data, urlResponse) = try await URLSession.shared.data(for: request)
             guard let httpResponse = urlResponse as? HTTPURLResponse else {
                 return
             }
@@ -126,6 +126,45 @@ class TourApiManager_hs {
             placeInfo = PlaceInfo(id: json.id, title: json.displayName.text, rating: json.rating, address: json.formattedAddress)
             guard let url = URL(string: "https://places.googleapis.com/v1/\(json.photos.first!.name)/media?maxHeightPx=2000&maxWidthPx=3000&key=\(googleApiKey)") else { return }
             placeInfo?.profileImage = url
+        } catch {
+            print("Fetcing is Failed!!", error, separator: "\n")
+        }
+    }
+    
+    func fetchPOIDetailNearbyPlace(latitude:Double,longitude:Double) async {
+        var baseUrl: String
+        var queryItems: [URLQueryItem]
+        
+        baseUrl = "https://places.googleapis.com/v1/places:searchNearby"
+        queryItems = [
+            URLQueryItem(name: "languageCode", value: "ko")
+        ]
+        guard var url = URL(string: baseUrl) else { print("invalida URL")
+            return }
+        url.append(queryItems: queryItems)
+        var request = URLRequest(url: url)
+        guard let googleApiKey = Bundle.main.googleApiKey else { return }
+        request.httpMethod = "POST"
+        let requestBody = TourNearybyAPIGoogleRequest(latitude: 37.7937, longitude: -122.3965)
+        request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
+        request.setValue("places.id,places.rating,places.displayName,places.primaryTypeDisplayName,places.location,places.photos,places.types", forHTTPHeaderField: "X-Goog-FieldMask")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            let encoder = JSONEncoder()
+            encoder.keyEncodingStrategy = .convertToSnakeCase
+            let bodyData = try encoder.encode(requestBody)
+            request.httpBody = bodyData
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                do {
+                    let decoder = JSONDecoder()
+                    guard let data = data else { return }
+                    let json = try decoder.decode(TourNearybyAPIGoogleResponse.self, from: data)
+                    print(String(data:data,encoding: .utf8))
+                } catch {
+                    print(#line,error)
+                }
+            }
+            task.resume()
         } catch {
             print("Fetcing is Failed!!", error, separator: "\n")
         }

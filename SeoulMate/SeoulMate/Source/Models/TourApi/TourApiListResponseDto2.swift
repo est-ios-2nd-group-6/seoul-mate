@@ -86,3 +86,61 @@ struct TourAPIGoogleResponseShort: Codable {
         var heightPx:Int
     }
 }
+
+struct TourNearybyAPIGoogleRequest: Codable {
+    let includedTypes: [String]
+    let maxResultCount: Int
+    let locationRestriction: LocationRestriction
+    
+    struct LocationRestriction: Codable {
+        let circle: Circle
+    }
+    
+    struct Circle: Codable {
+        let center: Center
+        let radius: Int
+    }
+    
+    struct Center: Codable {
+        let latitude: Double
+        let longitude: Double
+    }
+    
+    init(latitude: Double, longitude: Double) {
+        self.includedTypes = ["tourist_attraction","restaurant"]
+        self.maxResultCount = 10
+        self.locationRestriction = LocationRestriction(
+            circle: Circle(
+                center: Center(latitude: latitude, longitude: longitude),
+                radius: 1000
+            )
+        )
+    }
+}
+
+struct TourNearybyAPIGoogleResponse: Codable {
+    let places:[Place]?
+    struct Place: Codable {
+        let id:String
+        let location: Location
+        let types: [String]
+        let rating:Double
+        struct DisplayName: Codable {
+            var text: String
+            var languageCode: String
+        }
+        struct PrimaryTypeDisplayName: Codable {
+            var text: String
+            var languageCode: String
+        }
+        struct Photo: Codable {
+            var name:String
+            var widthPx:Int
+            var heightPx:Int
+        }
+        struct Location: Codable {
+            let latitude: Double
+            let longitude: Double
+        }
+    }
+}

@@ -33,7 +33,7 @@ class POIDetailViewController: UIViewController {
         Task {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: nameLabel)
             location = TourApiManager_hs.shared.placeInfo
-            print(location)
+            await TourApiManager_hs.shared.fetchPOIDetailNearbyPlace(latitude: 37.7937, longitude: -122.3965)
             self.detailTableView.reloadData()
         }
     }

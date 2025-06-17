@@ -35,6 +35,7 @@ class SearchResultTableHeaderView: UIView {
     }
     
     private func setupViews() {
+        self.backgroundColor = .white
         addSubview(titleLabel)
         addSubview(actionButton)
         

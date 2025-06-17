@@ -27,15 +27,16 @@ class SearchViewController: UIViewController {
         searchbarView.setImage(UIImage(), for: .search, state: .normal)
         searchbarView.becomeFirstResponder()
 
-        tagCollectionView.dataSource = self
-        tagCollectionView.delegate = self
-
         let layout = LeftAlignedCollectionViewFlowLayout()
         layout.minimumLineSpacing = 3
         layout.minimumInteritemSpacing = 3
         layout.sectionInset = UIEdgeInsets(top: 5, left: 2, bottom: 5, right: 3)
         tagCollectionView.collectionViewLayout = layout
         tagCollectionView.backgroundColor = .systemBackground
+        
+        tagCollectionView.dataSource = self
+        tagCollectionView.delegate = self
+        tagCollectionView.allowsSelection = true
 
         Task {
             items.removeAll()
@@ -72,10 +73,14 @@ class SearchViewController: UIViewController {
 
 }
 
-extension SearchViewController: UICollectionViewDataSource {
+extension SearchViewController: UICollectionViewDataSource,UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return tags.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(#function)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell

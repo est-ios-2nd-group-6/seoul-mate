@@ -25,6 +25,7 @@ final class OnboardingViewController: UIViewController {
         }
     }
 
+    private var hasSettupPage = false
     private var imageViews: [UIImageView] = []
     @IBOutlet weak var startButton: UIButton!
     
@@ -69,6 +70,15 @@ final class OnboardingViewController: UIViewController {
         super.viewDidLayoutSubviews()
         scrollView.frame = view.bounds
         setupPages()
+        if !hasSettupPage {
+            setupPages()
+            hasSettupPage = true
+        }
+    }
+
+    @objc private func pageControlDidChange(_ sender: UIPageControl) {
+        let x = CGFloat(sender.currentPage) * scrollView.bounds.width
+        scrollView.setContentOffset(CGPoint(x: x, y: 0), animated: true)
     }
 
     override func viewDidLoad() {
@@ -76,6 +86,7 @@ final class OnboardingViewController: UIViewController {
 
         pageControl.numberOfPages = imageNames.count
         pageControl.currentPage = 0
+        pageControl.addTarget(self, action: #selector(pageControlDidChange(_:)), for: .valueChanged)
         scrollView.contentInsetAdjustmentBehavior = .never
     }
 }
@@ -83,7 +94,7 @@ final class OnboardingViewController: UIViewController {
 extension OnboardingViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         scrollView.contentOffset.y = 0
-        let pageIndex = round(scrollView.contentOffset.x / view.frame.width)
-        pageControl.currentPage = Int(pageIndex)
+        let idx = Int(round(scrollView.contentOffset.x / scrollView.bounds.width))
+        pageControl.currentPage = Int(idx)
     }
 }

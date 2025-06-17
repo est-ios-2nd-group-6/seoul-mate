@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="t5S-7C-uac">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -12,19 +12,13 @@
         <!--Map View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController id="Y6W-OH-hqX" customClass="MapViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MapViewController" id="Y6W-OH-hqX" customClass="MapViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="여행 날짜" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EBV-NG-GMX">
-                                <rect key="frame" x="15" y="127.99999999999999" width="363" height="20.333333333333329"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c0f-KR-nlA">
-                                <rect key="frame" x="0.0" y="148.33333333333331" width="393" height="635.66666666666674"/>
+                                <rect key="frame" x="0.0" y="167" width="393" height="617"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="w92-Da-qqP">
                                         <rect key="frame" x="0.0" y="0.0" width="393" height="703.33333333333337"/>
@@ -49,7 +43,7 @@
                                                         </connections>
                                                     </button>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="wjN-OJ-MLt">
-                                                        <rect key="frame" x="0.0" y="404.33333333333326" width="393" height="289"/>
+                                                        <rect key="frame" x="0.0" y="404.33333333333337" width="393" height="289"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rBL-y5-hhk">
                                                                 <rect key="frame" x="0.0" y="0.0" width="393" height="44"/>
@@ -60,21 +54,34 @@
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XGE-ut-URq">
-                                                                        <rect key="frame" x="327.33333333333331" y="5" width="53.666666666666686" height="34.333333333333336"/>
-                                                                        <state key="normal" title="Button"/>
-                                                                        <buttonConfiguration key="configuration" style="filled" title="편집"/>
-                                                                        <connections>
-                                                                            <action selector="editAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="R8W-xQ-fqz"/>
-                                                                        </connections>
-                                                                    </button>
+                                                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="FeT-eU-SW0">
+                                                                        <rect key="frame" x="265.66666666666669" y="5" width="115.33333333333331" height="34.333333333333336"/>
+                                                                        <subviews>
+                                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G74-gT-X09">
+                                                                                <rect key="frame" x="0.0" y="0.0" width="53.666666666666664" height="34.333333333333336"/>
+                                                                                <state key="normal" title="Button"/>
+                                                                                <buttonConfiguration key="configuration" style="filled" title="저장"/>
+                                                                                <connections>
+                                                                                    <action selector="saveAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Msf-u1-O6Z"/>
+                                                                                </connections>
+                                                                            </button>
+                                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XGE-ut-URq">
+                                                                                <rect key="frame" x="61.666666666666629" y="0.0" width="53.666666666666657" height="34.333333333333336"/>
+                                                                                <state key="normal" title="Button"/>
+                                                                                <buttonConfiguration key="configuration" style="filled" title="편집"/>
+                                                                                <connections>
+                                                                                    <action selector="editAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="R8W-xQ-fqz"/>
+                                                                                </connections>
+                                                                            </button>
+                                                                        </subviews>
+                                                                    </stackView>
                                                                 </subviews>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="44" id="D2t-g7-GHf"/>
                                                                     <constraint firstItem="Rs5-kG-eEf" firstAttribute="leading" secondItem="rBL-y5-hhk" secondAttribute="leading" constant="12" id="JVu-yG-gHo"/>
                                                                     <constraint firstItem="Rs5-kG-eEf" firstAttribute="centerY" secondItem="rBL-y5-hhk" secondAttribute="centerY" id="Zes-Sw-c0s"/>
-                                                                    <constraint firstAttribute="trailing" secondItem="XGE-ut-URq" secondAttribute="trailing" constant="12" id="frJ-h4-9ND"/>
-                                                                    <constraint firstItem="XGE-ut-URq" firstAttribute="centerY" secondItem="rBL-y5-hhk" secondAttribute="centerY" id="k8r-sg-osf"/>
+                                                                    <constraint firstItem="FeT-eU-SW0" firstAttribute="centerY" secondItem="Rs5-kG-eEf" secondAttribute="centerY" constant="3.5527136788005009e-15" id="hbb-yw-948"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="FeT-eU-SW0" secondAttribute="trailing" constant="12" id="nDd-iq-X5c"/>
                                                                 </constraints>
                                                             </view>
                                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="E2f-xU-tcP">
@@ -148,6 +155,9 @@
                                                                                     <rect key="frame" x="153" y="5.3333333333333321" width="87.333333333333314" height="34.333333333333343"/>
                                                                                     <state key="normal" title="Button"/>
                                                                                     <buttonConfiguration key="configuration" style="filled" title="장소 추가"/>
+                                                                                    <connections>
+                                                                                        <action selector="addPlaceAction:" destination="V1e-Sr-7MG" eventType="touchUpInside" id="dmG-it-NzD"/>
+                                                                                    </connections>
                                                                                 </button>
                                                                             </subviews>
                                                                             <constraints>
@@ -155,6 +165,9 @@
                                                                                 <constraint firstItem="yfQ-Yi-J11" firstAttribute="centerY" secondItem="uIb-Wp-gWl" secondAttribute="centerY" id="gY8-df-j2z"/>
                                                                             </constraints>
                                                                         </tableViewCellContentView>
+                                                                        <connections>
+                                                                            <outlet property="addButton" destination="yfQ-Yi-J11" id="E2o-cg-GSe"/>
+                                                                        </connections>
                                                                     </tableViewCell>
                                                                 </prototypes>
                                                             </tableView>
@@ -183,45 +196,61 @@
                                 <viewLayoutGuide key="contentLayoutGuide" id="0Is-xX-Y8w"/>
                                 <viewLayoutGuide key="frameLayoutGuide" id="dqr-xu-OxY"/>
                             </scrollView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Im6-hH-czj">
+                                <rect key="frame" x="20" y="128" width="63" height="36"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="여행 제목" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gCG-5x-QSd">
+                                        <rect key="frame" x="0.0" y="0.0" width="63" height="20.333333333333332"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="여행 날짜" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EBV-NG-GMX">
+                                        <rect key="frame" x="0.0" y="20.333333333333343" width="63" height="15.666666666666664"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="EBV-NG-GMX" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="10" id="7sq-vO-K6N"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="c0f-KR-nlA" secondAttribute="bottom" id="BUG-v0-pfR"/>
                             <constraint firstItem="c0f-KR-nlA" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="Bgc-OP-a9N"/>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="EBV-NG-GMX" secondAttribute="trailing" constant="15" id="cFv-Yv-vud"/>
+                            <constraint firstItem="Im6-hH-czj" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="20" id="VsE-10-znY"/>
+                            <constraint firstItem="Im6-hH-czj" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="10" id="ene-j5-Z1O"/>
+                            <constraint firstItem="c0f-KR-nlA" firstAttribute="top" secondItem="Im6-hH-czj" secondAttribute="bottom" constant="3" id="j0t-GF-4rr"/>
                             <constraint firstItem="c0f-KR-nlA" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="sYa-rb-3Xi"/>
-                            <constraint firstItem="EBV-NG-GMX" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="15" id="snh-yW-5MN"/>
-                            <constraint firstItem="c0f-KR-nlA" firstAttribute="top" secondItem="EBV-NG-GMX" secondAttribute="bottom" id="yTM-KY-f5e"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="3ch-cS-BIy"/>
                     <connections>
                         <outlet property="daysLabel" destination="Rs5-kG-eEf" id="E8T-zH-gMh"/>
+                        <outlet property="editButton" destination="XGE-ut-URq" id="8FO-iK-Xtk"/>
                         <outlet property="myMapView" destination="RPr-3m-7PX" id="E1F-NA-ZcG"/>
+                        <outlet property="saveButton" destination="G74-gT-X09" id="BFV-5H-Qy7"/>
+                        <outlet property="stackView" destination="wjN-OJ-MLt" id="rQx-wb-izf"/>
                         <outlet property="tableView" destination="E2f-xU-tcP" id="qIV-Yg-ce9"/>
                         <outlet property="travelPeriodLabel" destination="EBV-NG-GMX" id="OLQ-WY-FRd"/>
+                        <outlet property="travleTitleLabel" destination="gCG-5x-QSd" id="K2o-Lg-8H1"/>
                         <outlet property="upDownButton" destination="gWr-ds-fve" id="hgW-No-A3r"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="139.69465648854961" y="-2.1126760563380285"/>
+            <point key="canvasLocation" x="2307.6335877862593" y="-2.1126760563380285"/>
         </scene>
-        <!--Page Sheet View Controller-->
-        <scene sceneID="cci-BF-n5A">
+        <!--Search-->
+        <scene sceneID="QsW-FY-kw2">
             <objects>
-                <viewController storyboardIdentifier="PageSheetViewController" id="7Yv-UB-2sc" customClass="PageSheetViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Pel-yk-8ZV">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="OTA-cM-4WM"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="EGT-KO-5kv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <viewControllerPlaceholder storyboardName="Search" id="eQp-y4-GLI" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="ihf-6j-7Oj"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sgX-8w-5Qp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2857" y="28"/>
+            <point key="canvasLocation" x="3240" y="-2"/>
         </scene>
         <!--Detail Sheet View Controller-->
         <scene sceneID="Zy6-kn-bpz">
@@ -276,13 +305,27 @@
                                     </button>
                                 </subviews>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="miZ-T3-ObW">
+                                <rect key="frame" x="20" y="620.33333333333337" width="353" height="89.333333333333371"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain"/>
+                                <connections>
+                                    <action selector="goToDetail:" destination="IRv-ac-uaC" eventType="touchUpInside" id="KI1-Qp-wGX"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="QuL-Dr-hU0"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="zG9-zT-BLz" firstAttribute="top" secondItem="miZ-T3-ObW" secondAttribute="top" id="2Wm-iu-Pvv"/>
                             <constraint firstItem="QuL-Dr-hU0" firstAttribute="trailing" secondItem="aHv-y7-vA8" secondAttribute="trailing" constant="20" id="B5I-nk-G8N"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="bottom" secondItem="zG9-zT-BLz" secondAttribute="bottom" id="EpH-Bb-HNJ"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="height" secondItem="zG9-zT-BLz" secondAttribute="height" id="Sls-3a-6Bv"/>
                             <constraint firstItem="QuL-Dr-hU0" firstAttribute="bottom" secondItem="aHv-y7-vA8" secondAttribute="bottom" constant="30" id="TwN-W1-sBf"/>
                             <constraint firstItem="aHv-y7-vA8" firstAttribute="leading" secondItem="QuL-Dr-hU0" secondAttribute="leading" constant="20" id="gyW-jH-MEh"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="width" secondItem="zG9-zT-BLz" secondAttribute="width" id="lGf-eb-b8m"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="trailing" secondItem="zG9-zT-BLz" secondAttribute="trailing" id="nTn-a2-UKg"/>
+                            <constraint firstItem="miZ-T3-ObW" firstAttribute="leading" secondItem="zG9-zT-BLz" secondAttribute="leading" id="xXs-DG-UhZ"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="TnK-9B-eUZ"/>
@@ -294,7 +337,24 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fDw-4P-Rcs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1144" y="-2"/>
+            <point key="canvasLocation" x="2308" y="713"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="SsI-va-5Ro">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="t5S-7C-uac" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Hog-gO-uvC">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Y6W-OH-hqX" kind="relationship" relationship="rootViewController" id="bvK-HN-5HP"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aar-J6-aCz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1439" y="-2"/>
         </scene>
     </scenes>
     <resources>

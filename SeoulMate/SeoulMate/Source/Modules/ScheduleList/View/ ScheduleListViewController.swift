@@ -119,7 +119,7 @@ extension ScheduleListViewController: UITableViewDataSource {
                 cell.tripImageView.tintColor = UIColor(named: "Main")
             }
 
-            cell.cityCountLabel.text = "\(tour.title?.count.description ?? "0") 개의 장소"
+            cell.placeCountLabel.text = viewModel.locationCountText(for: tour)
             return cell
         }
     }

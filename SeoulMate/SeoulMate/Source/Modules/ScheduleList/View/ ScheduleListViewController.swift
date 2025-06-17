@@ -33,18 +33,6 @@ class ScheduleListViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? MapViewController {
-            guard let indexPath = scheduleListTableView.indexPathForSelectedRow else { return }
-
-            let item = viewModel.tripItems[indexPath.row]
-            guard case .trip(let tour) = item else { return }
-
-            // MapView에 tour 필요
-            //vc.tour = tour
-        }
-    }
-
     private func FloatingButtondesign() {
         floatingButton.setImage(UIImage(systemName: "plus"), for: .normal)
         floatingButton.tintColor = .main
@@ -123,4 +111,20 @@ extension ScheduleListViewController: UITableViewDataSource {
             return cell
         }
     }
+}
+extension ScheduleListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+       tableView.deselectRow(at: indexPath, animated: true)
+       let item = viewModel.tripItems[indexPath.row]
+       guard case .trip(let tour) = item else { return }
+
+       let sb = UIStoryboard(name: "Map", bundle: nil)
+       guard let mapVC = sb.instantiateViewController(
+               withIdentifier: "MapViewController"
+             ) as? MapViewController
+       else { return }
+
+       mapVC.tour = tour
+       navigationController?.pushViewController(mapVC, animated: true)
+     }
 }

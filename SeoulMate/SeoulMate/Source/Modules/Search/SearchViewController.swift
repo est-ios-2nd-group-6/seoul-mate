@@ -7,23 +7,17 @@
 
 import UIKit
 
-enum SourceType {
-    case home
-    case map
-}
-
 class SearchViewController: UIViewController {
-
-    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
-    var items = [SearchResult]()
 
     @IBOutlet weak var searchResultTableView: UITableView!
     @IBOutlet weak var tagCollectionView: UICollectionView!
     @IBOutlet weak var searchbarView: UISearchBar!
     @IBOutlet weak var searchBar: UISearchBar!
-
-    var vcSourceType: SourceType?
-
+    
+    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
+    var items = [SearchResult]()
+    var nameString:String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         searchResultTableView.dataSource = self
@@ -32,7 +26,7 @@ class SearchViewController: UIViewController {
 
         searchbarView.setImage(UIImage(), for: .search, state: .normal)
         searchbarView.becomeFirstResponder()
-
+        
         tagCollectionView.dataSource = self
         tagCollectionView.delegate = self
 
@@ -42,6 +36,25 @@ class SearchViewController: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 5, left: 2, bottom: 5, right: 3)
         tagCollectionView.collectionViewLayout = layout
         tagCollectionView.backgroundColor = .systemBackground
+        
+        Task {
+            items.removeAll()
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: "서울 맛집")
+            items = TourApiManager_hs.shared.searchByTitleResultList
+            self.searchResultTableView.reloadData()
+            self.searchBar.text = "서울 맛집"
+            guard let placeName = nameString else { return }
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: placeName)
+        }
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "POIDetail" {
+            if let nav = segue.destination as? UINavigationController,
+               let detailVC = nav.topViewController as? POIDetailViewController {
+                detailVC.nameLabel = nameString ?? ""
+            }
+        }
     }
 
     @IBAction func searchItemButton(_ sender: Any) {
@@ -51,13 +64,12 @@ class SearchViewController: UIViewController {
             self.searchResultTableView.isHidden = false
             items.removeAll()
             //            await TourApiManager_hs.shared.fetchRcmCourseList(keyword: keyword)
-            await TourApiManager_hs.shared.fetchGooglePlaceAPI(keyword: keyword)
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: keyword)
             items = TourApiManager_hs.shared.searchByTitleResultList
             self.searchResultTableView.reloadData()
         }
-        searchBar.text = ""
     }
-
+    
 }
 
 extension SearchViewController: UICollectionViewDataSource {
@@ -113,7 +125,6 @@ extension SearchViewController: UITableViewDataSource {
                     withIdentifier: String(describing: SearchResultTableViewCell.self),
                     for: indexPath
                 ) as! SearchResultTableViewCell
-                print(#line,items.count)
             if items.count != 0 {
                 cell.titleLabel.text = items[indexPath.row].title
                 cell.subTitleLabel.text = items[indexPath.row].primaryTypeDisplayName?.text
@@ -144,6 +155,8 @@ extension SearchViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        nameString = items[indexPath.row].id
+        performSegue(withIdentifier: "POIDetail", sender: nameString)
     }
 
 }
@@ -156,7 +169,6 @@ protocol SearchViewControllerDelegate: AnyObject {
 extension SearchViewController: SearchViewControllerDelegate {
     func didRemoveButtonTapped(cell: UITableViewCell) {
         guard let item = self.searchResultTableView.indexPath(for: cell) else { return }
-        print(item)
         items.remove(at: item.row)
         DispatchQueue.main.async {
             self.searchResultTableView.deleteRows(at: [item], with: .fade)

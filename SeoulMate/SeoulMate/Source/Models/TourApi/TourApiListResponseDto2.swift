@@ -40,23 +40,20 @@ struct TourApiGoogleResponse: Codable {
     let places:[Place]
     
     struct Place: Codable {
+        var id:String
         var types:[String]
         var displayName:DisplayName
         var primaryTypeDisplayName:PrimaryTypeDisplayName?
         var photos:[Photo]
+        var rating:Double?
+        var location:Location
     }
     struct Photo: Codable {
         var name: String
         var widthPx: Int
         var heightPx: Int
-        var authorAttributions:[Author]
         var flagContentUri: String
         var googleMapsUri: String
-    }
-    struct Author: Codable {
-        var displayName: String
-        var uri: String
-        var photoUri: String
     }
     struct DisplayName: Codable {
         var text: String
@@ -65,5 +62,93 @@ struct TourApiGoogleResponse: Codable {
     struct PrimaryTypeDisplayName: Codable {
         var text: String
         var languageCode: String
+    }
+    struct Location: Codable {
+        let latitude: Double
+        let longitude: Double
+    }
+}
+
+struct TourAPIGoogleResponseShort: Codable {
+    var id:String
+    var formattedAddress:String
+    var rating:Double
+    var displayName:DisplayName
+    var photos:[Photo]
+    var location:Location
+    struct DisplayName: Codable {
+        var text: String
+        var languageCode: String
+    }
+    struct Photo: Codable {
+        var name:String
+        var widthPx:Int
+        var heightPx:Int
+    }
+    struct Location: Codable {
+        let latitude: Double
+        let longitude: Double
+    }
+}
+
+struct TourNearybyAPIGoogleRequest: Codable {
+    let includedTypes: [String]
+    let maxResultCount: Int
+    let locationRestriction: LocationRestriction
+    
+    struct LocationRestriction: Codable {
+        let circle: Circle
+    }
+    
+    struct Circle: Codable {
+        let center: Center
+        let radius: Int
+    }
+    
+    struct Center: Codable {
+        let latitude: Double
+        let longitude: Double
+    }
+    
+    init(latitude: Double, longitude: Double) {
+        self.includedTypes = ["tourist_attraction","restaurant","locality","museum"]
+        self.maxResultCount = 20
+        self.locationRestriction = LocationRestriction(
+            circle: Circle(
+                center: Center(latitude: latitude, longitude: longitude),
+                radius: 2000
+            )
+        )
+    }
+}
+
+struct TourNearybyAPIGoogleResponse: Codable {
+    let places:[Place]
+    struct Place: Codable {
+        let id:String
+        let formattedAddress: String?
+        let location: Location
+        let types: [String]
+        let rating:Double
+        let displayName:DisplayName
+        let primaryTypeDisplayName:PrimaryTypeDisplayName?
+        let photos:[Photo]
+        struct DisplayName: Codable {
+            var text: String
+            var languageCode: String
+        }
+        struct PrimaryTypeDisplayName: Codable {
+            var text: String
+            var languageCode: String
+        }
+        struct Photo: Codable {
+            var name:String
+            var widthPx:Int
+            var heightPx:Int
+        }
+        struct Location: Codable {
+            let latitude: Double
+            let longitude: Double
+        }
     }
 }

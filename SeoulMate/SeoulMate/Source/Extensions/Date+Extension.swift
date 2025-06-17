@@ -11,4 +11,8 @@ extension Date {
     public var summary: String {
         return DateFormatter.summaryWithDot.string(from: self)
     }
+
+    public var monthDayWeekday: String {
+        return DateFormatter.monthDayWeekdayFormatter.string(from: self)
+    }
 }

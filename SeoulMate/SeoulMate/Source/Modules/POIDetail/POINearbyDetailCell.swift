@@ -14,9 +14,11 @@ class POINearbyDetailCell: UITableViewCell {
     @IBOutlet weak var detailLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     @IBOutlet weak var categoryLabel: UILabel!
+    @IBOutlet weak var ratingCountLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        locationImageView.image = nil
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

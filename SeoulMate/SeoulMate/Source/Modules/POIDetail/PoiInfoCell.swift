@@ -28,5 +28,15 @@ class PoiInfoCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    
+    @IBAction func addScheduleButton(_ sender: Any) {
+    }
+    
+    @IBAction func findRoutesButton(_ sender: Any) {
+        
+    }
+    
+    @IBAction func shareButton(_ sender: Any) {
+        
+    }
 }

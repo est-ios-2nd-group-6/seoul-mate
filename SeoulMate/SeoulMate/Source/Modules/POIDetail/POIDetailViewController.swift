@@ -17,7 +17,6 @@ class POIDetailViewController: UIViewController {
     var POIItems: [POICellType] = []
     var nameLabel: String = ""
     var location: PlaceInfo?
-    var nearybyPlaceList: [TourNearybyAPIGoogleResponse.Place] = [TourNearybyAPIGoogleResponse.Place]()
 
     @IBOutlet weak var detailTableView: UITableView!
 
@@ -34,7 +33,6 @@ class POIDetailViewController: UIViewController {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: nameLabel)
             location = TourApiManager_hs.shared.placeInfo
             await TourApiManager_hs.shared.fetchPOIDetailNearbyPlace(latitude: 37.7937, longitude: -122.3965)
-            nearybyPlaceList = TourApiManager_hs.shared.nearybyPlaceList
             self.detailTableView.reloadData()
         }
     }
@@ -68,7 +66,7 @@ extension POIDetailViewController: UITableViewDataSource {
         case .Recommandation:
             let cell =
                 tableView.dequeueReusableCell(withIdentifier: String(describing: PoiNearbyCell.self)) as! PoiNearbyCell
-                cell.nearybyPlaceList = nearybyPlaceList
+                cell.nearbyPlaceList = TourApiManager_hs.shared.nearybyPlaceList
             return cell
         }
     }

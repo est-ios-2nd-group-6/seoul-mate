@@ -7,22 +7,15 @@
 
 import UIKit
 
-enum SourceType {
-    case home
-    case map
-}
-
 class SearchViewController: UIViewController {
-
-    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
-    var items = [SearchResult]()
 
     @IBOutlet weak var searchResultTableView: UITableView!
     @IBOutlet weak var tagCollectionView: UICollectionView!
     @IBOutlet weak var searchbarView: UISearchBar!
     @IBOutlet weak var searchBar: UISearchBar!
-
-    var vcSourceType: SourceType?
+    
+    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
+    var items = [SearchResult]()
     var nameString:String?
     
     override func viewDidLoad() {
@@ -33,7 +26,7 @@ class SearchViewController: UIViewController {
 
         searchbarView.setImage(UIImage(), for: .search, state: .normal)
         searchbarView.becomeFirstResponder()
-
+        
         tagCollectionView.dataSource = self
         tagCollectionView.delegate = self
 
@@ -76,7 +69,7 @@ class SearchViewController: UIViewController {
             self.searchResultTableView.reloadData()
         }
     }
-
+    
 }
 
 extension SearchViewController: UICollectionViewDataSource {

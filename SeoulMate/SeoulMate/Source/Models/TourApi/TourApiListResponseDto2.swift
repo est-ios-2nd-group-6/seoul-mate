@@ -51,15 +51,15 @@ struct TourApiGoogleResponse: Codable {
         var name: String
         var widthPx: Int
         var heightPx: Int
-        var authorAttributions:[Author]
+//        var authorAttributions:[Author]
         var flagContentUri: String
         var googleMapsUri: String
     }
-    struct Author: Codable {
-        var displayName: String
-        var uri: String
-        var photoUri: String
-    }
+//    struct Author: Codable {
+//        var displayName: String
+//        var uri: String
+//        var photoUri: String
+//    }
     struct DisplayName: Codable {
         var text: String
         var languageCode: String
@@ -107,12 +107,12 @@ struct TourNearybyAPIGoogleRequest: Codable {
     }
     
     init(latitude: Double, longitude: Double) {
-        self.includedTypes = ["tourist_attraction","restaurant"]
+        self.includedTypes = ["tourist_attraction","restaurant","locality","museum"]
         self.maxResultCount = 20
         self.locationRestriction = LocationRestriction(
             circle: Circle(
                 center: Center(latitude: latitude, longitude: longitude),
-                radius: 1000
+                radius: 2000
             )
         )
     }

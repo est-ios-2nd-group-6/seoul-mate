@@ -175,7 +175,7 @@ class TourApiManager_hs {
         var request = URLRequest(url: url)
         guard let googleApiKey = Bundle.main.googleApiKey else { return }
         request.httpMethod = "POST"
-        let requestBody = TourNearybyAPIGoogleRequest(latitude: 37.7937, longitude: -122.3965)
+        let requestBody = TourNearybyAPIGoogleRequest(latitude: 37.581890, longitude: 127.054080)
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
         request.setValue(
             "places.id,places.formattedAddress,places.rating,places.displayName,places.primaryTypeDisplayName,places.location,places.photos,places.types",

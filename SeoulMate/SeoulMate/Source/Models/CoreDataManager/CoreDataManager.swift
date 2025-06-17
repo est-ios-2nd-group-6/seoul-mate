@@ -124,9 +124,7 @@ final class CoreDataManager {
                 }
             }
 
-            tour.course = nil
             self.context.delete(tour)
-
             try? self.context.save()
         }
     }
@@ -143,11 +141,6 @@ final class CoreDataManager {
     func fetchPOIs(for schedule: Schedule) -> [POI] {
         guard let arr = schedule.pois else { return [] }
         return arr.compactMap { $0 as? POI }
-    }
-
-    func togglePOISaved(_ poi: POI) {
-        poi.isSaved.toggle()
-        saveContext()
     }
 
     func fetchSavedPOIs() -> [POI] {

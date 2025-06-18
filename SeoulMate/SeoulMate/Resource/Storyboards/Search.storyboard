@@ -14,7 +14,7 @@
         <!--Navigation Controller-->
         <scene sceneID="dfT-sH-mMQ">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="Yfy-Fm-F6S" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" hidesBottomBarWhenPushed="YES" navigationBarHidden="YES" id="Yfy-Fm-F6S" sceneMemberID="viewController">
                     <toolbarItems/>
                     <nil key="simulatedTopBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Hko-pH-zRo">
@@ -250,6 +250,7 @@
                             <constraint firstAttribute="bottom" secondItem="oqK-yO-mxr" secondAttribute="bottom" constant="10" id="zrF-YV-6hk"/>
                         </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                     <navigationItem key="navigationItem" id="n5U-lU-Qkx"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>

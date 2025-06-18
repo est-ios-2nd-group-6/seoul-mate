@@ -117,8 +117,12 @@ class AddToScheduleSheetViewController: UIViewController {
                 cellItems.append(item)
             }
 
-            cellItems[0].isSelected = true
-            cellItems[0].days[0].isSelected = true
+            if !cellItems.isEmpty {
+                cellItems[0].isSelected = true
+                cellItems[0].days[0].isSelected = true
+            }
+
+            validateButton()
 
             addToScheduleTableView.reloadData()
         }

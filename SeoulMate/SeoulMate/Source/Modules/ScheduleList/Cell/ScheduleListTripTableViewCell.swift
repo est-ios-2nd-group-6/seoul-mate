@@ -15,13 +15,9 @@ class ScheduleListTripTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        tripImageView.layer.cornerRadius = tripImageView.frame.height / 2
         tripImageView.clipsToBounds = true
         tripImageView.contentMode = .scaleAspectFill
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        tripImageView.layer.cornerRadius = tripImageView.frame.height / 2
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

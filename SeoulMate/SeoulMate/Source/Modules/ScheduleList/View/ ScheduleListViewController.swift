@@ -173,11 +173,17 @@ class ScheduleListViewController: UIViewController {
 
                 // 삭제 액션 추가
                 alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
+                    let row = indexPath.row
+                    let index = IndexPath(row: row, section: 0)
+
+                    self.viewModel.tripItems.remove(at: row)
+
+                    self.scheduleListTableView.performBatchUpdates {
+                        self.scheduleListTableView.deleteRows(at: [index], with: .automatic)
+                    }
+
                     Task {
                         await self.viewModel.delete(tour: tour)
-                        await MainActor.run {
-                            self.scheduleListTableView.reloadData()
-                        }
                     }
                 })
 

@@ -32,14 +32,13 @@ class ScheduleListViewController: UIViewController {
         FloatingButtondesign()
         showLoadingOverlay()
 
-        Task {
-            await CoreDataManager.shared.seedDummyData()
+        CoreDataManager.shared.seedDummyData()
+
+        Task { @MainActor in
             await viewModel.fetchScheduleList()
             preloadAssetImages()
-            await MainActor.run {
-                self.hideLoadingOverlay()
-                self.scheduleListTableView.reloadData()
-            }
+            hideLoadingOverlay()
+            scheduleListTableView.reloadData()
         }
     }
 

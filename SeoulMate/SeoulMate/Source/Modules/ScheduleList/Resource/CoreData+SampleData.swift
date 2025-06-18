@@ -9,9 +9,10 @@ import Foundation
 import CoreData
 
 extension CoreDataManager {
-    func seedDummyData() async {
-        let check = Set((await fetchToursAsync()).compactMap { $0.title })
-
+    func seedDummyData() {
+        let context = self.context
+        let existingTours = (try? context.fetch(Tour.fetchRequest()) as? [Tour]) ?? []
+        let existingTitles = Set(existingTours.compactMap { $0.title })
         let tours: [(title: String, start: Date, end: Date,
                      poisByDay: [[(
                         name: String,
@@ -234,8 +235,7 @@ extension CoreDataManager {
                      ]
 
         for tourInfo in tours {
-            guard !check.contains(tourInfo.title) else { continue }
-
+            guard !existingTitles.contains(tourInfo.title) else { continue }
             let tour = Tour(context: context)
             tour.id = UUID()
             tour.title = tourInfo.title
@@ -265,6 +265,8 @@ extension CoreDataManager {
                 }
             }
         }
-        self.saveContext()
+        if context.hasChanges {
+            try? context.save()
+        }
     }
 }

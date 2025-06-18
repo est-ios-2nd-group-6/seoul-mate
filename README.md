@@ -55,8 +55,8 @@
 
 이 프로젝트는 `Google`, `TourAPI`, `TMap` API를 사용합니다. 원활한 실행을 위해서는 각 서비스에서 발급받은 API 키를 프로젝트에 설정해야 합니다.
 
-1.  Xcode에서 `SeoulMate/SeoulMate/Resource` 그룹으로 이동합니다.
-2.  `Secrets.xcconfig` 파일을 새로 생성하고 아래와 같이 API 키를 추가합니다. (만약 파일이 이미 있다면 키 값만 추가합니다.)
+1.  Xcode에서 `SeoulMate/SeoulMate/Support` 그룹으로 이동합니다.
+2.  `Secret.xcconfig` 파일을 새로 생성하고 아래와 같이 API 키를 추가합니다. (만약 파일이 이미 있다면 키 값만 추가합니다.)
 
     ```
     GOOGLE_API_KEY = "여기에 Google API 키를 입력하세요"

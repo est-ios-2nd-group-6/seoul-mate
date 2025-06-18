@@ -13,16 +13,31 @@ class ScheduleListViewController: UIViewController {
     @IBOutlet weak var scheduleListTableView: UITableView!
     @IBOutlet weak var floatingButton: UIButton!
 
+    private var loadingOverlay: UIView?
     private let viewModel = ScheduleModel()
+
+    private lazy var allAssetNames: [String] = {
+        viewModel.tripItems.compactMap { item in
+            if case .trip(let tour) = item,
+               let poi = viewModel.thumbnailPOI(for: tour) {
+                return poi.assetImageName
+            }
+            return nil
+        }
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        scheduleListTableView.prefetchDataSource = self
         FloatingButtondesign()
+        showLoadingOverlay()
 
         Task {
             await CoreDataManager.shared.seedDummyData()
             await viewModel.fetchScheduleList()
+            preloadAssetImages()
             await MainActor.run {
+                self.hideLoadingOverlay()
                 self.scheduleListTableView.reloadData()
             }
         }
@@ -31,6 +46,65 @@ class ScheduleListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+        Task {
+            await viewModel.fetchScheduleList()
+            await MainActor.run {
+                scheduleListTableView.reloadData()
+            }
+        }
+    }
+
+    private func preloadAssetImages() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            for name in self.allAssetNames {
+                _ = UIImage(named: name)
+            }
+        }
+    }
+
+    private func showLoadingOverlay() {
+        let overlay = UIView(frame: view.bounds)
+        overlay.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.8)
+        overlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.color = .main
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.startAnimating()
+        overlay.addSubview(spinner)
+
+        let label = UILabel()
+        label.text = "여행 기록 불러오는 중..."
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .main
+        label.translatesAutoresizingMaskIntoConstraints = false
+        overlay.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            spinner.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: overlay.centerYAnchor),
+            label.topAnchor.constraint(equalTo: spinner.bottomAnchor, constant: 12),
+            label.centerXAnchor.constraint(equalTo: overlay.centerXAnchor)
+        ])
+
+        view.addSubview(overlay)
+        loadingOverlay = overlay
+    }
+
+    private func hideLoadingOverlay() {
+        loadingOverlay?.removeFromSuperview()
+        loadingOverlay = nil
+    }
+
+    @IBAction func floattingTapped(_ sender: Any) {
+        let sb = UIStoryboard(name: "Calendar", bundle: nil)
+        guard let vc = sb.instantiateViewController(
+            withIdentifier: "CalendarViewController"
+        ) as? CalendarViewController
+        else {
+            return
+        }
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     private func FloatingButtondesign() {
@@ -99,17 +173,22 @@ extension ScheduleListViewController: UITableViewDataSource {
 
             cell.tripNameLabel.text = viewModel.displayTitle(for: tour)
             cell.tripDateLabel.text = viewModel.formatDateRange(tour.startDate ?? Date(), tour.endDate ?? Date())
+            let placeholder = UIImage(systemName: "photo")?.withTintColor(UIColor(named: "Main")!, renderingMode: .alwaysOriginal)
 
             if let imageURL = viewModel.imageURL(for: tour) {
                 cell.tripImageView.load(from: imageURL)
             } else if let poi = viewModel.thumbnailPOI(for: tour) {
                 let assetName = poi.assetImageName
-                cell.tripImageView.image = UIImage(named: assetName)
+                cell.tripImageView.image = placeholder
+                if let img = UIImage(named: assetName) {
+                    cell.tripImageView.image = img
+                }
             } else {
-                cell.tripImageView.image = UIImage(systemName: "photo")
-                cell.tripImageView.tintColor = UIColor(named: "Main")
+                cell.tripImageView.image = placeholder
             }
-            
+            cell.tripImageView.layer.drawsAsynchronously = true
+            cell.tripImageView.layer.shouldRasterize = true
+            cell.tripImageView.layer.rasterizationScale   = UIScreen.main.scale
             cell.placeCountLabel.text = viewModel.locationCountText(for: tour)
             return cell
         }
@@ -117,17 +196,30 @@ extension ScheduleListViewController: UITableViewDataSource {
 }
 extension ScheduleListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-       tableView.deselectRow(at: indexPath, animated: true)
-       let item = viewModel.tripItems[indexPath.row]
-       guard case .trip(let tour) = item else { return }
+        tableView.deselectRow(at: indexPath, animated: true)
+        let item = viewModel.tripItems[indexPath.row]
+        guard case .trip(let tour) = item else { return }
 
-       let sb = UIStoryboard(name: "Map", bundle: nil)
-       guard let mapVC = sb.instantiateViewController(
-               withIdentifier: "MapViewController"
-             ) as? MapViewController
-       else { return }
+        let sb = UIStoryboard(name: "Map", bundle: nil)
+        guard let mapVC = sb.instantiateViewController(
+            withIdentifier: "MapViewController"
+        ) as? MapViewController
+        else { return }
 
-       mapVC.tour = tour
-       navigationController?.pushViewController(mapVC, animated: true)
-     }
+        mapVC.tour = tour
+        navigationController?.pushViewController(mapVC, animated: true)
+    }
+}
+extension ScheduleListViewController: UITableViewDataSourcePrefetching {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        for ip in indexPaths {
+            guard case .trip(let tour) = viewModel.tripItems[ip.row],
+                  viewModel.imageURL(for: tour) == nil,
+                  let name = viewModel.thumbnailPOI(for: tour)?.assetImageName else { continue }
+
+            DispatchQueue.global(qos: .utility).async {
+                _ = UIImage(named: name)
+            }
+        }
+    }
 }

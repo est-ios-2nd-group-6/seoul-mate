@@ -19,12 +19,19 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var searchbarView: UISearchBar!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tagCollectionViewTitle: UILabel!
-
+    @IBOutlet weak var totalPlaceCountLabel: UILabel!
+    
     var comingVCType: SourceViewController?
     //    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
     var pois: [POI] = [] {
         didSet {
             self.tagCollectionView.reloadData()
+            if pois.count > 0 {
+                self.totalPlaceCountLabel.isHidden = false
+                self.totalPlaceCountLabel.text = "\(pois.count)개의 장소가 선택됨"
+            } else {
+                self.totalPlaceCountLabel.isHidden = true
+            }
         }
     }
     var POIsBackToVC: (([POI]) -> Void)?
@@ -39,6 +46,8 @@ class SearchViewController: UIViewController {
 
         searchbarView.setImage(UIImage(), for: .search, state: .normal)
         searchbarView.becomeFirstResponder()
+        
+        totalPlaceCountLabel.isHidden = true
 
         let layout = LeftAlignedCollectionViewFlowLayout()
         layout.minimumLineSpacing = 3
@@ -252,6 +261,7 @@ extension SearchViewController: SearchViewControllerDelegate {
         poi.imageURL = items[item.row].profileImage
         poi.openingHours = items[item.row].weekdayDescription?.joined(separator: "\n")
         pois.append(poi)
+        
     }
 
     func didDeselectButtonTapped(cell: UICollectionViewCell) {

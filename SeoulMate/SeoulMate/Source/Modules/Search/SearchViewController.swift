@@ -7,14 +7,26 @@
 
 import UIKit
 
+enum SourceViewController {
+    case home
+    case schedule
+}
+
 class SearchViewController: UIViewController {
 
     @IBOutlet weak var searchResultTableView: UITableView!
     @IBOutlet weak var tagCollectionView: UICollectionView!
     @IBOutlet weak var searchbarView: UISearchBar!
     @IBOutlet weak var searchBar: UISearchBar!
-
-    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
+    @IBOutlet weak var tagCollectionViewTitle: UILabel!
+    
+    var comingVCType:SourceViewController?
+//    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
+    var tags:[String] = [] {
+        didSet {
+            self.tagCollectionView.reloadData()
+        }
+    }
     var items = [SearchResult]()
     var nameString: String?
 
@@ -37,6 +49,18 @@ class SearchViewController: UIViewController {
         tagCollectionView.dataSource = self
         tagCollectionView.delegate = self
         tagCollectionView.allowsSelection = true
+        
+        switch comingVCType {
+            case .home:
+                tagCollectionViewTitle.text = "인기 검색"
+                break
+            case .schedule:
+                tagCollectionViewTitle.text = "최근 검색 장소"
+                tags.removeAll()
+                tagCollectionView.reloadData()
+            default:
+                break
+        }
 
         Task {
             items.removeAll()
@@ -80,7 +104,6 @@ extension SearchViewController: UICollectionViewDataSource,UICollectionViewDeleg
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(#function)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
@@ -175,6 +198,7 @@ extension SearchViewController: UITableViewDelegate {
 protocol SearchViewControllerDelegate: AnyObject {
     func didRemoveAllButtonTapped()
     func didRemoveButtonTapped(cell: UITableViewCell)
+    func didSelectButtonTapped(cell: UITableViewCell)
 }
 
 extension SearchViewController: SearchViewControllerDelegate {
@@ -192,6 +216,12 @@ extension SearchViewController: SearchViewControllerDelegate {
         alertVC.modalTransitionStyle = .crossDissolve
         alertVC.delegate = self
         present(alertVC, animated: false)
+    }
+    
+    func didSelectButtonTapped(cell: UITableViewCell) {
+        guard let item = self.searchResultTableView.indexPath(for: cell)
+        else { return }
+        tags.append(items[item.row].title)
     }
 }
 

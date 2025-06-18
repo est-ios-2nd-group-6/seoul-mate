@@ -22,7 +22,6 @@ class LeftAlignedCollectionViewFlowLayout: UICollectionViewFlowLayout {
                 maxY = max(layoutAttribute.frame.maxY, maxY)
             }
         }
-        self.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         return attributes
     }
 }

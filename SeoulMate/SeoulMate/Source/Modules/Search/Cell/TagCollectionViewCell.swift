@@ -10,7 +10,7 @@ import UIKit
 class TagCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var label: UILabel!
-        
+    weak var delegate:(any SearchViewControllerDelegate)?
     override func awakeFromNib() {
         super.awakeFromNib()
     }
@@ -18,7 +18,11 @@ class TagCollectionViewCell: UICollectionViewCell {
     func setCell(text: String){
         self.label.text = text
         self.layer.backgroundColor = .init(red:240/255, green: 240/255, blue: 240/255, alpha: 0.6)
-        self.layer.cornerRadius = 10
+        self.layer.cornerRadius = 4
         self.layer.masksToBounds = true
+    }
+    
+    @IBAction func deselectItem(_ sender: Any) {
+        self.delegate?.didDeselectButtonTapped(cell: self)
     }
 }

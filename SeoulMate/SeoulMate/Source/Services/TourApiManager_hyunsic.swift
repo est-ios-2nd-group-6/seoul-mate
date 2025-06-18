@@ -17,6 +17,7 @@ struct SearchResult {
     var primaryTypeDisplayName: TourApiGoogleResponse.PrimaryTypeDisplayName?
     var address: String?
     var location: TourApiGoogleResponse.Location
+    var weekdayDescription:[String]?
     struct DisplayName: Codable {
         var text: String
         var languageCode: String
@@ -39,6 +40,7 @@ struct PlaceInfo {
     var longitude: Double?
     var latitude: Double?
     var types: [String]?
+    var weekdayDescriptions:[String]?
 }
 
 struct CurrentLocation {
@@ -76,7 +78,7 @@ class TourApiManager_hs {
         request.httpMethod = "POST"
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
         request.setValue(
-            "places.id,places.displayName,places.types,places.photos,places.primaryTypeDisplayName,places.rating,places.location",
+            "places.id,places.displayName,places.types,places.photos,places.primaryTypeDisplayName,places.rating,places.location,places.regularOpeningHours",
             forHTTPHeaderField: "X-Goog-FieldMask"
         )
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -106,7 +108,9 @@ class TourApiManager_hs {
                     profileImage: value.photos.first?.name,
                     photos: value.photos,
                     primaryTypeDisplayName: value.primaryTypeDisplayName,
-                    location: value.location
+                    location: value.location,
+                    weekdayDescription: value.regularOpeningHours.weekdayDescriptions
+                    
                 )
                 searchByTitleResultList.append(result)
             }
@@ -133,7 +137,7 @@ class TourApiManager_hs {
         guard let googleApiKey = Bundle.main.googleApiKey else { return }
 
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
-        request.setValue("id,formattedAddress,rating,displayName,photos,location", forHTTPHeaderField: "X-Goog-FieldMask")
+        request.setValue("id,formattedAddress,rating,displayName,photos,location,regularOpeningHours", forHTTPHeaderField: "X-Goog-FieldMask")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         do {
@@ -154,6 +158,7 @@ class TourApiManager_hs {
                 address: json.formattedAddress,
                 longitude: json.location.longitude,
                 latitude: json.location.latitude,
+                weekdayDescriptions: json.weekdayDescriptions
             )
             guard
                 let url = URL(

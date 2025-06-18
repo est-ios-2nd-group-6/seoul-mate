@@ -7,14 +7,28 @@
 
 import UIKit
 
+enum SourceViewController {
+    case home
+    case schedule
+}
+
 class SearchViewController: UIViewController {
 
     @IBOutlet weak var searchResultTableView: UITableView!
     @IBOutlet weak var tagCollectionView: UICollectionView!
     @IBOutlet weak var searchbarView: UISearchBar!
     @IBOutlet weak var searchBar: UISearchBar!
-
-    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
+    @IBOutlet weak var tagCollectionViewTitle: UILabel!
+    
+    var comingVCType:SourceViewController?
+//    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
+    var pois:[POI] = [] {
+        didSet {
+            self.tagCollectionView.reloadData()
+            print(#line,pois.count)
+        }
+    }
+    var POIsBackToVC:(([POI])->Void)?
     var items = [SearchResult]()
     var nameString: String?
 
@@ -37,6 +51,18 @@ class SearchViewController: UIViewController {
         tagCollectionView.dataSource = self
         tagCollectionView.delegate = self
         tagCollectionView.allowsSelection = true
+        
+        switch comingVCType {
+            case .home:
+                tagCollectionViewTitle.text = "인기 검색"
+                break
+            case .schedule:
+                tagCollectionViewTitle.text = "최근 검색 장소"
+                pois.removeAll()
+                tagCollectionView.reloadData()
+            default:
+                break
+        }
 
         Task {
             items.removeAll()
@@ -49,10 +75,18 @@ class SearchViewController: UIViewController {
         }
     }
     
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+
+
     @IBAction func backToSchduleView(_ sender: Any) {
         navigationController?.popViewController(animated: true)
     }
     
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "POIDetail" {
             if let nav = segue.destination as? UINavigationController,
@@ -74,17 +108,17 @@ class SearchViewController: UIViewController {
             self.searchResultTableView.reloadData()
         }
     }
-
+    @IBAction func dismissVC(_ sender: Any) {
+        POIsBackToVC?(pois)
+        navigationController?.popViewController(animated: true)
+    }
+    
 }
 
 extension SearchViewController: UICollectionViewDataSource,UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return tags.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(#function)
+        return pois.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
@@ -94,7 +128,8 @@ extension SearchViewController: UICollectionViewDataSource,UICollectionViewDeleg
                 withReuseIdentifier: String(describing: TagCollectionViewCell.self),
                 for: indexPath
             ) as! TagCollectionViewCell
-        cell.setCell(text: tags[indexPath.item])
+        cell.setCell(text: pois[indexPath.item].name ?? "")
+        cell.delegate = self
         return cell
     }
 }
@@ -105,9 +140,9 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let text = tags[indexPath.item]
+        let text = pois[indexPath.item].name ?? ""
         let size = (text as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)])
-        return CGSize(width: size.width + 24, height: size.height + 16)
+        return CGSize(width: size.width + 60, height: size.height + 4)
     }
 }
 
@@ -179,6 +214,8 @@ extension SearchViewController: UITableViewDelegate {
 protocol SearchViewControllerDelegate: AnyObject {
     func didRemoveAllButtonTapped()
     func didRemoveButtonTapped(cell: UITableViewCell)
+    func didSelectButtonTapped(cell: UITableViewCell)
+    func didDeselectButtonTapped(cell: UICollectionViewCell)
 }
 
 extension SearchViewController: SearchViewControllerDelegate {
@@ -197,7 +234,27 @@ extension SearchViewController: SearchViewControllerDelegate {
         alertVC.delegate = self
         present(alertVC, animated: false)
     }
+    
+    func didSelectButtonTapped(cell: UITableViewCell) {
+        guard let item = self.searchResultTableView.indexPath(for: cell)
+        else { return }
+        let poi = POI(context: CoreDataManager.shared.context)
+        poi.name = items[item.row].title
+        poi.latitude = items[item.row].location.latitude
+        poi.longitude = items[item.row].location.longitude
+        poi.category = items[item.row].primaryTypeDisplayName?.text
+        poi.placeID = items[item.row].id
+        poi.imageURL = items[item.row].profileImage
+        poi.openingHours = items[item.row].weekdayDescription?.joined(separator: "\n")
+        pois.append(poi)
+    }
+    
+    func didDeselectButtonTapped(cell: UICollectionViewCell) {
+        guard let item = self.tagCollectionView.indexPath(for: cell) else { return }
+        pois.remove(at: item.row)
+    }
 }
+
 
 extension SearchViewController: CustomAlertControllerDelegate {
     func deleteRecentItem(_ alert: CustomAlertController) {

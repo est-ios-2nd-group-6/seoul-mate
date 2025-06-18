@@ -15,6 +15,7 @@ class SearchPlaceViewController: UIViewController {
     @IBOutlet weak var scheduleAddButton: UIButton!
 
     var items = [SearchResult]()
+    var selectedItems = [SearchResult]()
     var nameString: String?
 
     override func viewDidLoad() {
@@ -29,6 +30,7 @@ class SearchPlaceViewController: UIViewController {
         scheduleAddButton.layer.masksToBounds = true
         scheduleAddButton.layer.cornerRadius = 15
         scheduleAddButton.isHidden = true
+        
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -50,10 +52,12 @@ class SearchPlaceViewController: UIViewController {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: keyword)
             items = TourApiManager_hs.shared.searchByTitleResultList
             self.searchResultTableView.reloadData()
-            print(items)
         }
     }
-
+    @IBAction func vcDismiss(_ sender: Any) {
+        self.navigationController?.dismiss(animated: true)
+    }
+    
 }
 
 extension SearchPlaceViewController: UITableViewDataSource {
@@ -71,6 +75,25 @@ extension SearchPlaceViewController: UITableViewDataSource {
                 withIdentifier: String(describing: SearchViewFromMapTableViewCell.self),
                 for: indexPath
             ) as! SearchViewFromMapTableViewCell
+        if items.count != 0 {
+            cell.placeTitleLabel.text = items[indexPath.row].title
+            cell.placeCategoryLabel.text = items[indexPath.row].primaryTypeDisplayName?.text
+            if let profileURL = items[indexPath.row].profileImage, let apiKey = Bundle.main.googleApiKey,
+               let url = URL(
+                string:
+                    "https://places.googleapis.com/v1/\(profileURL)/media?maxHeightPx=50&maxWidthPx=50&key=\(apiKey)"
+               )
+            {
+                URLSession.shared.dataTask(with: url) { data, _, error in
+                    if let data = data {
+                        DispatchQueue.main.async {
+                            cell.placeImageView.image = UIImage(data: data)
+                        }
+                    }
+                }.resume()
+            }
+            cell.delegate = self
+        }
         return cell
     }
 }
@@ -81,7 +104,6 @@ extension SearchPlaceViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        nameString = items[indexPath.row].id
         performSegue(withIdentifier: "POIDetail", sender: nameString)
     }
     
@@ -91,34 +113,14 @@ extension SearchPlaceViewController: UITableViewDelegate {
 }
 
 protocol SearchPlaceViewControllerDelegate: AnyObject {
-    func didRemoveAllButtonTapped()
-    func didRemoveButtonTapped(cell: UITableViewCell)
+    func didPlaceScheduleAddTapped(cell: UITableViewCell)
 }
 
-extension SearchPlaceViewController: SearchViewControllerDelegate {
-    func didRemoveButtonTapped(cell: UITableViewCell) {
+extension SearchPlaceViewController: SearchPlaceViewControllerDelegate {
+    func didPlaceScheduleAddTapped(cell: UITableViewCell) {
         guard let item = self.searchResultTableView.indexPath(for: cell) else { return }
-        items.remove(at: item.row)
-        DispatchQueue.main.async {
-            self.searchResultTableView.deleteRows(at: [item], with: .fade)
-            if self.items.count == 1 {
-                self.searchResultTableView.isHidden = true
-            }
-        }
+        self.searchResultTableView.reloadRows(at: [item], with: .none)
     }
-
-    func didRemoveAllButtonTapped() {
-        let alertVC = CustomAlertController()
-        alertVC.modalPresentationStyle = .overFullScreen
-        alertVC.modalTransitionStyle = .crossDissolve
-        alertVC.delegate = self
-        present(alertVC, animated: false)
-    }
+    
 }
 
-extension SearchPlaceViewController: CustomAlertControllerDelegate {
-    func deleteRecentItem(_ alert: CustomAlertController) {
-        self.items.removeAll()
-        self.searchResultTableView.reloadData()
-    }
-}

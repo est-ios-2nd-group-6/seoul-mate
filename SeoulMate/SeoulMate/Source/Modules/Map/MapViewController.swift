@@ -284,15 +284,16 @@ class MapViewController: UIViewController {
     
     
     func addPOI(_ poi: POI, toDay dayIndex: Int) {
-        guard dayIndex >= 0 && dayIndex < scheduleItemsArray.count else {
+        print("1")
+        guard dayIndex >= 0 && dayIndex < poisByDay.count else {
             return
         }
-        
-        scheduleItemsArray[dayIndex].append(poi)
+        print("2")
+        poisByDay[dayIndex].append(poi)
         
         tableView.reloadSections(IndexSet(integer: dayIndex), with: .automatic)
         
-        let coords = scheduleItemsArray[dayIndex]
+        let coords = poisByDay[dayIndex]
             .map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
         makePath(for: dayIndex, with: coords)
     }
@@ -445,7 +446,7 @@ class MapViewController: UIViewController {
         
         
         let allPois: [POI] = poisByDay.flatMap { $0 }
-        print("allpois: \(allPois)")
+//        print("allpois: \(allPois)")
         guard let firstPoi = allPois.first,
               let poiName = firstPoi.name else {
             travleTitleLabel.text = tourTitle
@@ -766,7 +767,7 @@ extension MapViewController: CLLocationManagerDelegate {
 
 extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return sortedDates.count
+        return scheduleItemsArray.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -930,15 +931,17 @@ extension MapViewController: AddPlaceButtonCellDelegate {
     func addPlace(_ cell: AddPlaceButtonCell) {
         let storyboard = UIStoryboard(name: "Search", bundle: nil)
         if let vc = storyboard.instantiateViewController(withIdentifier: "SearchVC") as? SearchViewController {
-            print("addplacebuttoncell")
             navigationController?.pushViewController(vc, animated: true)
             navigationController?.navigationBar.isHidden = true
             let dayIndex = cell.addButton.tag
             // TODO: - 데이터 받아오기
-            let newPoi = POI(context: context)
-            
+//            let newPoi = POI(context: context)
+            vc.POIsBackToVC = { [weak self] returnedPois in
+                returnedPois.forEach { i in
+                    self?.addPOI(i, toDay: dayIndex)
+                }
+            }
             cameBackFromSearch = true
-            addPOI(newPoi, toDay: dayIndex)
         }
     }
     

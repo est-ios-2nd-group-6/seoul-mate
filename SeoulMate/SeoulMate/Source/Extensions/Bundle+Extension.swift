@@ -16,10 +16,6 @@ extension Bundle {
         return infoDictionary?["NaverMapApiKey"] as? String
     }
 
-    var googleRoutesApiKey: String? {
-        return infoDictionary?["GoogleRoutesApiKey"] as? String
-    }
-
     var tMapRoutesApiKey: String? {
         return infoDictionary?["TMapRoutesApiKey"] as? String
     }

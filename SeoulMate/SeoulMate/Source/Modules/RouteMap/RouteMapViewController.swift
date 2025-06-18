@@ -8,8 +8,6 @@
 import UIKit
 import NMapsMap
 
-// TODO: 1. TravelMode == .transit 일때, 경로 정보 안내
-
 // TODO: drive, walk 시 대체경로 회색으로 표시
 // TODO: TableView 순서 변경
 // TODO: TravelMode == .transit 일때, 지하철 호선에 따른 색상 변경
@@ -25,8 +23,8 @@ struct TempTour {
 var dummyData: [TempTour] = [
     TempTour(name: "신림역", latitude: 37.484171739, longitude: 126.929784067),
     TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
-    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
-    TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
+//    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
+//    TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
     TempTour(name: "옥수역", latitude: 37.468502, longitude: 126.906699),
 ]
 
@@ -198,23 +196,6 @@ struct RouteData {
             self.traffic = traffic
             self.detail = detail
         }
-
-        //        init(step: Step) {
-        //            var polyline: [RouteData.Coordinate] = []
-        //
-        //
-        //
-        //            for coordinate in step.polyline.geoJSONLinestring.coordinates {
-        //                let latitude: Double = coordinate[1]
-        //                let longitude: Double = coordinate[0]
-        //
-        //                polyline.append(.init(latitude: latitude, longitude: longitude))
-        //            }
-        //
-        //            self.polyline = polyline
-        //            self.travelMode = RouteOption(rawValue: step.travelMode)
-        //        }
-
     }
 
     var searchOption: SearchOption? = nil
@@ -280,7 +261,6 @@ class RouteMapViewController: UIViewController {
     }
 
     @IBAction func more(_ sender: Any) {
-        print(#function)
     }
 
     // MARK: - Properties
@@ -304,8 +284,10 @@ class RouteMapViewController: UIViewController {
             } else {
                 transitDetailWrapperViewHeightConstraint.constant = 0
 
-                interStackView.isHidden = false
-                interToEndArrow.isHidden = false
+                if let intermediates {
+                    interStackView.isHidden = false
+                    interToEndArrow.isHidden = false
+                }
             }
 
             UIView.animate(withDuration: 0.3) { [weak self] in
@@ -437,8 +419,6 @@ class RouteMapViewController: UIViewController {
 // MARK: - Extension
 extension RouteMapViewController {
     func setupLayout() {
-        naverMapView.showLocationButton = false
-
         routeInfoWrapperView.layer.borderColor = UIColor.gray.withAlphaComponent(0.2).cgColor
         routeInfoWrapperView.layer.borderWidth = 1
         routeInfoWrapperView.layer.cornerRadius = 12
@@ -453,6 +433,12 @@ extension RouteMapViewController {
     }
 
     func setupMapView() {
+        naverMapView.showLocationButton = true
+
+        print(routeOptionCollectionView.frame.minY)
+        print(transitDetailWrapperView.bounds.maxY)
+        naverMapView.mapView.contentInset = UIEdgeInsets(top: 250, left: 0, bottom: 0, right: 0)
+
         naverMapView.mapView.touchDelegate = self
         naverMapView.mapView.extent = NMGLatLngBounds(
             southWestLat: 37.413294,
@@ -460,6 +446,11 @@ extension RouteMapViewController {
             northEastLat: 37.715133,
             northEastLng: 127.269311
         )
+
+        let locationOverlay = naverMapView.mapView.locationOverlay
+        locationOverlay.hidden = false
+
+        naverMapView.mapView.positionMode = .normal
     }
 
     func setupTableViews() {
@@ -527,7 +518,7 @@ extension RouteMapViewController {
            let northEastLng = dummyData.max(by: { $0.longitude < $1.longitude })?.longitude {
             let bounds = NMGLatLngBounds(southWestLat: southWestLat, southWestLng: southWestLng, northEastLat: northEastLat, northEastLng: northEastLng)
 
-            let cameraUpdate = NMFCameraUpdate(fit: bounds, paddingInsets: UIEdgeInsets(top: 200, left: 50, bottom: 50, right: 50))
+            let cameraUpdate = NMFCameraUpdate(fit: bounds, paddingInsets: UIEdgeInsets(top: 250, left: 50, bottom: 50, right: 50))
             cameraUpdate.animation = .easeIn
 
             naverMapView.mapView.moveCamera(cameraUpdate)

@@ -102,11 +102,14 @@ extension ScheduleListViewController: UITableViewDataSource {
 
             if let imageURL = viewModel.imageURL(for: tour) {
                 cell.tripImageView.load(from: imageURL)
+            } else if let poi = viewModel.thumbnailPOI(for: tour) {
+                let assetName = poi.assetImageName
+                cell.tripImageView.image = UIImage(named: assetName)
             } else {
                 cell.tripImageView.image = UIImage(systemName: "photo")
                 cell.tripImageView.tintColor = UIColor(named: "Main")
             }
-
+            
             cell.placeCountLabel.text = viewModel.locationCountText(for: tour)
             return cell
         }

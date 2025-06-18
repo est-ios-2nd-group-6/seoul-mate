@@ -16,7 +16,7 @@
     <entity name="Schedule" representedClassName="Schedule" syncable="YES" codeGenerationType="class">
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="pois" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="POI" inverseName="schedule" inverseEntity="POI"/>
+        <relationship name="pois" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="POI" inverseName="schedule" inverseEntity="POI"/>
         <relationship name="tour" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tour" inverseName="days" inverseEntity="Tour"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
@@ -31,7 +31,7 @@
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="startDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
-        <relationship name="days" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Schedule" inverseName="tour" inverseEntity="Schedule"/>
-        <relationship name="pois" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="POI" inverseName="tour" inverseEntity="POI"/>
+        <relationship name="days" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Schedule" inverseName="tour" inverseEntity="Schedule"/>
+        <relationship name="pois" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="POI" inverseName="tour" inverseEntity="POI"/>
     </entity>
 </model>

@@ -7,10 +7,15 @@
 
 import Foundation
 
+/// `SettingSection`은 설정 화면의 섹션 구분을 정의하는 열거형입니다.
+/// 각 섹션은 제목과 해당 섹션에 표시될 액션 목록을 제공합니다.
 enum SettingSection: Int, CaseIterable {
+    /// 관심사 설정 섹션
     case interest
+    /// 위치 권한 설정 섹션
     case location
 
+    /// 섹션 헤더에 표시될 제목
     var title: String {
         switch self {
         case .interest: return "관심사 설정"
@@ -18,6 +23,7 @@ enum SettingSection: Int, CaseIterable {
         }
     }
 
+    /// 섹션에 포함된 액션 타입들의 배열
     var actions: [ActionType] {
         switch self {
         case .interest: return [.interestSetting]
@@ -25,6 +31,7 @@ enum SettingSection: Int, CaseIterable {
         }
     }
 
+    /// 섹션별 액션 타입을 정의하는 내부 열거형
     enum ActionType {
         case interestSetting
         case locationPermission
@@ -36,6 +43,7 @@ enum SettingSection: Int, CaseIterable {
             }
         }
 
+        /// 해당 액션이 트리거할 세그웨이 식별자 (없으면 nil)
         var segueIdentifier: String? {
             switch self {
             case .interestSetting: return "showTagSetting"

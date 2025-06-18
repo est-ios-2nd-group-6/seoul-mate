@@ -63,7 +63,9 @@ class AddToScheduleSheetViewController: UIViewController {
             targetSchedule.addToPois(poi)
         }
 
-        CoreDataManager.shared.saveContext()
+        Task {
+            await CoreDataManager.shared.saveContextAsync()
+        }
 
         delegate?.sheetViewControllerDidDismiss(self)
 
@@ -113,13 +115,15 @@ class AddToScheduleSheetViewController: UIViewController {
 
             // 가져온 Tour 데이터를 UI에 표시하기 위한 CellItem 모델로 변환.
             for tour in ToursOriginal {
-                guard let schedules = tour.days?.allObjects as? [Schedule] else {
+                guard var schedules = tour.days?.allObjects as? [Schedule] else {
                     continue
                 }
 
                 var item = CellItem(tour: tour)
 
                 var days: [CellItem.Day] = []
+
+                schedules = schedules.sorted { $0.date! < $1.date! }
 
                 for (index, schedule) in schedules.enumerated() {
                     let dayText = "Day \(index + 1)"
@@ -134,12 +138,6 @@ class AddToScheduleSheetViewController: UIViewController {
                 item.days = days
 
                 cellItems.append(item)
-            }
-
-            // 초기 선택 상태 설정 (첫 번째 여행의 첫 번째 날)
-            if !cellItems.isEmpty {
-                cellItems[0].isSelected = true
-                cellItems[0].days[0].isSelected = true
             }
 
             validateButton()

@@ -52,7 +52,7 @@ struct RecommandCoursePlace {
     let imageUrl: String
     var image: UIImage? = nil
 
-    var type: PlaceType?
+    var type: PlaceType = .sightseeing
 
     init(id: String, typeId: String, subnum: String, subContentId: String, name: String, description: String, imageUrl: String, image: UIImage? = nil) {
         self.id = id

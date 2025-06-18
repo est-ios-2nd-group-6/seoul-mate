@@ -58,22 +58,23 @@ class RecommandCourseDetailViewController: UIViewController {
                 // Google Places API를 통해 장소 이름으로 POI 상세 정보 비동기 조회.
                 let poi = await fetchGooglePlaceData(
                     name: rcmPlace.name,
-                    category: rcmPlace.description
+                    category: rcmPlace.type.name
                 )
 
                 if let poi {
                     pois.append(poi)
                 }
+            }
 
-                // 조회된 POI가 있을 경우, 일정 추가 시트를 표시.
-                if !pois.isEmpty {
-                    let sheet = AddToScheduleSheetViewController()
+            // 조회된 POI가 있을 경우, 일정 추가 시트를 표시.
+            if !pois.isEmpty {
+                let sheet = AddToScheduleSheetViewController()
 
-                    sheet.pois = pois
-                    sheet.delegate = self
+                print(pois.count)
+                sheet.pois = pois
+                sheet.delegate = self
 
-                    present(sheet, animated: true)
-                }
+                present(sheet, animated: true)
             }
         }
     }
@@ -121,7 +122,7 @@ class RecommandCourseDetailViewController: UIViewController {
                         .replacing(/<br\s*\/>/, with: "\n")
                         .trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
-                    place.type = PlaceType.init(rawValue: commonDetailInfo?.contenttypeid ?? "12")
+                    place.type = PlaceType.init(rawValue: commonDetailInfo?.contenttypeid ?? "12") ?? .sightseeing
 
                     // 각 장소 이미지 비동기 로드.
                     let image = await ImageManager.shared.getImage(courseSubItem.subdetailimg)
@@ -278,7 +279,7 @@ extension RecommandCourseDetailViewController: UITableViewDataSource {
         }
 
         cell.titleLabel.text = subItem.name
-        cell.typeLabel.text = subItem.type?.name
+        cell.typeLabel.text = subItem.type.name
 
         return cell
     }

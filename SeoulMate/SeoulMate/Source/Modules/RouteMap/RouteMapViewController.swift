@@ -396,9 +396,18 @@ class RouteMapViewController: UIViewController {
         selectedRouteOption = .drive
     }
 
-    override func viewIsAppearing(_ animated: Bool) {
-        super.viewIsAppearing(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.tabBarController?.tabBar.isHidden = true
     }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        self.tabBarController?.tabBar.isHidden = false
+    }
+
 
     /// 경로 정보 테이블 뷰를 표시.
     @objc func showRouteInfoTableView() {

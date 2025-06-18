@@ -131,19 +131,22 @@ final class CoreDataManager {
         }
     }
 
-    /// 특정 투어와 연관된 모든 일정(`Schedule`)을 삭제 후 해당 투어를 삭제합니다.
-    /// - Parameter tour: 삭제할 `Tour` 객체
+    /// 지정된 `Tour` 객체를 Core Data 컨텍스트에서 삭제하고 저장합니다.
+    ///
+    /// 이 메서드는 비동기적으로 `context.perform` 블록 내에서 실행되어,
+    /// 주어진 `Tour` 엔티티를 컨텍스트에서 제거한 뒤 변경사항을 영구 저장소에 반영합니다.
+    ///
+    /// - Parameter tour: 삭제할 대상인 `Tour` 엔티티 인스턴스
     func deleteTourAsync(_ tour: Tour) async {
         await context.perform {
-            if let schedules = tour.days as? Set<Schedule> {
-                for schedule in schedules {
-                    schedule.pois = nil
-                    self.context.delete(schedule)
-                }
-            }
-
             self.context.delete(tour)
-            try? self.context.save()
+
+            do {
+                try self.context.save()
+                print("삭제완료")
+            } catch {
+                print(error)
+            }
         }
     }
 

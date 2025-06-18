@@ -14,6 +14,15 @@ import UIKit
 ///   해당 이름이 없는 경우 `categoryAssetName`으로 대체합니다.
 /// - `categoryAssetName`: POI의 `category`를 기준으로 매핑된 이미지 파일 이름을 반환합니다.
 extension POI {
+    /// NSManagedObject가 영구 저장소에 처음 삽입(insert)될 때 호출됩니다.
+    ///
+    /// 이 시점에 고유 식별자(UUID)를 `id` 속성에 자동으로 할당하여
+    /// 모든 POI 인스턴스가 반드시 유효한 `id`를 갖도록 보장합니다.
+    public override func awakeFromInsert() {
+        super.awakeFromInsert()
+        self.id = UUID()
+    }
+
     /// POI의 `name`에 대응하는 이미지 자산 이름을 반환합니다.
     /// 지정된 이름이 일치하지 않으면 `categoryAssetName`을 대신 사용합니다.
     var assetImageName: String {

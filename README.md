@@ -37,7 +37,7 @@
 
 ## ⚙️ 구현 기술 및 라이브러리
 
-  - **UI & Layout**: `UIKit`
+  - **UI & Layout**: `UIKit` & `Storyboard`
   - **Data Persistence**: `CoreData`
   - **Concurrency**: `async/await`를 활용한 비동기 처리
   - **APIs**:

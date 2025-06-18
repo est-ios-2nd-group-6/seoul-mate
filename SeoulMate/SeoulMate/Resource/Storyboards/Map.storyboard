@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c0f-KR-nlA">
-                                <rect key="frame" x="0.0" y="167" width="393" height="617"/>
+                                <rect key="frame" x="0.0" y="211" width="393" height="573"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="w92-Da-qqP">
                                         <rect key="frame" x="0.0" y="0.0" width="393" height="703.33333333333337"/>
@@ -211,7 +211,7 @@
                                 <viewLayoutGuide key="frameLayoutGuide" id="dqr-xu-OxY"/>
                             </scrollView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Im6-hH-czj">
-                                <rect key="frame" x="20" y="128" width="63" height="36"/>
+                                <rect key="frame" x="20" y="172" width="63" height="36"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="여행 제목" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gCG-5x-QSd">
                                         <rect key="frame" x="0.0" y="0.0" width="63" height="20.333333333333332"/>
@@ -239,7 +239,8 @@
                             <constraint firstItem="c0f-KR-nlA" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="sYa-rb-3Xi"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="3ch-cS-BIy"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="3ch-cS-BIy"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="daysLabel" destination="Rs5-kG-eEf" id="E8T-zH-gMh"/>
                         <outlet property="editButton" destination="XGE-ut-URq" id="8FO-iK-Xtk"/>

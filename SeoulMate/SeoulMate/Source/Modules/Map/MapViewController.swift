@@ -53,6 +53,7 @@ class MapViewController: UIViewController {
         } catch {
             print("saveerror:", error)
         }
+        editButtonVisibility()
     }
     @IBAction func editAction(_ sender: UIButton) {
         if tableView.isEditing {
@@ -248,47 +249,44 @@ class MapViewController: UIViewController {
         updateDaysLabel(for: 0)
     }
     
+    func editButtonVisibility() {
+        if poisByDay.allSatisfy({ $0.isEmpty }) {
+            editButton.isHidden = true
+        } else {
+            editButton.isHidden = false
+        }
+    }
+
     
     private func loadTourData() {
         guard let tour = tour else { return }
-        print("tourunwrapping")
         // 1) Tour.days에서 Schedule을 날짜 순으로 추출
         let schedules = (tour.days as? Set<Schedule> ?? [])
             .compactMap { $0.date != nil ? $0 : nil }
             .sorted { $0.date! < $1.date! }
         print(schedules)
-        // 2) 섹션용 날짜 배열
         sortedDates = schedules.map { Calendar.current.startOfDay(for: $0.date!) }
         
-        // 3) 각 Schedule별 POI 배열 (NSOrderedSet 처리)
         poisByDay = schedules.map { schedule in
-            // Core Data 관계가 NSOrderedSet이므로 array로 변환
             let ordered = schedule.pois
             let poiArray = (ordered?.array as? [POI]) ?? []
             return poiArray.sorted { ($0.name ?? "") < ($1.name ?? "") }
         }
         
-        // 4) 좌표 2차원 배열로 변환
         coordsByDay = poisByDay.map { poiList in
             poiList.map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
-        }
-        if poisByDay.count == 0 {
-            editButton.isHidden = true
-        } else {
-            editButton.isHidden = false
         }
         
         updateTravelPeriodLabel()
         updateTravelTitleLabel()
+        editButtonVisibility()
     }
     
     
     func addPOI(_ poi: POI, toDay dayIndex: Int) {
-        print("1")
         guard dayIndex >= 0 && dayIndex < poisByDay.count else {
             return
         }
-        print("2")
         poisByDay[dayIndex].append(poi)
         
         tableView.reloadSections(IndexSet(integer: dayIndex), with: .automatic)
@@ -782,6 +780,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         if isLastRow {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "addButtonCell", for: indexPath) as? AddPlaceButtonCell else { return UITableViewCell() }
             cell.delegate = self
+            cell.addButton.tag = indexPath.section
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "placeInfoCell", for: indexPath) as? MapTableViewCell else { return UITableViewCell() }
@@ -810,7 +809,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
                 .map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
             
             makePath(for: indexPath.section, with: coords)
-            
+            editButtonVisibility()
         }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -850,22 +849,32 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    heightForFooterInSection section: Int) -> CGFloat {
-        return 0.5
+        if section == poisByDay.count - 1 {
+            return 0
+        }
+        return 10
     }
     
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        
-        let isLastSection = section == poisByDay.count - 1
-        
-        if isLastSection {
-            return UIView()
-        } else {
+        guard section < poisByDay.count - 1 else { return nil }
+
+            let footerView = UIView()
             let separator = UIView()
+        
             separator.backgroundColor = .lightGray
-            separator.layer.opacity = 0.5
-            return separator
-        }
+            separator.alpha = 0.7
+            separator.translatesAutoresizingMaskIntoConstraints = false
+            footerView.addSubview(separator)
+
+            NSLayoutConstraint.activate([
+                separator.heightAnchor.constraint(equalToConstant: 0.5),
+                separator.leadingAnchor.constraint(equalTo: footerView.leadingAnchor, constant: 16),
+                separator.trailingAnchor.constraint(equalTo: footerView.trailingAnchor, constant: -16),
+                separator.bottomAnchor.constraint(equalTo: footerView.bottomAnchor)
+            ])
+
+            return footerView
         
     }
     
@@ -934,8 +943,6 @@ extension MapViewController: AddPlaceButtonCellDelegate {
             navigationController?.pushViewController(vc, animated: true)
             navigationController?.navigationBar.isHidden = true
             let dayIndex = cell.addButton.tag
-            // TODO: - 데이터 받아오기
-//            let newPoi = POI(context: context)
             vc.POIsBackToVC = { [weak self] returnedPois in
                 returnedPois.forEach { i in
                     self?.addPOI(i, toDay: dayIndex)

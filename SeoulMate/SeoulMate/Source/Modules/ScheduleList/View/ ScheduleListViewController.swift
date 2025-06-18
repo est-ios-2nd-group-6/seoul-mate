@@ -45,6 +45,7 @@ class ScheduleListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+        navigationController?.navigationBar.tintColor = .label
         Task {
             await viewModel.fetchScheduleList()
             await MainActor.run {

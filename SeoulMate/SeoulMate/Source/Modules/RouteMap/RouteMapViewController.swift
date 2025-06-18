@@ -258,11 +258,6 @@ class RouteMapViewController: UIViewController {
     }
 
 
-    // MARK: - Properties
-    var pois: [POI] = []
-
-    var transitDetailWrapperViewHeight: Int = 300
-
     @IBAction func back(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
@@ -271,7 +266,7 @@ class RouteMapViewController: UIViewController {
     }
 
     // MARK: - Properties
-    var pois: [POI] = []
+   var pois: [POI] = []
 
     var transitDetailWrapperViewHeight: Int = 300
 

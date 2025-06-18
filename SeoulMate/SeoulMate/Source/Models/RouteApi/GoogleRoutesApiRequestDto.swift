@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Google Routes Api 요청 JSON 객체
 struct GoogleRoutesApiRequestDto: Encodable {
     let origin: Destination
     let destination: Destination

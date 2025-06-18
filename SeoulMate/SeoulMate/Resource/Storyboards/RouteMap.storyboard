@@ -425,12 +425,6 @@
                                 <action selector="back:" destination="Y6W-OH-hqX" id="Gwi-oG-fbW"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" image="ellipsis" catalog="system" id="UdI-4s-UMT">
-                            <color key="tintColor" systemColor="labelColor"/>
-                            <connections>
-                                <action selector="more:" destination="Y6W-OH-hqX" id="8kH-Mg-67z"/>
-                            </connections>
-                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="interStackView" destination="AM6-8y-d9a" id="7H5-D9-Iu0"/>
@@ -476,7 +470,6 @@
         <image name="bus.fill" catalog="system" width="128" height="122"/>
         <image name="car" catalog="system" width="128" height="95"/>
         <image name="chevron.left" catalog="system" width="97" height="128"/>
-        <image name="ellipsis" catalog="system" width="128" height="37"/>
         <image name="figure.walk" catalog="system" width="94" height="128"/>
         <image name="target" catalog="system" width="128" height="123"/>
         <namedColor name="Main">

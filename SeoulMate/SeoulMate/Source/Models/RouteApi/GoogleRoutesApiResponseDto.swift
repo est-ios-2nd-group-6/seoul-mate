@@ -1,17 +1,19 @@
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
 //
-//   let welcome = try? JSONDecoder().decode(Welcome.self, from: jsonData)
+//  RoutesPedestrianRequestDto.swift
+//  SeoulMate
+//
+//  Created by JuHyeon Seong on 6/11/25.
+//
 
 import Foundation
 
+/// Google Routes Api 응답 JSON 객체
 struct GoogleRoutesApiResponseDto: Codable {
     struct Location: Codable {
         let latLng: High
     }
 
     let routes: [Route]
-//    let geocodingResults: GeocodingResults
 }
 
 struct GeocodingResults: Codable {
@@ -21,25 +23,12 @@ struct Route: Codable {
     let legs: [Leg]
     let distanceMeters: Int
     let duration: String
-//    let staticDuration: String
-//    let polyline: Polyline
-//    let viewport: Viewport
-//    let travelAdvisory: TravelAdvisory
-//    let localizedValues: LegLocalizedValues
-//    let routeLabels: [String]
 }
 
 struct Leg: Codable {
-//    let distanceMeters: Int?
-//    let duration, staticDuration: String?
-//    let polyline: Polyline?
     let startLocation, endLocation: GoogleRoutesApiResponseDto.Location
     let steps: [Step]
-//    let localizedValues: LegLocalizedValues
-//    let stepsOverview: StepsOverview
 }
-
-
 
 struct High: Codable {
     let latitude, longitude: Double

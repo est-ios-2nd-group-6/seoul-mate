@@ -151,6 +151,16 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
             return pois.count
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let keyword = tags[indexPath.item].name {
+            Task {
+                await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: "서울 \(keyword)")
+                items = TourApiManager_hs.shared.searchByTitleResultList
+                self.searchResultTableView.reloadData()
+            }
+        }
+    }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {

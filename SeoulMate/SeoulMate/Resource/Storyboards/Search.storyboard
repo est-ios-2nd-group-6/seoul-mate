@@ -179,7 +179,7 @@
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="TagCollectionViewCell" id="Job-wg-NgU" customClass="TagCollectionViewCell" customModule="SeoulMate" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="128" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="3fx-c7-JRh" customClass="TagCollectionViewCell" customModule="SeoulMate" customModuleProvider="target">
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="3fx-c7-JRh" customClass="TagCollectionViewCell" customModule="SeoulMate" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="128" height="100"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>

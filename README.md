@@ -60,8 +60,9 @@
 
     ```
     GOOGLE_API_KEY = "여기에 Google API 키를 입력하세요"
-    TOUR_API_KEY = "여기에 TourAPI 서비스 키를 입력하세요"
-    TMAP_API_KEY = "여기에 TMap AppKey를 입력하세요"
+    TOUR_API_KEY = "여기에 공공데이터 Open Api 서비스 키를 입력하세요"
+    TMAP_API_KEY = "여기에 TMap Api 키를 입력하세요"
+    NaverMap_API_KEY = "여기에 Naver Map SDK 키를 입력하세요"
     ```
 
 3.  프로젝트 설정의 `Info` 탭으로 이동하여 `Configurations`에서 `Debug`와 `Release` 모두 `Secrets`를 선택하여 방금 생성한 `xcconfig` 파일을 사용하도록 설정합니다.
@@ -70,6 +71,7 @@
     * `GOOGLE_API_KEY`: `$(GOOGLE_API_KEY)`
     * `TOUR_API_KEY`: `$(TOUR_API_KEY)`
     * `TMAP_API_KEY`: `$(TMAP_API_KEY)`
+    * `NaverMap_API_KEY`: `${NaverMap_API_KEY}`
 
 ### **2. 빌드 및 실행**
 

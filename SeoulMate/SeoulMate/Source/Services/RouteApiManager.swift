@@ -104,8 +104,8 @@ class RouteApiManager {
             fatalError("URL Initialization is Failed")
         }
 
-        guard let googleRoutesApiKey = Bundle.main.googleRoutesApiKey else {
-            fatalError("Google Routes Api Key is missing")
+        guard let googleApiKey = Bundle.main.googleApiKey else {
+            fatalError("Google Api Key is missing")
         }
 
         let origin = Destination(latitude: startPoint.latitude, longitude: startPoint.longitude)
@@ -130,7 +130,7 @@ class RouteApiManager {
             request.addValue("gzip, deflate, br", forHTTPHeaderField: "Aceept-Encoding")
             request.addValue("keep-alive", forHTTPHeaderField: "Connection")
             
-            request.addValue(googleRoutesApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
+            request.addValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
             request.addValue("routes.distanceMeters,routes.duration,routes.legs.startLocation,routes.legs.endLocation,routes.legs.steps", forHTTPHeaderField: "X-Goog-FieldMask")
             request.addValue(Bundle.main.bundleIdentifier ?? "", forHTTPHeaderField: "X-Ios-Bundle-Identifier")
 

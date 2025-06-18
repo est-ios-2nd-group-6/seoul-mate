@@ -56,6 +56,12 @@ class MapViewController: UIViewController {
         editButtonVisibility()
     }
     @IBAction func editAction(_ sender: UIButton) {
+        
+        do {
+            try context.save()
+        } catch {
+            print(error)
+        }
         if tableView.isEditing {
             tableView.setEditing(false, animated: true)
             sender.setTitle("편집", for: .normal)
@@ -108,23 +114,23 @@ class MapViewController: UIViewController {
     
     var scehduels: [[Schedule]] = []
     
-    private lazy var fetchedResultsController: NSFetchedResultsController<POI> = {
-        // 1) 요청 생성: schedule.date 기준으로 정렬
-        let request: NSFetchRequest<POI> = POI.fetchRequest()
-        request.sortDescriptors = [
-            NSSortDescriptor(key: "schedule.date", ascending: true),
-            NSSortDescriptor(key: "name", ascending: true) // 같은 날짜 내 정렬
-        ]
-        // 2) FRC 초기화: 섹션 키패스로 날짜(Date 객체)를 그대로 사용
-        let frc = NSFetchedResultsController(
-            fetchRequest: request,
-            managedObjectContext: context,
-            sectionNameKeyPath: "schedule.date",
-            cacheName: nil
-        )
-        frc.delegate = self
-        return frc
-    }()
+//    private lazy var fetchedResultsController: NSFetchedResultsController<POI> = {
+//        // 1) 요청 생성: schedule.date 기준으로 정렬
+//        let request: NSFetchRequest<POI> = POI.fetchRequest()
+//        request.sortDescriptors = [
+//            NSSortDescriptor(key: "schedule.date", ascending: true),
+//            NSSortDescriptor(key: "name", ascending: true) // 같은 날짜 내 정렬
+//        ]
+//        // 2) FRC 초기화: 섹션 키패스로 날짜(Date 객체)를 그대로 사용
+//        let frc = NSFetchedResultsController(
+//            fetchRequest: request,
+//            managedObjectContext: context,
+//            sectionNameKeyPath: "schedule.date",
+//            cacheName: nil
+//        )
+//        frc.delegate = self
+//        return frc
+//    }()
     
     
     var allSchedules: [Schedule] = []
@@ -151,28 +157,28 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         guard let tour = tour else { return }
-        fetchedResultsController = {
-            let request: NSFetchRequest<POI> = POI.fetchRequest()
-            request.predicate = NSPredicate(format: "schedule.tour == %@", tour)
-            request.sortDescriptors = [
-                NSSortDescriptor(key: "schedule.date", ascending: true),
-                NSSortDescriptor(key: "name", ascending: true)
-            ]
-            let frc = NSFetchedResultsController(
-                fetchRequest: request,
-                managedObjectContext: context,
-                sectionNameKeyPath: "schedule.date",
-                cacheName: nil
-            )
-            frc.delegate = self
-            return frc
-        }()
-        
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            print(error)
-        }
+//        fetchedResultsController = {
+//            let request: NSFetchRequest<POI> = POI.fetchRequest()
+//            request.predicate = NSPredicate(format: "schedule.tour == %@", tour)
+//            request.sortDescriptors = [
+//                NSSortDescriptor(key: "schedule.date", ascending: true),
+//                NSSortDescriptor(key: "name", ascending: true)
+//            ]
+//            let frc = NSFetchedResultsController(
+//                fetchRequest: request,
+//                managedObjectContext: context,
+//                sectionNameKeyPath: "schedule.date",
+//                cacheName: nil
+//            )
+//            frc.delegate = self
+//            return frc
+//        }()
+//        
+//        do {
+//            try fetchedResultsController.performFetch()
+//        } catch {
+//            print(error)
+//        }
         
         // CoreLocation
         locationManager.delegate = self
@@ -186,7 +192,7 @@ class MapViewController: UIViewController {
         tableView.delegate = self
         
         
-        debugPrintFRC()
+//        debugPrintFRC()
         
         myMapView.showLocationButton = true
         myMapView.showCompass = true
@@ -264,7 +270,7 @@ class MapViewController: UIViewController {
         let schedules = (tour.days as? Set<Schedule> ?? [])
             .compactMap { $0.date != nil ? $0 : nil }
             .sorted { $0.date! < $1.date! }
-        print(schedules)
+//        print(schedules)
         sortedDates = schedules.map { Calendar.current.startOfDay(for: $0.date!) }
         
         poisByDay = schedules.map { schedule in
@@ -286,8 +292,17 @@ class MapViewController: UIViewController {
         guard dayIndex >= 0 && dayIndex < poisByDay.count else {
             return
         }
-        poisByDay[dayIndex].append(poi)
-        
+        let localPoi = context.object(with: poi.objectID) as! POI
+        let schedule = allSchedules[dayIndex]
+        schedule.addToPois(localPoi)
+        do {
+            try context.save()
+            print("애드 후 저장 성공")
+        } catch {
+            print("애드 저장 실패: \(error)")
+        }
+        poisByDay[dayIndex].append(localPoi)
+
         tableView.reloadSections(IndexSet(integer: dayIndex), with: .automatic)
         
         let coords = poisByDay[dayIndex]
@@ -416,27 +431,6 @@ class MapViewController: UIViewController {
     
     
     
-    private func debugPrintFRC() {
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            print("❌ FRC performFetch failed:", error)
-            return
-        }
-        guard let sections = fetchedResultsController.sections else {
-            print("🟠 FRC.sections is nil")
-            return
-        }
-        print("🟢 FRC 섹션 개수: \(sections.count)")
-        for sec in sections {
-            print("  • section name(raw): \(sec.name), 객체 수: \(sec.numberOfObjects)")
-        }
-        let total = (sections.reduce(0) { $0 + $1.numberOfObjects })
-        print("  → 총 POI 개수: \(total)")
-    }
-    
-    
-    
     private func updateTravelTitleLabel() {
         
         let tourTitle = "서울 여행"
@@ -513,7 +507,8 @@ class MapViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
-
+        fetchSchedules()
+        
         if cameBackFromSearch {
             saveButton.isHidden = false
             tableView.setEditing(true, animated: true)
@@ -779,6 +774,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "addButtonCell", for: indexPath) as? AddPlaceButtonCell else { return UITableViewCell() }
             cell.delegate = self
             cell.addButton.tag = indexPath.section
+            cell.routeButton.tag = indexPath.section
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "placeInfoCell", for: indexPath) as? MapTableViewCell else { return UITableViewCell() }
@@ -799,7 +795,18 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+            let schedule = allSchedules[indexPath.section]
+            let poi      = poisByDay[indexPath.section][indexPath.row]
+
+            schedule.removeFromPois(poi)
             
+            do {
+                try context.save()
+                print("삭제 후 저장성공")
+            } catch {
+                print("삭제 후 저장 에러: \(error)")
+            }
+
             poisByDay[indexPath.section].remove(at: indexPath.row)
             tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
             
@@ -829,9 +836,19 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let itemToMove = poisByDay[sourceIndexPath.section].remove(at: sourceIndexPath.row)
-        poisByDay[destinationIndexPath.section].insert(itemToMove, at: destinationIndexPath.row)
-        //        tableView.reloadSections(IndexSet(integer: destinationIndexPath.section), with: .automatic)
+        let sourceSchedule = allSchedules[sourceIndexPath.section]
+        let poiToMove = poisByDay[sourceIndexPath.section][sourceIndexPath.row]
+        sourceSchedule.removeFromPois(at: sourceIndexPath.row)
+        sourceSchedule.insertIntoPois(poiToMove, at: destinationIndexPath.row)
+        
+        do {
+            try context.save()
+        } catch {
+            print("순서 변경 저장 실패: \(error)")
+        }
+//        let itemToMove = poisByDay[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+        poisByDay[destinationIndexPath.section].insert(poiToMove, at: destinationIndexPath.row)
+        tableView.reloadSections(IndexSet(integer: destinationIndexPath.section), with: .automatic)
         let coords = poisByDay[destinationIndexPath.section]
             .map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
         
@@ -974,37 +991,4 @@ extension MapViewController: DetailSheetDelegate {
     }
     
     
-}
-
-extension MapViewController: NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        tableView.beginUpdates()
-    }
-    
-    func controller(_ controller: NSFetchedResultsController<any NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch type {
-        case .insert:
-            if let insertIndexPath = newIndexPath {
-                tableView.insertRows(at: [insertIndexPath], with: .automatic)
-            }
-        case .delete:
-            if let deleteIndexPath = indexPath {
-                tableView.deleteRows(at: [deleteIndexPath], with: .automatic)
-            }
-        case .update:
-            if let updateIndexPath = indexPath {
-                tableView.reloadRows(at: [updateIndexPath], with: .automatic)
-            }
-        case .move:
-            if let originalIndexPath = indexPath, let targetIndexPath = newIndexPath {
-                tableView.moveRow(at: originalIndexPath, to: targetIndexPath)
-            }
-        default:
-            break
-        }
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        tableView.endUpdates()
-    }
 }

@@ -181,6 +181,7 @@ class MapViewController: UIViewController {
       
         tableView.reloadData()
         let coords = coordsByDay.first ?? []
+        updateDaysLabel(for: 0)
         makePath(for: 0, with: coords)
     }
     
@@ -226,7 +227,7 @@ class MapViewController: UIViewController {
             .compactMap { $0.date != nil ? $0 : nil }
             .sorted { $0.date! < $1.date! }
         self.sortedSchedules = schedules
-
+        sortedDates = schedules.map { Calendar.current.startOfDay(for: $0.date!) }
         self.poisByDay = schedules.map { schedule in
             return (schedule.pois?.array as? [POI]) ?? []
         }
@@ -236,7 +237,6 @@ class MapViewController: UIViewController {
         updateTravelPeriodLabel()
         updateTravelTitleLabel()
         editButtonVisibility()
-        updateDaysLabel(for: 0)
 
     }
     
@@ -487,7 +487,7 @@ class MapViewController: UIViewController {
     
     private func updateDaysLabel(for section: Int) {
         guard section >= 0,
-              section < sortedDates.count else {
+              section < sortedSchedules.count else {
             daysLabel.text = ""
             return
         }

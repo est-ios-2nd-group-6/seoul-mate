@@ -68,7 +68,7 @@ class SearchViewController: UIViewController {
         case .home:
             tagCollectionViewTitle.text = "관심 태그"
             Task {
-                tags = await CoreDataManager.shared.fetchTagsAsync()
+                tags = await CoreDataManager.shared.fetchTagsAsync().filter{$0.selected}
             }
             searchBar.text = ""
             break
@@ -153,11 +153,13 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let keyword = tags[indexPath.item].name {
-            Task {
-                await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: "서울 \(keyword)")
-                items = TourApiManager_hs.shared.searchByTitleResultList
-                self.searchResultTableView.reloadData()
+        if comingVCType == .home {
+            if let keyword = tags[indexPath.item].name {
+                Task {
+                    await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: "서울 \(keyword)")
+                    items = TourApiManager_hs.shared.searchByTitleResultList
+                    self.searchResultTableView.reloadData()
+                }
             }
         }
     }

@@ -58,10 +58,10 @@ final class ScheduleModel: ObservableObject {
 
         if let pois = tour.pois as? Set<POI>,
            let firstPOI = pois.sorted(by: { ($0.name ?? "") < ($1.name ?? "") }).first {
-            return firstPOI.name ?? "제목 없는 여행"
+            return firstPOI.name ?? "서울 여행"
         }
 
-        return "제목 없는 여행"
+        return "서울 여행"
     }
 
     func imageURL(for tour: Tour) -> URL? {

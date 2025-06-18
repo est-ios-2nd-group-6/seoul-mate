@@ -8,10 +8,6 @@
 import UIKit
 import NMapsMap
 
-// TODO: drive, walk 시 대체경로 회색으로 표시
-// TODO: TableView 순서 변경
-// TODO: TravelMode == .transit 일때, 지하철 호선에 따른 색상 변경
-
 typealias TransitDetailInfo = RouteData.Path.TransitDetailInfo
 
 struct RouteLocation: Codable {
@@ -244,6 +240,10 @@ class RouteMapViewController: UIViewController {
     /// 이전 화면에서 전달받은 여행 장소(POI) 배열.
     var pois: [POI] = []
 
+    let locationManager: CLLocationManager = CLLocationManager()
+
+    var isFetchedLocationList: Bool = false
+
     var transitDetailWrapperViewHeight: Int = 300
 
     /// API 호출 결과를 캐싱하여 불필요한 네트워크 요청을 방지하기 위한 딕셔너리.
@@ -322,34 +322,43 @@ class RouteMapViewController: UIViewController {
     var markerReference: [NMFMarker] = []
 
     var startPoint: RouteLocation? {
-        guard let first = pois.first else {
+            guard let first = pois.first else {
+                return nil
+            }
+
+            return RouteLocation(name: first.name, latitude: first.latitude, longitude: first.longitude)
+        }
+
+        var endPoint: RouteLocation? {
+            guard let last = pois.last else {
+                return nil
+            }
+
+            return RouteLocation(name: last.name, latitude: last.latitude, longitude: last.longitude)
+        }
+
+        var intermediates: [RouteLocation]? {
+            if pois.count > 2 {
+                let count = pois.count
+
+                return pois[1 ..< count-1].map { RouteLocation(name: $0.name, latitude: $0.latitude, longitude: $0.longitude) }
+            }
+
             return nil
         }
-
-        return RouteLocation(name: first.name, latitude: first.latitude, longitude: first.longitude)
-    }
-
-    var endPoint: RouteLocation? {
-        guard let last = pois.last else {
-            return nil
-        }
-
-        return RouteLocation(name: last.name, latitude: last.latitude, longitude: last.longitude)
-    }
-
-    var intermediates: [RouteLocation]? {
-        if pois.count > 2 {
-            let count = pois.count
-
-            return pois[1 ..< count-1].map { RouteLocation(name: $0.name, latitude: $0.latitude, longitude: $0.longitude) }
-        }
-
-        return nil
-    }
 
     var isMapFullscreend: Bool = false
 
     var indicatorConstraint: [NSLayoutConstraint] = []
+
+    let overlayImage = NMFOverlayImage(name: "route_path_arrow")
+
+    let seoulBoudns = NMGLatLngBounds(
+        southWestLat: 37.413294,
+        southWestLng: 126.734086,
+        northEastLat: 37.715133,
+        northEastLng: 127.269311
+    )
 
     // MARK: - Actions
     @IBAction func route(_ sender: Any) {
@@ -385,20 +394,14 @@ class RouteMapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupLayout()
-        setupMapView()
-        setupTableViews()
-        updateIntermediatesInfo()
+        locationManager.delegate = self
 
-        moveCameraToFitBounds()
-
-        // 초기 경로를 '자동차'로 설정.
-        selectedRouteOption = .drive
+        checkUserDeviceLocationServiceAuthorization()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         self.tabBarController?.tabBar.isHidden = true
     }
 
@@ -442,6 +445,81 @@ class RouteMapViewController: UIViewController {
 
 // MARK: - Extension : UI & Map Setup
 extension RouteMapViewController {
+    func setup() {
+        setupLayout()
+        setupMapView()
+        setupTableViews()
+        updateIntermediatesInfo()
+        moveCameraToFitBounds()
+
+        // 초기 경로를 '자동차'로 설정.
+        selectedRouteOption = .drive
+    }
+
+    func checkUserDeviceLocationServiceAuthorization() {
+        guard CLLocationManager.locationServicesEnabled() else {
+            // 시스템 설정으로 유도하는 커스텀 얼럿
+            showRequestLocationServiceAlert()
+
+            return
+        }
+
+        let authorizationStatus: CLAuthorizationStatus
+
+        // 앱의 권한 상태 가져오는 코드 (iOS 버전에 따라 분기처리)
+        authorizationStatus = locationManager.authorizationStatus
+
+        // 권한 상태값에 따라 분기처리를 수행하는 메서드 실행
+        checkUserCurrentLocationAuthorization(authorizationStatus)
+    }
+
+    func checkUserCurrentLocationAuthorization(_ status: CLAuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            // 사용자가 권한에 대한 설정을 선택하지 않은 상태
+            // 권한 요청을 보내기 전에 desiredAccuracy 설정 필요
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+
+            // 권한 요청을 보낸다.
+            locationManager.requestWhenInUseAuthorization()
+
+        case .denied, .restricted:
+            // 사용자가 명시적으로 권한을 거부했거나, 위치 서비스 활성화가 제한된 상태
+            showRequestLocationServiceAlert()
+
+        case .authorizedWhenInUse, .authorizedAlways:
+            // 앱을 사용중일 때, 위치 서비스를 이용할 수 있는 상태
+
+            if pois.count > 1 {
+                setup()
+            } else {
+                locationManager.requestLocation()
+            }
+
+        default:
+            print("Default")
+        }
+    }
+
+    func showRequestLocationServiceAlert() {
+        let requestLocationServiceAlert = UIAlertController(title: "위치 정보 이용", message: "위치 서비스를 사용할 수 없습니다.\n디바이스의 '설정 > 개인정보 보호'에서 위치 서비스를 켜주세요.", preferredStyle: .alert)
+
+        let goSetting = UIAlertAction(title: "설정으로 이동", style: .destructive) { _ in
+            if let appSetting = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(appSetting)
+            }
+        }
+
+        let cancel = UIAlertAction(title: "취소", style: .default) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }
+
+        requestLocationServiceAlert.addAction(cancel)
+        requestLocationServiceAlert.addAction(goSetting)
+
+        present(requestLocationServiceAlert, animated: true)
+    }
+
     func setupLayout() {
         routeInfoWrapperView.layer.borderColor = UIColor.gray.withAlphaComponent(0.2).cgColor
         routeInfoWrapperView.layer.borderWidth = 1
@@ -503,6 +581,8 @@ extension RouteMapViewController {
         )
 
         routeInfoTableView.addGestureRecognizer(showInfoStackTapGesture)
+
+        routeInfoTableView.reloadData()
     }
 
     /// 경유지 개수에 따라 UI를 업데이트.
@@ -530,25 +610,39 @@ extension RouteMapViewController {
     /// 특정 위치로 카메라를 이동.
     func moveCamera(location: Location) {
         let scrollTo = NMGLatLng(lat: location.latitude, lng: location.longitude)
+
         let cameraUpdate = NMFCameraUpdate(scrollTo: scrollTo)
         cameraUpdate.animation = .easeIn
+
         naverMapView.mapView.moveCamera(cameraUpdate)
     }
 
     /// 모든 경로 포인트를 포함하도록 카메라 시점을 조절.
     func moveCameraToFitBounds() {
-        if let southWestLat = pois.min(by: { $0.latitude < $1.latitude })?.latitude,
-           let southWestLng = pois.min(by: { $0.longitude < $1.longitude })?.longitude,
-           let northEastLat = pois.max(by: { $0.latitude < $1.latitude })?.latitude,
-           let northEastLng = pois.max(by: { $0.longitude < $1.longitude })?.longitude {
+        var bounds: NMGLatLngBounds = seoulBoudns
 
-            let bounds = NMGLatLngBounds(southWestLat: southWestLat, southWestLng: southWestLng, northEastLat: northEastLat, northEastLng: northEastLng)
+        if let startPoint, let endPoint {
+            let boundPoints = [startPoint, endPoint]
 
-            let cameraUpdate = NMFCameraUpdate(fit: bounds, paddingInsets: UIEdgeInsets(top: 250, left: 50, bottom: 50, right: 50))
+            if let southWestLat = boundPoints.min(by: { $0.latitude < $1.latitude })?.latitude,
+               let southWestLng = boundPoints.min(by: { $0.longitude < $1.longitude })?.longitude,
+               let northEastLat = boundPoints.max(by: { $0.latitude < $1.latitude })?.latitude,
+               let northEastLng = boundPoints.max(by: { $0.longitude < $1.longitude })?.longitude {
 
-            cameraUpdate.animation = .easeIn
-            naverMapView.mapView.moveCamera(cameraUpdate)
+                bounds = NMGLatLngBounds(
+                    southWestLat: southWestLat,
+                    southWestLng: southWestLng,
+                    northEastLat: northEastLat,
+                    northEastLng: northEastLng
+                )
+
+            }
         }
+
+        let cameraUpdate = NMFCameraUpdate(fit: bounds, paddingInsets: UIEdgeInsets(top: 250, left: 50, bottom: 50, right: 50))
+
+        cameraUpdate.animation = .easeIn
+        naverMapView.mapView.moveCamera(cameraUpdate)
     }
 
     /// 교통수단 타입에 따라 적절한 API를 호출하여 경로를 계산.
@@ -741,6 +835,8 @@ extension RouteMapViewController {
 
         drawPoints(points: routeData.points)
         drawPath(paths: routeData.paths)
+
+        moveCameraToFitBounds()
     }
 
     /// 경로 지점들을 지도에 마커로 표시.
@@ -783,7 +879,7 @@ extension RouteMapViewController {
 
         multipartPath.width = 8
 
-        multipartPath.patternIcon = NMFOverlayImage(name: "route_path_arrow")
+        multipartPath.patternIcon = overlayImage
         multipartPath.patternInterval = 16
 
         multipartPath.lineParts = lineParts
@@ -947,5 +1043,53 @@ extension RouteMapViewController: NMFMapViewTouchDelegate {
 
             self.view.layoutIfNeeded()
         }
+    }
+}
+
+extension RouteMapViewController: CLLocationManagerDelegate {
+
+    /// 위치 서비스 권한 상태가 변경될 때 호출.
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse: // 위치 서비스를 사용 가능한 상태
+            print("위치 서비스 사용 가능")
+            locationManager.requestLocation()
+            break
+        case .restricted, .denied: // 위치 서비스를 사용 가능하지 않은 상태
+            print("위치 서비스 사용 불가")
+            break
+        case .notDetermined: // 권한 설정이 되어 있지 않은 상태
+            print("권한 설정 필요")
+            locationManager.requestWhenInUseAuthorization() // 권한 요청
+            break
+        default:
+            break
+        }
+    }
+
+    /// 위치 정보가 업데이트될 때 호출.
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let coordinate = locations.last?.coordinate {
+            // 위치 기반 코스 목록이 아직 호출되지 않았을 경우에만 API 호출 실행.
+            if isFetchedLocationList { return }
+
+            isFetchedLocationList = true
+
+            if pois.count == 1 {
+                let currentLocation = POI(context: CoreDataManager.shared.context)
+
+                currentLocation.name = "현재 위치"
+                currentLocation.latitude = coordinate.latitude
+                currentLocation.longitude = coordinate.longitude
+
+                pois.insert(currentLocation, at: 0)
+                
+                setup()
+            }
+        }
+    }
+
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Location manager failed with error: \(error.localizedDescription)")
     }
 }

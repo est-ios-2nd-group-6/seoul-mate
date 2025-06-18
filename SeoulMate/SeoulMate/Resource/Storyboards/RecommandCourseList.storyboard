@@ -181,7 +181,7 @@ Label</string>
                         <barButtonItem key="rightBarButtonItem" image="square.and.arrow.down" catalog="system" id="Gc8-aC-q62">
                             <color key="tintColor" systemColor="labelColor"/>
                             <connections>
-                                <action selector="addToSchedule:" destination="CVb-rg-9Kc" id="P4k-Fl-gBd"/>
+                                <action selector="addToSchedule:" destination="CVb-rg-9Kc" id="LOI-MI-4eU"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

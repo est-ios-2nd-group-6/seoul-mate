@@ -514,7 +514,8 @@ class MapViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+
         if cameBackFromSearch {
             saveButton.isHidden = false
             tableView.setEditing(true, animated: true)
@@ -536,7 +537,7 @@ class MapViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+        navigationController?.setNavigationBarHidden(true, animated: animated)
         circleTimer?.invalidate()
     }
     
@@ -848,7 +849,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    heightForFooterInSection section: Int) -> CGFloat {
-        return 1
+        return 0.5
     }
     
     
@@ -860,7 +861,8 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
             return UIView()
         } else {
             let separator = UIView()
-            separator.backgroundColor = .main
+            separator.backgroundColor = .lightGray
+            separator.layer.opacity = 0.5
             return separator
         }
         

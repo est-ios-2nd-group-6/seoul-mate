@@ -10,7 +10,7 @@ import CoreData
 
 extension CoreDataManager {
     func seedDummyData() async {
-        guard await fetchToursAsync().isEmpty else { return }
+        let check = Set((await fetchToursAsync()).compactMap { $0.title })
 
         let tours: [(title: String, start: Date, end: Date,
                      poisByDay: [[(
@@ -234,6 +234,8 @@ extension CoreDataManager {
                      ]
 
         for tourInfo in tours {
+            guard !check.contains(tourInfo.title) else { continue }
+
             let tour = Tour(context: context)
             tour.id = UUID()
             tour.title = tourInfo.title
@@ -263,6 +265,6 @@ extension CoreDataManager {
                 }
             }
         }
-        saveContext()
+        self.saveContext()
     }
 }

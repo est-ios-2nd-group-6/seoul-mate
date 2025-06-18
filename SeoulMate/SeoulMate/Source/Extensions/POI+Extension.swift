@@ -8,7 +8,14 @@
 import Foundation
 import UIKit
 
+// POI 모델 확장을 통해 장소 이름 또는 카테고리에 대응하는 앱 자산 이미지 이름을 제공합니다.
+///
+/// - `assetImageName`: POI의 `name`을 기준으로 매핑된 이미지 파일 이름을 반환하며,
+///   해당 이름이 없는 경우 `categoryAssetName`으로 대체합니다.
+/// - `categoryAssetName`: POI의 `category`를 기준으로 매핑된 이미지 파일 이름을 반환합니다.
 extension POI {
+    /// POI의 `name`에 대응하는 이미지 자산 이름을 반환합니다.
+    /// 지정된 이름이 일치하지 않으면 `categoryAssetName`을 대신 사용합니다.
     var assetImageName: String {
         switch name {
         case "남대문": return "Namdaemun"
@@ -34,6 +41,8 @@ extension POI {
         }
     }
 
+    /// POI의 `category`에 대응하는 이미지 자산 이름을 반환합니다.
+    /// 주로 `assetImageName`에서 매핑되지 않은 경우 사용됩니다.
     private var categoryAssetName: String {
         switch category {
         case "카페", "카페투어": return "cafe"

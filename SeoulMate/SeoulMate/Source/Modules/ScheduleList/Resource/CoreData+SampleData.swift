@@ -9,10 +9,23 @@ import Foundation
 import CoreData
 
 extension CoreDataManager {
+    /// 미리 정의된 투어 및 일자별 POI 데이터를 Core Data에 시딩(seed)합니다.
+      ///
+      /// - 동작 순서:
+      ///   1. 기존에 저장된 Tour 객체의 제목을 조회하여 중복 여부를 검사합니다.
+      ///   2. `tours` 배열에 정의된 각 투어 정보(제목, 시작일, 종료일, 일자별 POI 목록)를 순회합니다.
+      ///   3. 중복된 제목이 아니면 새 `Tour` 객체를 생성하고 속성을 설정합니다.
+      ///   4. `start` 날짜 기준으로 일자별로 `Schedule` 객체를 생성하고 등록합니다.
+      ///   5. 각 `Schedule`에 포함된 `(name, placeID, lat, lng, category, hours)` 튜플을 사용해 `POI` 객체를 생성하여 관계를 설정합니다.
+      ///   6. 모든 객체 생성이 완료되면, 변경된 컨텍스트를 저장합니다.
     func seedDummyData() {
         let context = self.context
+
+        // 1) 기존 Tour 제목 조회
         let existingTours = (try? context.fetch(Tour.fetchRequest()) as? [Tour]) ?? []
         let existingTitles = Set(existingTours.compactMap { $0.title })
+
+        // 2) 시딩할 투어 정보 배열
         let tours: [(title: String, start: Date, end: Date,
                      poisByDay: [[(
                         name: String,
@@ -234,8 +247,12 @@ extension CoreDataManager {
                         )
                      ]
 
+        // 3) 투어 정보에 따라 Core Data 객체 생성
         for tourInfo in tours {
+            // 중복된 제목은 건너뜁니다
             guard !existingTitles.contains(tourInfo.title) else { continue }
+
+            // Tour 객체 생성 및 속성 설정
             let tour = Tour(context: context)
             tour.id = UUID()
             tour.title = tourInfo.title
@@ -243,6 +260,7 @@ extension CoreDataManager {
             tour.endDate = tourInfo.end
             tour.createdAt = Date()
 
+            // 4) 일자별 Schedule 생성
             for (dayOffset, dayPois) in tourInfo.poisByDay.enumerated() {
                 let date = Calendar.current.date(byAdding: .day, value: dayOffset, to: tourInfo.start)!
                 let schedule = Schedule(context: context)
@@ -251,6 +269,7 @@ extension CoreDataManager {
                 schedule.tour = tour
                 tour.addToDays(schedule)
 
+                // 5) POI 객체 생성 및 관계 설정
                 for poiInfo in dayPois {
                     let poi = POI(context: context)
                     poi.name = poiInfo.name
@@ -265,6 +284,7 @@ extension CoreDataManager {
                 }
             }
         }
+        // 6) 컨텍스트 변경 사항 저장
         if context.hasChanges {
             try? context.save()
         }

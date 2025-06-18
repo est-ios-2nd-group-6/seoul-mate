@@ -53,6 +53,18 @@ class HomeViewController: UIViewController {
         }
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            rcmCourseListByAreaCollectionView.reloadData()
+
+            if rcmCourseListByLocationCollectionView.isHidden == false {
+                rcmCourseListByLocationCollectionView.reloadData()
+            }
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -79,6 +91,7 @@ class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: UICollectionViewDataSource {
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == rcmCourseListByAreaCollectionView {
             return min(rcmCourseListByArea.count, 5)
@@ -124,10 +137,6 @@ extension HomeViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
     }
-}
-
-extension HomeViewController: UICollectionViewDelegate {
-
 }
 
 extension HomeViewController: CLLocationManagerDelegate {

@@ -24,7 +24,7 @@ class CustomAlertController: UIViewController {
     func setupView() {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         
-        backgroundView.backgroundColor = .white
+        backgroundView.backgroundColor = .systemBackground
         backgroundView.layer.cornerRadius = 6
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(backgroundView)

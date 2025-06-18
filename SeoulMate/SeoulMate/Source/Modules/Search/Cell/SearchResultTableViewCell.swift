@@ -30,4 +30,7 @@ class SearchResultTableViewCell: UITableViewCell {
     @IBAction func removeItemButton(_ sender: Any) {
         self.delegate?.didRemoveButtonTapped(cell: self)
     }
+    @IBAction func selectButton(_ sender: Any) {
+        self.delegate?.didSelectButtonTapped(cell: self)
+    }
 }

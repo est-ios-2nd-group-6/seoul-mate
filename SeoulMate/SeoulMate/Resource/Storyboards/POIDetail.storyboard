@@ -21,7 +21,7 @@
                                 <rect key="frame" x="0.0" y="118" width="393" height="734"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="PoiInfoCell" rowHeight="365" id="AkD-u6-Kc3" customClass="PoiInfoCell" customModule="SeoulMate" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="POIInfoCell" rowHeight="365" id="AkD-u6-Kc3" customClass="POIInfoCell" customModule="SeoulMate" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="55.333332061767578" width="393" height="365"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AkD-u6-Kc3" id="qC0-zD-Vxc">
@@ -195,7 +195,7 @@
                                             <outlet property="titleLabel" destination="zJy-BA-e4i" id="Zy5-UV-f1k"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="PoiNearbyCell" rowHeight="300" id="oTI-MG-TtC" customClass="PoiNearbyCell" customModule="SeoulMate" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="POINearbyCell" rowHeight="300" id="oTI-MG-TtC" customClass="POINearbyCell" customModule="SeoulMate" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="420.33333206176758" width="393" height="300"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oTI-MG-TtC" id="YgH-4Z-Uwr">
@@ -350,14 +350,18 @@
                             <constraint firstItem="i4X-ve-l3P" firstAttribute="trailing" secondItem="geY-gY-pio" secondAttribute="trailing" id="mOL-Ay-Qux"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="4pQ-VS-gNk"/>
+                    <navigationItem key="navigationItem" id="4pQ-VS-gNk">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="arrow.left" catalog="system" id="0lX-UT-IaK">
+                            <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="detailTableView" destination="geY-gY-pio" id="Pwf-hv-qpS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kee-p6-fMA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3315.2671755725191" y="126.7605633802817"/>
+            <point key="canvasLocation" x="3302" y="127"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="JIe-9U-rAO">
@@ -378,6 +382,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="arrow.left" catalog="system" width="128" height="95"/>
         <image name="calendar" catalog="system" width="128" height="107"/>
         <image name="location" catalog="system" width="128" height="119"/>
         <image name="mappin.circle" catalog="system" width="128" height="123"/>

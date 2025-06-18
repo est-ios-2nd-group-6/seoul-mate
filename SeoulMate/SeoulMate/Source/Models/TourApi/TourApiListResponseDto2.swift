@@ -47,6 +47,7 @@ struct TourApiGoogleResponse: Codable {
         var photos:[Photo]
         var rating:Double?
         var location:Location
+        var regularOpeningHours: RegularOpeningHours
     }
     struct Photo: Codable {
         var name: String
@@ -67,6 +68,9 @@ struct TourApiGoogleResponse: Codable {
         let latitude: Double
         let longitude: Double
     }
+    struct RegularOpeningHours: Codable {
+        var weekdayDescriptions:[String]
+    }
 }
 
 struct TourAPIGoogleResponseShort: Codable {
@@ -76,6 +80,7 @@ struct TourAPIGoogleResponseShort: Codable {
     var displayName:DisplayName
     var photos:[Photo]
     var location:Location
+    var weekdayDescriptions:[String]?
     struct DisplayName: Codable {
         var text: String
         var languageCode: String

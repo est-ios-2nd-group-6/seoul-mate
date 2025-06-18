@@ -52,7 +52,7 @@ extension POIDetailViewController: UITableViewDataSource {
         switch POIItems[indexPath.row] {
         case .Location:
             let cell =
-                tableView.dequeueReusableCell(withIdentifier: String(describing: PoiInfoCell.self)) as! PoiInfoCell
+                tableView.dequeueReusableCell(withIdentifier: String(describing: POIInfoCell.self)) as! POIInfoCell
                 cell.delegate = self
             if let location = location {
                 cell.titleLabel.text = location.title
@@ -71,7 +71,7 @@ extension POIDetailViewController: UITableViewDataSource {
             return cell
         case .Recommandation:
             let cell =
-                tableView.dequeueReusableCell(withIdentifier: String(describing: PoiNearbyCell.self)) as! PoiNearbyCell
+                tableView.dequeueReusableCell(withIdentifier: String(describing: POINearbyCell.self)) as! POINearbyCell
                 cell.nearbyPlaceList = TourApiManager_hs.shared.nearybyPlaceList
                 if let longitude = location?.longitude,let latitude = location?.latitude {
                     cell.currentLocation = CurrentLocation(longitude: longitude, latitude: latitude)

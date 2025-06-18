@@ -174,21 +174,31 @@ extension ScheduleListViewController: UITableViewDataSource {
             cell.tripNameLabel.text = viewModel.displayTitle(for: tour)
             cell.tripDateLabel.text = viewModel.formatDateRange(tour.startDate ?? Date(), tour.endDate ?? Date())
             let placeholder = UIImage(systemName: "photo")?.withTintColor(UIColor(named: "Main")!, renderingMode: .alwaysOriginal)
+            cell.contentView.alpha = 0
 
             if let imageURL = viewModel.imageURL(for: tour) {
-                cell.tripImageView.load(from: imageURL)
+                cell.tripImageView.load(from: imageURL) {
+                    UIView.animate(withDuration: 0.25) {
+                        cell.contentView.alpha = 1
+                    }
+                }
             } else if let poi = viewModel.thumbnailPOI(for: tour) {
                 let assetName = poi.assetImageName
-                cell.tripImageView.image = placeholder
                 if let img = UIImage(named: assetName) {
                     cell.tripImageView.image = img
+                } else {
+                    cell.tripImageView.image = placeholder
                 }
+                cell.contentView.alpha = 1
             } else {
                 cell.tripImageView.image = placeholder
+                cell.contentView.alpha = 1
             }
+
             cell.tripImageView.layer.drawsAsynchronously = true
             cell.tripImageView.layer.shouldRasterize = true
-            cell.tripImageView.layer.rasterizationScale   = UIScreen.main.scale
+            cell.tripImageView.layer.rasterizationScale = UIScreen.main.scale
+
             cell.placeCountLabel.text = viewModel.locationCountText(for: tour)
             return cell
         }

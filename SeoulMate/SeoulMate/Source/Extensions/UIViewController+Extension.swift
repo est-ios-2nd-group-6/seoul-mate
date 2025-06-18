@@ -13,7 +13,7 @@ extension UIViewController {
         message: String,
         duration: TimeInterval = 3.0,
         backgroundColor: UIColor = .main,
-        iconName: String? = "checkmark.fill",
+        iconName: String? = "checkmark.circle.fill",
         completion: (() -> Void)? = nil
     ) {
         let notificationView = InAppNotificationView()

@@ -8,7 +8,7 @@ class InAppNotificationView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .white
-        imageView.image = UIImage(systemName: "checkmark.fill")
+        imageView.image = UIImage(systemName: "checkmark.circle.fill")
 
         return imageView
     }()
@@ -79,7 +79,7 @@ class InAppNotificationView: UIView {
         in viewController: UIViewController,
         duration: TimeInterval = 1.0,
         backgroundColor: UIColor = .main,
-        iconName: String? = "checkmark.fill",
+        iconName: String? = "checkmark.circle.fill",
         completion: (() -> Void)? = nil
     ) {
         self.messageLabel.text = message

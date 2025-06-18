@@ -62,12 +62,12 @@ class HomeViewController: UIViewController {
         locationManager.delegate = self
 
         Task {
-            locationManager.requestLocation()
-
             await TourApiManager.shared.fetchRcmCourseList(by: .area)
             rcmCourseListByArea = TourApiManager.shared.rcmCourseListByArea
 
             rcmCourseListByAreaCollectionView.reloadData()
+
+            locationManager.requestLocation()
         }
     }
 

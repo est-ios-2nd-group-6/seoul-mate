@@ -112,7 +112,7 @@ extension POIDetailViewController: POIDetailViewControllerDelegate {
     }
     
     func didShareButtonTapped() {
-        print(#file,#function,"called")
+        
     }
 }
 

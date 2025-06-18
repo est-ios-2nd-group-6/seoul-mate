@@ -36,12 +36,10 @@ class POIInfoCell: UITableViewCell {
     }
     
     @IBAction func findRoutesButton(_ sender: Any) {
-        print(#line,"루트찾기",sender)
         delegate?.didFindRoutesButtonTapped()
     }
     
     @IBAction func shareButton(_ sender: Any) {
-        print(#line,"공유하기",sender)
         delegate?.didShareButtonTapped()
     }
 }

@@ -26,28 +26,30 @@ class RecommandCourseDetailViewController: UIViewController {
 
     @IBAction func addToSchedule(_ sender: Any) {
         Task {
-//            var pois: [POI] = []
-//
-//            for place in places {
-//                let name = await fetchGooglePlaceName(textQuery: place.name)
-//
-//                let poi = POI(context: CoreDataManager.shared.context)
-//                poi.name = place.name
-//                poi.placeID = name
-//
-//                pois.append(poi)
-//            }
+            var pois: [POI] = []
 
-            let tours = await CoreDataManager.shared.fetchToursAsync()
+            for place in places {
+                let name = await fetchGooglePlaceName(textQuery: place.name)
 
-            let pois = tours[0].pois?.allObjects as! [POI]
+                let poi = POI(context: CoreDataManager.shared.context)
+                poi.name = place.name
+                poi.placeID = name
 
-            let sheet = AddToScheduleSheetViewController()
-            
-            sheet.pois = pois
-            sheet.delegate = self
+                pois.append(poi)
+            }
 
-            present(sheet, animated: true)
+//            let tours = await CoreDataManager.shared.fetchToursAsync()
+
+//            let pois = tours[0].pois?.allObjects as! [POI]
+
+            if !pois.isEmpty {
+                let sheet = AddToScheduleSheetViewController()
+
+                sheet.pois = pois
+                sheet.delegate = self
+
+                present(sheet, animated: true)
+            }
         }
 
     }
@@ -137,14 +139,19 @@ extension RecommandCourseDetailViewController {
 
         request.httpMethod = "POST"
 
+        request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
+        request.addValue("*/*", forHTTPHeaderField: "Aceept")
+        request.addValue("gzip, deflate, br", forHTTPHeaderField: "Aceept-Encoding")
+        request.addValue("keep-alive", forHTTPHeaderField: "Connection")
+
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
         request.setValue(Bundle.main.bundleIdentifier, forHTTPHeaderField: "X-Ios-Bundle-Identifier")
         request.setValue(fieldMasks.joined(separator: ","), forHTTPHeaderField: "X-Goog-FieldMask")
 
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
         do {
-            let (data, urlResponse) = try await URLSession.shared.data(for: request)
+            let session = URLSession(configuration: .ephemeral)
+
+            let (data, urlResponse) = try await session.data(for: request)
 
             guard let httpResponse = urlResponse as? HTTPURLResponse else {
                 return nil
@@ -215,8 +222,7 @@ extension RecommandCourseDetailViewController: AddToScheduleSheetViewControllerD
     func sheetViewControllerDidDismiss(_ viewController: AddToScheduleSheetViewController) {
         self.showInAppNotification(
             message: "일정에 성공적으로 추가했어요!",
-            duration: 2,
-            backgroundColor: .main
+            duration: 2
         )
     }
 }

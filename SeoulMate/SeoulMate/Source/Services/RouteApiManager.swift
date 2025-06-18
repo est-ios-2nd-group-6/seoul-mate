@@ -56,7 +56,7 @@ class RouteApiManager {
     ///   - endPoint: 도착지 좌표.
     ///   - intermediates: 경유지 좌표 배열 (옵셔널).
     /// - Returns: TMap 경로 API 응답 DTO (`TMapRoutesApiResponseDto`). 실패 시 `nil`.
-    public func calcRouteByTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async -> TMapRoutesApiResponseDto? {
+    public func calcRouteByTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: RouteLocation, endPoint: RouteLocation, intermediates: [RouteLocation]? = nil) async -> TMapRoutesApiResponseDto? {
         guard let url = getApiUrl(type: type) else {
             fatalError("URL Initialization is Failed")
         }
@@ -117,7 +117,7 @@ class RouteApiManager {
     ///   - startPoint: 출발지 좌표.
     ///   - endPoint: 도착지 좌표.
     /// - Returns: Google Routes API 응답 DTO (`GoogleRoutesApiResponseDto`). 실패 시 `nil`.
-    public func calcRouteTransitByGoogle(startPoint: Location, endPoint: Location) async -> GoogleRoutesApiResponseDto? {
+    public func calcRouteTransitByGoogle(startPoint: RouteLocation, endPoint: RouteLocation) async -> GoogleRoutesApiResponseDto? {
         guard let url = URL(string: "https://routes.googleapis.com/directions/v2:computeRoutes") else {
             fatalError("URL Initialization is Failed")
         }

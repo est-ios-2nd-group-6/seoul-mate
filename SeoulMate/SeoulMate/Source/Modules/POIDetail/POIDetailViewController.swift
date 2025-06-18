@@ -17,7 +17,11 @@ class POIDetailViewController: UIViewController {
     var POIItems: [POICellType] = []
     var nameLabel: String = ""
     var location: PlaceInfo?
+    var id:String?
+    var latitude:Double?
+    var longtitude:Double?
 
+    
     @IBOutlet weak var detailTableView: UITableView!
 
     override func viewDidLoad() {

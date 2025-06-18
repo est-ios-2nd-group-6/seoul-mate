@@ -45,6 +45,15 @@ class POIDetailViewController: UIViewController {
         super.viewDidAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "RouteMap" {
+            if let nav = segue.destination as? UINavigationController,let routeVC = nav.topViewController as? RouteMapViewController {
+                routeVC.pois = pois
+                print(pois)
+            }
+        }
+    }
 }
 
 extension POIDetailViewController: UITableViewDataSource {
@@ -111,9 +120,6 @@ extension POIDetailViewController: POIDetailViewControllerDelegate {
     }
 
     func didFindRoutesButtonTapped() {
-        let route = RouteMapViewController()
-        route.pois = pois
-        performSegue(withIdentifier: "RouteMap", sender: pois)
     }
 
     func didShareButtonTapped() {

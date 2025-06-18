@@ -50,6 +50,9 @@
                                 <buttonConfiguration key="configuration" style="plain" image="arrow.left" catalog="system" title="">
                                     <color key="baseForegroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </buttonConfiguration>
+                                <connections>
+                                    <action selector="dismissVC:" destination="mU0-P1-Z8a" eventType="touchUpInside" id="jJX-Wn-0as"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aOB-Xs-V9n">
                                 <rect key="frame" x="326.33333333333331" y="81" width="49.666666666666686" height="34.333333333333343"/>

@@ -28,6 +28,7 @@ class SearchViewController: UIViewController {
             print(#line,pois.count)
         }
     }
+    var POIsBackToVC:(([POI])->Void)?
     var items = [SearchResult]()
     var nameString: String?
 
@@ -95,7 +96,11 @@ class SearchViewController: UIViewController {
             self.searchResultTableView.reloadData()
         }
     }
-
+    @IBAction func dismissVC(_ sender: Any) {
+        POIsBackToVC?(pois)
+        navigationController?.popViewController(animated: true)
+    }
+    
 }
 
 extension SearchViewController: UICollectionViewDataSource,UICollectionViewDelegate {

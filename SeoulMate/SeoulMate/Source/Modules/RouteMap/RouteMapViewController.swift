@@ -14,20 +14,10 @@ import NMapsMap
 
 typealias TransitDetailInfo = RouteData.Path.TransitDetailInfo
 
-/// (임시) 여행지 더미 데이터.
-struct TempTour {
-    var name: String
-    var latitude: Double
-    var longitude: Double
+struct RouteLocation: Codable {
+    let name: String?
+    let latitude, longitude: Double
 }
-
-var dummyData: [TempTour] = [
-    TempTour(name: "신림역", latitude: 37.484171739, longitude: 126.929784067),
-    TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
-    //    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
-    //    TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
-    TempTour(name: "옥수역", latitude: 37.468502, longitude: 126.906699),
-]
 
 /// 지도에 표시할 경로와 관련된 모든 데이터를 담는 모델.
 struct RouteData {
@@ -227,6 +217,10 @@ class RouteMapViewController: UIViewController {
     @IBOutlet weak var naverMapView: NMFNaverMapView!
 
     @IBOutlet weak var routeInfoStackView: UIStackView!
+
+    @IBOutlet weak var routeInfoStartPointLabel: UILabel!
+    @IBOutlet weak var routeInfoEndPointLabel: UILabel!
+
     @IBOutlet weak var routeInfoTableView: UITableView!
     @IBOutlet weak var routeInfoWrapperView: UIView!
 
@@ -327,27 +321,27 @@ class RouteMapViewController: UIViewController {
     /// 지도에 표시된 마커들을 관리하는 배열.
     var markerReference: [NMFMarker] = []
 
-    var startPoint: Location? {
-        guard let first = dummyData.first else {
+    var startPoint: RouteLocation? {
+        guard let first = pois.first else {
             return nil
         }
 
-        return Location(latitude: first.latitude, longitude: first.longitude)
+        return RouteLocation(name: first.name, latitude: first.latitude, longitude: first.longitude)
     }
 
-    var endPoint: Location? {
-        guard let last = dummyData.last else {
+    var endPoint: RouteLocation? {
+        guard let last = pois.last else {
             return nil
         }
 
-        return Location(latitude: last.latitude, longitude: last.longitude)
+        return RouteLocation(name: last.name, latitude: last.latitude, longitude: last.longitude)
     }
 
-    var intermediates: [Location]? {
-        if dummyData.count > 2 {
-            let count = dummyData.count
+    var intermediates: [RouteLocation]? {
+        if pois.count > 2 {
+            let count = pois.count
 
-            return dummyData[1..<count-1].map { Location(latitude: $0.latitude, longitude: $0.longitude) }
+            return pois[1 ..< count-1].map { RouteLocation(name: $0.name, latitude: $0.latitude, longitude: $0.longitude) }
         }
 
         return nil
@@ -445,6 +439,9 @@ extension RouteMapViewController {
         routeInfoWrapperView.layer.cornerRadius = 12
         routeInfoWrapperView.clipsToBounds = true
 
+        routeInfoStartPointLabel.text = startPoint?.name
+        routeInfoEndPointLabel.text = endPoint?.name
+
         segmentIndicator.layer.cornerRadius = segmentIndicator.frame.height / 2
         segmentIndicator.backgroundColor = .main.withAlphaComponent(0.5)
 
@@ -488,12 +485,14 @@ extension RouteMapViewController {
             target: self,
             action: #selector(showRouteInfoTableView)
         )
+
         routeInfoStackView.addGestureRecognizer(showInfoTableTapGesture)
 
         let showInfoStackTapGesture = UITapGestureRecognizer(
             target: self,
             action: #selector(showRouteInfoStackView)
         )
+
         routeInfoTableView.addGestureRecognizer(showInfoStackTapGesture)
     }
 
@@ -529,10 +528,10 @@ extension RouteMapViewController {
 
     /// 모든 경로 포인트를 포함하도록 카메라 시점을 조절.
     func moveCameraToFitBounds() {
-        if let southWestLat = dummyData.min(by: { $0.latitude < $1.latitude })?.latitude,
-           let southWestLng = dummyData.min(by: { $0.longitude < $1.longitude })?.longitude,
-           let northEastLat = dummyData.max(by: { $0.latitude < $1.latitude })?.latitude,
-           let northEastLng = dummyData.max(by: { $0.longitude < $1.longitude })?.longitude {
+        if let southWestLat = pois.min(by: { $0.latitude < $1.latitude })?.latitude,
+           let southWestLng = pois.min(by: { $0.longitude < $1.longitude })?.longitude,
+           let northEastLat = pois.max(by: { $0.latitude < $1.latitude })?.latitude,
+           let northEastLng = pois.max(by: { $0.longitude < $1.longitude })?.longitude {
 
             let bounds = NMGLatLngBounds(southWestLat: southWestLat, southWestLng: southWestLng, northEastLat: northEastLat, northEastLng: northEastLng)
 
@@ -544,7 +543,7 @@ extension RouteMapViewController {
     }
 
     /// 교통수단 타입에 따라 적절한 API를 호출하여 경로를 계산.
-    func calcRoute(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location?, endPoint: Location?, intermediates: [Location]? = nil) async {
+    func calcRoute(type: RouteOption, searchOption: SearchOption? = nil, startPoint: RouteLocation?, endPoint: RouteLocation?, intermediates: [RouteLocation]? = nil) async {
         guard let startPoint, let endPoint else {
             print("Parameter error")
             return
@@ -564,7 +563,7 @@ extension RouteMapViewController {
     }
 
     /// Google Routes API를 통해 대중교통 경로를 계산하고 `routeCache`에 저장.
-    func calcRouteTransitByGoogle(startPoint: Location, endPoint: Location) async {
+    func calcRouteTransitByGoogle(startPoint: RouteLocation, endPoint: RouteLocation) async {
         let response: GoogleRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteTransitByGoogle(startPoint: startPoint, endPoint: endPoint)
         guard let response else { return }
 
@@ -632,12 +631,12 @@ extension RouteMapViewController {
                         // 새로운 도보 구간 시작
                         acc = RouteData.Path(polyline: polyline, travelMode: RouteOption(rawValue: step.travelMode), detail: TransitDetailInfo(step: step))
 
-                        if index == 0, let departureName = dummyData.first?.name {
+                        if index == 0, let departureName = pois.first?.name {
                             acc?.detail?.departureName = departureName
                         }
 
                         // 마지막 스텝이 도보일 경우, 누적된 정보를 경로에 추가
-                        if index == steps.count - 1, let arrivalName = dummyData.last?.name {
+                        if index == steps.count - 1, let arrivalName = pois.last?.name {
                             acc?.detail?.arrivalName = arrivalName
                             routeData.paths.append(acc!)
                         }
@@ -650,7 +649,7 @@ extension RouteMapViewController {
     }
 
     /// TMap API를 통해 자동차/도보 경로를 계산하고 `routeCache`에 저장.
-    func calcRouteByTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
+    func calcRouteByTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: RouteLocation, endPoint: RouteLocation, intermediates: [RouteLocation]? = nil) async {
         let response: TMapRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteByTMap(type: type, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
 
         var routeData = RouteData()
@@ -789,7 +788,7 @@ extension RouteMapViewController {
 extension RouteMapViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == routeInfoTableView {
-            return dummyData.count
+            return pois.count
         } else if tableView == transitDetailTableView {
             return routeCache[.transit]?[selectedSearchOption].paths.count ?? 0
         } else {
@@ -803,13 +802,13 @@ extension RouteMapViewController: UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "RouteInfoTableViewCell", for: indexPath) as? RouteInfoTableViewCell else { return UITableViewCell() }
 
             let index = indexPath.row
-            let routeInfo = dummyData[index]
+            let routeInfo = pois[index]
             var image: UIImage? = UIImage(systemName: "target")?.withRenderingMode(.alwaysOriginal)
 
             // 인덱스에 따라 출발, 도착, 경유지 아이콘 색상 설정
             if index == 0 {
                 image = image?.withTintColor(.mapPointGreen)
-            } else if index == dummyData.count - 1 {
+            } else if index == pois.count - 1 {
                 image = image?.withTintColor(.mapPointRed)
             } else {
                 image = image?.withTintColor(.mapPointGray)

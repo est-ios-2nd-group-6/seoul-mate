@@ -461,11 +461,6 @@ extension RouteMapViewController {
             forCellReuseIdentifier: TransitDetailTableViewCell.identifier
         )
 
-        transitDetailTableView.register(
-            TransitDetailSegueTableViewCell.nib,
-            forCellReuseIdentifier: TransitDetailSegueTableViewCell.identifier
-        )
-
         transitDetailTableView.showsVerticalScrollIndicator = false
         transitDetailTableView.showsHorizontalScrollIndicator = false
 

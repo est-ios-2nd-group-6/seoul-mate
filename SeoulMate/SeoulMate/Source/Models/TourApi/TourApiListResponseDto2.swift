@@ -72,7 +72,7 @@ struct TourApiGoogleResponse: Codable {
 struct TourAPIGoogleResponseShort: Codable {
     var id:String
     var formattedAddress:String
-    var rating:Double
+    var rating:Double?
     var displayName:DisplayName
     var photos:[Photo]
     var location:Location

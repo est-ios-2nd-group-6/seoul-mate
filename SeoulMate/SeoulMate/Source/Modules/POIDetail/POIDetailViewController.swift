@@ -17,7 +17,11 @@ class POIDetailViewController: UIViewController {
     var POIItems: [POICellType] = []
     var nameLabel: String = ""
     var location: PlaceInfo?
+    var id:String?
+    var latitude:Double?
+    var longtitude:Double?
 
+    
     @IBOutlet weak var detailTableView: UITableView!
 
     override func viewDidLoad() {
@@ -49,9 +53,10 @@ extension POIDetailViewController: UITableViewDataSource {
         case .Location:
             let cell =
                 tableView.dequeueReusableCell(withIdentifier: String(describing: PoiInfoCell.self)) as! PoiInfoCell
+                cell.delegate = self
             if let location = location {
                 cell.titleLabel.text = location.title
-                cell.reviewNumberLabel.text = "\(String(describing: location.rating!))"
+                cell.reviewNumberLabel.text = "\(String(describing: location.rating ?? 0))"
                 cell.addressLabel.text = location.address
                 if let url = location.profileImage {
                     URLSession.shared.dataTask(with: url) { data, _, error in
@@ -84,5 +89,25 @@ extension POIDetailViewController: UITableViewDelegate {
         case .Recommandation:
             return 675
         }
+    }
+}
+
+protocol POIDetailViewControllerDelegate: AnyObject {
+    func didAddScheduleButtonTapped()
+    func didFindRoutesButtonTapped()
+    func didShareButtonTapped()
+}
+
+extension POIDetailViewController: POIDetailViewControllerDelegate {
+    func didAddScheduleButtonTapped() {
+        print(#file,#function,"called")
+    }
+    
+    func didFindRoutesButtonTapped() {
+        print(#file,#function,"called")
+    }
+    
+    func didShareButtonTapped() {
+        print(#file,#function,"called")
     }
 }

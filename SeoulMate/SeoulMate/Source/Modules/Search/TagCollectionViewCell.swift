@@ -10,8 +10,8 @@ import UIKit
 class TagCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var label: UILabel!
-    
-    override class func awakeFromNib() {
+        
+    override func awakeFromNib() {
         super.awakeFromNib()
     }
     

@@ -76,15 +76,24 @@ class TourApiManager_hs {
         guard let googleApiKey = Bundle.main.googleApiKey else { return }
 
         request.httpMethod = "POST"
+
+        request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
+        request.addValue("*/*", forHTTPHeaderField: "Aceept")
+        request.addValue("gzip, deflate, br", forHTTPHeaderField: "Aceept-Encoding")
+        request.addValue("keep-alive", forHTTPHeaderField: "Connection")
+
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
         request.setValue(
-            "places.id,places.displayName,places.types,places.photos,places.primaryTypeDisplayName,places.rating,places.location,places.regularOpeningHours",
+            "places.id,places.displayName,places.types,places.photos,places.primaryTypeDisplayName,places.rating,places.location",
             forHTTPHeaderField: "X-Goog-FieldMask"
         )
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue(Bundle.main.bundleIdentifier ?? "", forHTTPHeaderField: "X-Ios-Bundle-Identifier")
 
         do {
-            let (data, urlResponse) = try await URLSession.shared.data(for: request)
+            let session = URLSession(configuration: .ephemeral)
+
+            let (data, urlResponse) = try await session.data(for: request)
+
             guard let httpResponse = urlResponse as? HTTPURLResponse else {
                 return
             }
@@ -109,7 +118,7 @@ class TourApiManager_hs {
                     photos: value.photos,
                     primaryTypeDisplayName: value.primaryTypeDisplayName,
                     location: value.location,
-                    weekdayDescription: value.regularOpeningHours.weekdayDescriptions
+                    weekdayDescription: value.regularOpeningHours?.weekdayDescriptions
                     
                 )
                 searchByTitleResultList.append(result)
@@ -136,12 +145,17 @@ class TourApiManager_hs {
         var request = URLRequest(url: url)
         guard let googleApiKey = Bundle.main.googleApiKey else { return }
 
+        request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
+        request.addValue("*/*", forHTTPHeaderField: "Aceept")
+        request.addValue("gzip, deflate, br", forHTTPHeaderField: "Aceept-Encoding")
+        request.addValue("keep-alive", forHTTPHeaderField: "Connection")
+
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
-        request.setValue("id,formattedAddress,rating,displayName,photos,location,regularOpeningHours", forHTTPHeaderField: "X-Goog-FieldMask")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("id,formattedAddress,rating,displayName,photos,location", forHTTPHeaderField: "X-Goog-FieldMask")
+        request.addValue(Bundle.main.bundleIdentifier ?? "", forHTTPHeaderField: "X-Ios-Bundle-Identifier")
 
         do {
-            let (data, urlResponse) = try await URLSession.shared.data(for: request)
+            let (data, urlResponse) = try await URLSession(configuration: .ephemeral).data(for: request)
             guard let httpResponse = urlResponse as? HTTPURLResponse else {
                 return
             }
@@ -158,7 +172,6 @@ class TourApiManager_hs {
                 address: json.formattedAddress,
                 longitude: json.location.longitude,
                 latitude: json.location.latitude,
-                weekdayDescriptions: json.weekdayDescriptions
             )
             guard
                 let url = URL(
@@ -189,12 +202,19 @@ class TourApiManager_hs {
         guard let googleApiKey = Bundle.main.googleApiKey else { return }
         request.httpMethod = "POST"
         let requestBody = TourNearybyAPIGoogleRequest(latitude: latitude, longitude: longitude)
+
+        request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
+        request.addValue("*/*", forHTTPHeaderField: "Aceept")
+        request.addValue("gzip, deflate, br", forHTTPHeaderField: "Aceept-Encoding")
+        request.addValue("keep-alive", forHTTPHeaderField: "Connection")
+
         request.setValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
         request.setValue(
             "places.id,places.formattedAddress,places.rating,places.displayName,places.primaryTypeDisplayName,places.location,places.photos,places.types",
             forHTTPHeaderField: "X-Goog-FieldMask"
         )
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue(Bundle.main.bundleIdentifier ?? "", forHTTPHeaderField: "X-Ios-Bundle-Identifier")
+
         do {
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase

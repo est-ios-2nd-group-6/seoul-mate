@@ -80,6 +80,11 @@ class CalendarViewController: UIViewController {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
     func fetchAllSchedules() -> [Schedule] {
         let req: NSFetchRequest<Schedule> = Schedule.fetchRequest()
         req.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]

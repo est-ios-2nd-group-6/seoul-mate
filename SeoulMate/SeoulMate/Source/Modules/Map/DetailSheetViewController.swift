@@ -52,7 +52,7 @@ class DetailSheetViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         if segue.identifier == "POIDetail",
-           let vc = segue.destination as? PoiDetailViewController {
+           let vc = segue.destination as? POIDetailViewController {
                 
         }
         

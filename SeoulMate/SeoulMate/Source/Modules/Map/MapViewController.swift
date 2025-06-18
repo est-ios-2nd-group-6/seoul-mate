@@ -1038,7 +1038,7 @@ extension MapViewController: DetailSheetDelegate {
         let poiStoryboard = UIStoryboard(name: "POIDetail", bundle: nil)
         guard let poiDetailVC = poiStoryboard
             .instantiateViewController(withIdentifier: "POIDetail")
-                as? PoiDetailViewController else { return }
+                as? POIDetailViewController else { return }
         
         //        poiDetailVC.place = sheet.place
         //        poiDetailVC.placeCategory = sheet.placeCategory

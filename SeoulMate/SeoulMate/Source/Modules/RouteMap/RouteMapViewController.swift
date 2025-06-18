@@ -14,6 +14,7 @@ import NMapsMap
 
 typealias TransitDetailInfo = RouteData.Path.TransitDetailInfo
 
+/// (임시) 여행지 더미 데이터.
 struct TempTour {
     var name: String
     var latitude: Double
@@ -23,21 +24,25 @@ struct TempTour {
 var dummyData: [TempTour] = [
     TempTour(name: "신림역", latitude: 37.484171739, longitude: 126.929784067),
     TempTour(name: "서울역", latitude: 37.552987, longitude: 126.972591),
-//    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
-//    TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
+    //    TempTour(name: "사당역", latitude: 37.476559992, longitude: 126.981638570),
+    //    TempTour(name: "강남역", latitude: 37.496486, longitude: 127.028361),
     TempTour(name: "옥수역", latitude: 37.468502, longitude: 126.906699),
 ]
 
+/// 지도에 표시할 경로와 관련된 모든 데이터를 담는 모델.
 struct RouteData {
+    /// 위경도 좌표.
     struct Coordinate {
         let latitude: Double
         let longitude: Double
     }
 
+    /// 출발, 도착, 경유지 등 지도에 표시될 특정 지점.
     struct Point {
         let coordinate: Coordinate
         let type: PointType
 
+        /// 지점 유형에 따라 마커 색상을 반환.
         var pointColor: UIColor {
             switch self.type {
             case .sp, .s, .startLocation:
@@ -54,6 +59,7 @@ struct RouteData {
             }
         }
 
+        /// 지점 유형에 따라 마커의 캡션 텍스트를 반환.
         var captionText: String? {
             switch self.type {
             case .sp, .s, .startLocation:
@@ -73,7 +79,9 @@ struct RouteData {
         }
     }
 
+    /// 지도에 그려질 단일 경로 구간.
     struct Path {
+        /// TMap API에서 제공하는 교통량 정보.
         enum Traffic: Int {
             case unknown = 0
             case smooth = 1
@@ -81,7 +89,9 @@ struct RouteData {
             case verySlow = 4
         }
 
+        /// Google Routes API의 대중교통 상세 정보를 담는 모델.
         struct TransitDetailInfo {
+            /// 대중교통(지하철, 버스) 정보.
             struct Vehicle {
                 let name: String
                 let color: UIColor
@@ -103,6 +113,7 @@ struct RouteData {
             var duration: Int
             var instructions: [String]? = nil
 
+            /// 테이블 뷰 셀에 표시될 상세 설명 텍스트.
             var descriptionText: String? {
                 var text = ""
 
@@ -135,9 +146,9 @@ struct RouteData {
                 return text
             }
 
+            /// Google Routes API의 `Step` 데이터로부터 초기화.
             init?(step: Step) {
                 let transitDetails = step.transitDetails
-
                 let transitLine = transitDetails?.transitLine
                 let stopDetails = transitDetails?.stopDetails
 
@@ -152,13 +163,13 @@ struct RouteData {
 
                 self.stopCount = transitDetails?.stopCount
                 self.distance = step.distanceMeters ?? 0
-
                 self.instructions = []
 
                 if let instruction = step.navigationInstruction.instructions {
                     self.instructions?.append(instruction)
                 }
 
+                // "s" 접미사 제거 및 정수 변환
                 if let duration: Int = Int(step.staticDuration.replacing(/[a-zA-Z]/, with: "")) {
                     self.duration = duration
                 } else {
@@ -172,12 +183,12 @@ struct RouteData {
         var traffic: Traffic? = nil
         var detail: TransitDetailInfo? = nil
 
+        /// 이동 수단 및 교통 상황에 따라 경로 선 색상을 결정.
         var lineColor: UIColor? {
             switch travelMode {
             case .transit:
                 return detail?.vehicle?.color
             case .walk, nil:
-                // drive -> traffic에 따른 분기 필요
                 return .mapLineBasic
             case .drive:
                 switch traffic {
@@ -208,6 +219,9 @@ struct RouteData {
     var paths: [Path] = []
 }
 
+/// 지도 위에 사용자 일정의 경로를 표시하고, 교통수단별 상세 정보를 제공하는 뷰 컨트롤러.
+///
+/// TMap API(자동차, 도보)와 Google Routes API(대중교통)를 사용하여 경로를 계산하고 Naver Map SDK를 통해 시각화.
 class RouteMapViewController: UIViewController {
     // MARK: - Outlets
     @IBOutlet weak var naverMapView: NMFNaverMapView!
@@ -231,47 +245,19 @@ class RouteMapViewController: UIViewController {
 
     @IBOutlet weak var transitDetailTableView: UITableView!
 
-    // MARK: - Actions
-    @IBAction func route(_ sender: Any) {
-        if let btn = sender as? UIButton {
-
-            indicatorConstraint.forEach {
-                if btn == ($0.secondItem as? UIButton) {
-                    $0.priority = .defaultHigh
-                } else {
-                    $0.priority = .defaultLow
-                }
-            }
-
-            UIView.animate(withDuration: 0.3) { [weak self] in
-                self?.view.layoutIfNeeded()
-            }
-
-
-            switch btn.tag {
-            case 1: selectedRouteOption = .drive
-            case 2: selectedRouteOption = .transit
-            case 3: selectedRouteOption = .walk
-            default: return
-            }
-        }
-    }
-
-
-    @IBAction func back(_ sender: Any) {
-        self.navigationController?.popViewController(animated: true)
-    }
-
-    @IBAction func more(_ sender: Any) {
-    }
-
     // MARK: - Properties
-   var pois: [POI] = []
+
+    /// 이전 화면에서 전달받은 여행 장소(POI) 배열.
+    var pois: [POI] = []
 
     var transitDetailWrapperViewHeight: Int = 300
 
+    /// API 호출 결과를 캐싱하여 불필요한 네트워크 요청을 방지하기 위한 딕셔너리.
+    /// - Key: `RouteOption` (교통수단)
+    /// - Value: 해당 교통수단으로 계산된 `RouteData` 배열
     var routeCache: [RouteOption: [RouteData]] = [:]
 
+    /// 현재 선택된 교통수단. `didSet`을 통해 UI 및 경로 데이터가 업데이트됨.
     var selectedRouteOption: RouteOption? = nil {
         didSet(oldVal) {
             if selectedRouteOption == oldVal {
@@ -286,7 +272,7 @@ class RouteMapViewController: UIViewController {
             } else {
                 transitDetailWrapperViewHeightConstraint.constant = 0
 
-                if let intermediates {
+                if intermediates != nil {
                     interStackView.isHidden = false
                     interToEndArrow.isHidden = false
                 }
@@ -320,6 +306,7 @@ class RouteMapViewController: UIViewController {
         }
     }
 
+    /// 현재 선택된 경로 검색 옵션(추천, 최단거리 등). `didSet`을 통해 지도 오버레이가 다시 그려짐.
     var selectedSearchOption: Int = 0 {
         didSet {
             guard let selectedRouteOption else { return }
@@ -334,8 +321,10 @@ class RouteMapViewController: UIViewController {
         }
     }
 
+    /// 지도에 그려질 여러 구간의 경로를 관리하는 객체.
     let multipartPath = NMFMultipartPath()
 
+    /// 지도에 표시된 마커들을 관리하는 배열.
     var markerReference: [NMFMarker] = []
 
     var startPoint: Location? {
@@ -368,12 +357,39 @@ class RouteMapViewController: UIViewController {
 
     var indicatorConstraint: [NSLayoutConstraint] = []
 
+    // MARK: - Actions
+    @IBAction func route(_ sender: Any) {
+        if let btn = sender as? UIButton {
+
+            indicatorConstraint.forEach {
+                if btn == ($0.secondItem as? UIButton) {
+                    $0.priority = .defaultHigh
+                } else {
+                    $0.priority = .defaultLow
+                }
+            }
+
+            UIView.animate(withDuration: 0.3) { [weak self] in
+                self?.view.layoutIfNeeded()
+            }
+
+
+            switch btn.tag {
+            case 1: selectedRouteOption = .drive
+            case 2: selectedRouteOption = .transit
+            case 3: selectedRouteOption = .walk
+            default: return
+            }
+        }
+    }
+
+    @IBAction func back(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+    }
+
     // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // FIXME: 임시
-        self.overrideUserInterfaceStyle = .light
 
         setupLayout()
         setupMapView()
@@ -382,6 +398,7 @@ class RouteMapViewController: UIViewController {
 
         moveCameraToFitBounds()
 
+        // 초기 경로를 '자동차'로 설정.
         selectedRouteOption = .drive
     }
 
@@ -389,6 +406,7 @@ class RouteMapViewController: UIViewController {
         super.viewIsAppearing(animated)
     }
 
+    /// 경로 정보 테이블 뷰를 표시.
     @objc func showRouteInfoTableView() {
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
@@ -403,6 +421,7 @@ class RouteMapViewController: UIViewController {
         }
     }
 
+    /// 경로 정보 요약 스택 뷰를 표시.
     @objc func showRouteInfoStackView() {
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
@@ -418,7 +437,7 @@ class RouteMapViewController: UIViewController {
     }
 }
 
-// MARK: - Extension
+// MARK: - Extension : UI & Map Setup
 extension RouteMapViewController {
     func setupLayout() {
         routeInfoWrapperView.layer.borderColor = UIColor.gray.withAlphaComponent(0.2).cgColor
@@ -434,14 +453,14 @@ extension RouteMapViewController {
         })
     }
 
+    /// 네이버 지도 SDK 관련 설정을 초기화.
     func setupMapView() {
         naverMapView.showLocationButton = true
 
-        print(routeOptionCollectionView.frame.minY)
-        print(transitDetailWrapperView.bounds.maxY)
         naverMapView.mapView.contentInset = UIEdgeInsets(top: 250, left: 0, bottom: 0, right: 0)
-
         naverMapView.mapView.touchDelegate = self
+
+        // 서울 지역으로 지도 범위 제한
         naverMapView.mapView.extent = NMGLatLngBounds(
             southWestLat: 37.413294,
             southWestLng: 126.734086,
@@ -455,6 +474,7 @@ extension RouteMapViewController {
         naverMapView.mapView.positionMode = .normal
     }
 
+    /// 테이블 뷰 및 제스처 관련 설정을 초기화.
     func setupTableViews() {
         transitDetailTableView.register(
             TransitDetailTableViewCell.nib,
@@ -477,6 +497,7 @@ extension RouteMapViewController {
         routeInfoTableView.addGestureRecognizer(showInfoStackTapGesture)
     }
 
+    /// 경유지 개수에 따라 UI를 업데이트.
     func updateIntermediatesInfo() {
         interStackView.subviews.forEach { $0.removeFromSuperview() }
 
@@ -487,10 +508,8 @@ extension RouteMapViewController {
 
             for _ in 0..<intermediates.count {
                 let interImageView = UIImageView(image: interImage)
-
                 interImageView.contentMode = .scaleAspectFit
                 interImageView.translatesAutoresizingMaskIntoConstraints = false
-
                 interStackView.addArrangedSubview(interImageView)
             }
 
@@ -500,39 +519,39 @@ extension RouteMapViewController {
         }
     }
 
+    /// 특정 위치로 카메라를 이동.
     func moveCamera(location: Location) {
-        //        cameraUpdateWithFitBounds
         let scrollTo = NMGLatLng(lat: location.latitude, lng: location.longitude)
         let cameraUpdate = NMFCameraUpdate(scrollTo: scrollTo)
         cameraUpdate.animation = .easeIn
         naverMapView.mapView.moveCamera(cameraUpdate)
     }
 
+    /// 모든 경로 포인트를 포함하도록 카메라 시점을 조절.
     func moveCameraToFitBounds() {
         if let southWestLat = dummyData.min(by: { $0.latitude < $1.latitude })?.latitude,
            let southWestLng = dummyData.min(by: { $0.longitude < $1.longitude })?.longitude,
            let northEastLat = dummyData.max(by: { $0.latitude < $1.latitude })?.latitude,
            let northEastLng = dummyData.max(by: { $0.longitude < $1.longitude })?.longitude {
+
             let bounds = NMGLatLngBounds(southWestLat: southWestLat, southWestLng: southWestLng, northEastLat: northEastLat, northEastLng: northEastLng)
 
             let cameraUpdate = NMFCameraUpdate(fit: bounds, paddingInsets: UIEdgeInsets(top: 250, left: 50, bottom: 50, right: 50))
-            cameraUpdate.animation = .easeIn
 
+            cameraUpdate.animation = .easeIn
             naverMapView.mapView.moveCamera(cameraUpdate)
         }
     }
 
+    /// 교통수단 타입에 따라 적절한 API를 호출하여 경로를 계산.
     func calcRoute(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location?, endPoint: Location?, intermediates: [Location]? = nil) async {
-
         guard let startPoint, let endPoint else {
             print("Parameter error")
-
             return
         }
 
-        if let datas = routeCache[type], let routeData = datas.first(where: { $0.searchOption == searchOption }) {
-            drawMapOverlays(routeData: routeData)
-
+        if let datas = routeCache[type], let _ = datas.first(where: { $0.searchOption == searchOption }) {
+            drawMapOverlays(routeData: routeCache[type]!.first(where: { $0.searchOption == searchOption })!)
             return
         }
 
@@ -544,10 +563,9 @@ extension RouteMapViewController {
         }
     }
 
+    /// Google Routes API를 통해 대중교통 경로를 계산하고 `routeCache`에 저장.
     func calcRouteTransitByGoogle(startPoint: Location, endPoint: Location) async {
-        // TODO: computeAlternativeRoutes true 시 경로 오류
         let response: GoogleRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteTransitByGoogle(startPoint: startPoint, endPoint: endPoint)
-
         guard let response else { return }
 
         var routeData = RouteData()
@@ -557,72 +575,51 @@ extension RouteMapViewController {
             let steps = leg.steps
 
             routeData.totalDistance = route.distanceMeters
-
             let duration: String = route.duration.replacing(/[a-zA-Z]/, with: "")
-
             if let totalTime = Int(duration) {
                 routeData.totalTime = totalTime
             }
 
             let startLocation = leg.startLocation.latLng
 
-            let startPoint = RouteData.Point(
-                latitude: startLocation.latitude,
-                longitude: startLocation.longitude,
-                type: .startLocation
-            )
-
-            routeData.points.append(startPoint)
+            routeData.points.append(.init(latitude: startLocation.latitude, longitude: startLocation.longitude, type: .startLocation))
 
             let endLocation = leg.endLocation.latLng
 
-            let endPoint = RouteData.Point(
-                latitude: endLocation.latitude,
-                longitude: endLocation.longitude,
-                type: .endLocation
-            )
+            routeData.points.append(.init(latitude: endLocation.latitude, longitude: endLocation.longitude, type: .endLocation))
 
-            routeData.points.append(endPoint)
-
+            // 연속된 도보 구간을 하나로 누적하기 위한 객체
             var acc: RouteData.Path? = nil
 
             for (index, step) in steps.enumerated() {
                 if step.distanceMeters == nil && step.staticDuration == "0s" {
                     continue
                 }
-
                 var polyline: [RouteData.Coordinate] = []
-
                 for coordinate in step.polyline.geoJSONLinestring.coordinates {
-                    let latitude: Double = coordinate[1]
-                    let longitude: Double = coordinate[0]
-
-                    polyline.append(.init(latitude: latitude, longitude: longitude))
+                    polyline.append(.init(latitude: coordinate[1], longitude: coordinate[0]))
                 }
 
+                // 대중교통 구간 처리
                 if step.travelMode == "TRANSIT" {
                     if acc != nil {
                         routeData.paths.append(acc!)
-
                         acc = nil
                     }
 
-                    let path = RouteData.Path(
-                        polyline: polyline,
-                        travelMode: RouteOption(rawValue: step.travelMode),
-                        detail: TransitDetailInfo(step: step)
-                    )
+                    let path = RouteData.Path(polyline: polyline, travelMode: RouteOption(rawValue: step.travelMode), detail: TransitDetailInfo(step: step))
 
                     routeData.paths.append(path)
 
+                    // 도보 구간 처리
                 } else if step.travelMode == "WALK" {
                     if acc != nil {
+
+                        // 기존 도보 구간에 현재 도보 구간 정보 누적
                         acc?.detail?.distance += step.distanceMeters ?? 0
 
                         if let duration = Int(step.staticDuration.replacing(/[a-zA-Z]/, with: "")) {
-                            acc?.detail?.duration = duration
-                        } else {
-                            acc?.detail?.duration = 0
+                            acc?.detail?.duration += duration
                         }
 
                         if let instructions = step.navigationInstruction.instructions {
@@ -631,18 +628,17 @@ extension RouteMapViewController {
 
                         acc?.polyline.append(contentsOf: polyline)
                     } else {
-                        acc = RouteData.Path(
-                            polyline: polyline,
-                            travelMode: RouteOption(rawValue: step.travelMode),
-                            detail: TransitDetailInfo(step: step))
+
+                        // 새로운 도보 구간 시작
+                        acc = RouteData.Path(polyline: polyline, travelMode: RouteOption(rawValue: step.travelMode), detail: TransitDetailInfo(step: step))
 
                         if index == 0, let departureName = dummyData.first?.name {
                             acc?.detail?.departureName = departureName
                         }
 
+                        // 마지막 스텝이 도보일 경우, 누적된 정보를 경로에 추가
                         if index == steps.count - 1, let arrivalName = dummyData.last?.name {
                             acc?.detail?.arrivalName = arrivalName
-
                             routeData.paths.append(acc!)
                         }
                     }
@@ -653,6 +649,7 @@ extension RouteMapViewController {
         }
     }
 
+    /// TMap API를 통해 자동차/도보 경로를 계산하고 `routeCache`에 저장.
     func calcRouteByTMap(type: RouteOption, searchOption: SearchOption? = nil, startPoint: Location, endPoint: Location, intermediates: [Location]? = nil) async {
         let response: TMapRoutesApiResponseDto? = await RouteApiManager.shared.calcRouteByTMap(type: type, searchOption: searchOption, startPoint: startPoint, endPoint: endPoint, intermediates: intermediates)
 
@@ -661,22 +658,17 @@ extension RouteMapViewController {
 
         if let features = response?.features {
             for feature in features {
-                if feature.properties.index == nil {
-                    continue
-                }
+                if feature.properties.index == nil { continue }
 
+                // 경로 지점 정보 처리
                 if feature.geometry.type == .point {
                     guard case let .double(longitude) = feature.geometry.coordinates[0],
-                          case let .double(latitude) = feature.geometry.coordinates[1] else {
+                          case let .double(latitude) = feature.geometry.coordinates[1],
+                          let pointType = feature.properties.pointType else {
                         continue
                     }
 
-                    guard let pointType = feature.properties.pointType else {
-                        continue
-                    }
-
-                    let point = RouteData.Point(latitude: latitude, longitude: longitude, type: pointType)
-                    routeData.points.append(point)
+                    routeData.points.append(.init(latitude: latitude, longitude: longitude, type: pointType))
 
                     if let totalDistance = feature.properties.totalDistance {
                         routeData.totalDistance = totalDistance
@@ -686,44 +678,36 @@ extension RouteMapViewController {
                         routeData.totalTime = totalTime
                     }
 
+                    // 경로 선 정보 처리
                 } else if feature.geometry.type == .lineString {
                     let coordinates = feature.geometry.coordinates
 
+                    // 교통량 정보가 있는 경우, 각 구간을 색상이 다른 경로로 분리하여 저장
                     if let traffics = feature.geometry.traffic, !traffics.isEmpty {
+
                         for traffic in traffics {
-                            let startIndex = traffic[0]
-                            let endIndex = traffic[1]
-                            let trafficValue = traffic[2]
 
-                            let polyline: [RouteData.Coordinate] = coordinates[startIndex...endIndex].compactMap { coordinate in
-                                guard case let .doubleArray(latLng) = coordinate else {
-                                    return nil
-                                }
+                            let (startIndex, endIndex, trafficValue) = (traffic[0], traffic[1], traffic[2])
 
-                                return RouteData.Coordinate(latitude: latLng[1], longitude: latLng[0])
+                            let polyline: [RouteData.Coordinate] = coordinates[startIndex...endIndex].compactMap {
+
+                                guard case let .doubleArray(latLng) = $0 else { return nil }
+
+                                return .init(latitude: latLng[1], longitude: latLng[0])
                             }
 
-                            let path: RouteData.Path = .init(
-                                polyline: polyline,
-                                travelMode: type,
-                                traffic: RouteData.Path.Traffic(
-                                    rawValue: trafficValue
-                                )
-                            )
-
-                            routeData.paths.append(path)
+                            routeData.paths.append(.init(polyline: polyline, travelMode: type, traffic: .init(rawValue: trafficValue)))
                         }
                     } else {
-                        let polyline: [RouteData.Coordinate] = coordinates.compactMap { coordinate in
-                            guard case let .doubleArray(latLng) = coordinate else {
-                                return nil
-                            }
+                        // 교통량 정보가 없는 경우, 전체를 단일 경로로 저장
+                        let polyline: [RouteData.Coordinate] = coordinates.compactMap {
 
-                            return RouteData.Coordinate(latitude: latLng[1], longitude: latLng[0])
+                            guard case let .doubleArray(latLng) = $0 else { return nil }
+
+                            return .init(latitude: latLng[1], longitude: latLng[0])
                         }
 
-                        let path: RouteData.Path = .init(polyline: polyline, travelMode: type)
-                        routeData.paths.append(path)
+                        routeData.paths.append(.init(polyline: polyline, travelMode: type))
                     }
                 }
             }
@@ -732,6 +716,7 @@ extension RouteMapViewController {
         routeCache[type, default: []].append(routeData)
     }
 
+    /// 지도에 그려진 마커와 경로를 모두 제거.
     func resetMapComponents() {
         multipartPath.mapView = nil
 
@@ -742,6 +727,7 @@ extension RouteMapViewController {
         markerReference.removeAll()
     }
 
+    /// `RouteData`를 기반으로 지도 위에 마커와 경로를 그림.
     func drawMapOverlays(routeData: RouteData) {
         resetMapComponents()
 
@@ -749,6 +735,7 @@ extension RouteMapViewController {
         drawPath(paths: routeData.paths)
     }
 
+    /// 경로 지점들을 지도에 마커로 표시.
     func drawPoints(points: [RouteData.Point]) {
         for point in points {
             if point.type != .n && point.type != .gp {
@@ -756,7 +743,6 @@ extension RouteMapViewController {
 
                 marker.width = 30
                 marker.height = 40
-
                 marker.iconImage = NMF_MARKER_IMAGE_BLACK
                 marker.iconTintColor = point.pointColor
 
@@ -765,7 +751,6 @@ extension RouteMapViewController {
                 }
 
                 marker.position = NMGLatLng(lat: point.coordinate.latitude, lng: point.coordinate.longitude)
-
                 marker.mapView = naverMapView.mapView
 
                 markerReference.append(marker)
@@ -773,6 +758,7 @@ extension RouteMapViewController {
         }
     }
 
+    /// 여러 구간으로 나뉜 경로를 `NMFMultipartPath`를 사용하여 색상과 함께 지도에 표시.
     func drawPath(paths: [RouteData.Path]) {
         var lineParts: [NMGLineString<AnyObject>] = []
         var colorParts: [NMFPathColor] = []
@@ -780,14 +766,10 @@ extension RouteMapViewController {
         for path in paths {
             let points = path.polyline.map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
 
-            let linePart = NMGLineString<AnyObject>(points: points)
-
-            lineParts.append(linePart)
+            lineParts.append(NMGLineString<AnyObject>(points: points))
 
             if let color = path.lineColor {
-                let colorPart = NMFPathColor(color: color)
-
-                colorParts.append(colorPart)
+                colorParts.append(NMFPathColor(color: color))
             }
         }
 
@@ -796,7 +778,6 @@ extension RouteMapViewController {
         multipartPath.patternIcon = NMFOverlayImage(name: "route_path_arrow")
         multipartPath.patternInterval = 16
 
-        // FIXME: 간헐적인 색상 오류 -> 확인 필요
         multipartPath.lineParts = lineParts
         multipartPath.colorParts = colorParts
 
@@ -817,14 +798,15 @@ extension RouteMapViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // 경로 정보 테이블 뷰 (장소 목록)
         if tableView == routeInfoTableView {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "RouteInfoTableViewCell", for: indexPath) as? RouteInfoTableViewCell else { return UITableViewCell() }
 
             let index = indexPath.row
             let routeInfo = dummyData[index]
-
             var image: UIImage? = UIImage(systemName: "target")?.withRenderingMode(.alwaysOriginal)
 
+            // 인덱스에 따라 출발, 도착, 경유지 아이콘 색상 설정
             if index == 0 {
                 image = image?.withTintColor(.mapPointGreen)
             } else if index == dummyData.count - 1 {
@@ -834,19 +816,19 @@ extension RouteMapViewController: UITableViewDataSource {
             }
 
             cell.cellImageView.image = image
-
             cell.titleLabel.text = routeInfo.name
 
             return cell
+
+            // 대중교통 상세 경로 테이블 뷰
         } else if tableView == transitDetailTableView {
             guard let selectedRouteOption, selectedRouteOption == .transit else {
                 return UITableViewCell()
             }
-
             let path = routeCache[selectedRouteOption]?[selectedSearchOption].paths[indexPath.row]
-          
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TransitDetailTableViewCell.identifier, for: indexPath) as? TransitDetailTableViewCell else { return UITableViewCell() }
 
+            // 출발지/도착지 이름이 있는 경우에만 해당 스택 뷰 표시
             if let departureName = path?.detail?.departureName {
                 cell.departureTitleLabel.text = departureName
                 cell.departureStackView.isHidden = false
@@ -855,7 +837,6 @@ extension RouteMapViewController: UITableViewDataSource {
             }
 
             cell.segueLineView.backgroundColor = path?.lineColor
-
             cell.descriptionLabel.text = path?.detail?.descriptionText
 
             if let arrivalName = path?.detail?.arrivalName {
@@ -876,7 +857,6 @@ extension RouteMapViewController: UITableViewDataSource {
 extension RouteMapViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let selectedRouteOption else { return 0 }
-
         return routeCache[selectedRouteOption]?.count ?? 0
     }
 
@@ -886,12 +866,13 @@ extension RouteMapViewController: UICollectionViewDataSource {
         }
 
         guard let selectedRouteOption else { return UICollectionViewCell() }
-
         let index = indexPath.item
-        let option = selectedRouteOption.searchOptions?[index]
 
+        // 현재 선택된 옵션에 해당하는 데이터 찾기
+        let option = selectedRouteOption.searchOptions?[index]
         guard let data = routeCache[selectedRouteOption]?.first(where: { $0.searchOption == option }) else { return UICollectionViewCell() }
 
+        // 선택된 셀에 테두리 강조 효과 적용
         if index == selectedSearchOption {
             cell.wrapperView.layer.borderColor = UIColor.label.cgColor
         } else {
@@ -905,6 +886,7 @@ extension RouteMapViewController: UICollectionViewDataSource {
         cell.wrapperView.layer.shadowOpacity = 0.2
         cell.wrapperView.layer.shadowRadius = 5
         cell.wrapperView.layer.shadowOffset = CGSize(width: 0, height: 0)
+
 
         cell.optionLabel.text = option?.title ?? "추천 경로 \(index + 1)"
 
@@ -926,7 +908,7 @@ extension RouteMapViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - Extension : UICollectionViewDeletagate
+// MARK: - Extension : UICollectionViewDelegate
 extension RouteMapViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedSearchOption = indexPath.item
@@ -937,10 +919,13 @@ extension RouteMapViewController: UICollectionViewDelegate {
     }
 }
 
+// MARK: - Extension : NMFMapViewTouchDelegate
 extension RouteMapViewController: NMFMapViewTouchDelegate {
+    /// 지도 터치 시 전체화면 모드를 토글.
     func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
         isMapFullscreend.toggle()
 
+        // 대중교통이 아닐 때, 또는 전체화면 모드일 때는 상세 정보 뷰를 숨김.
         self.transitDetailWrapperViewHeightConstraint.constant = self.isMapFullscreend || self.selectedRouteOption != .transit ? 0 : CGFloat(transitDetailWrapperViewHeight)
 
         UIView.animate(withDuration: 0.3) { [weak self] in

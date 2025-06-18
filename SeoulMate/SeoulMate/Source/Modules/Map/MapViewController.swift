@@ -226,6 +226,7 @@ class MapViewController: UIViewController {
             .compactMap { $0.date != nil ? $0 : nil }
             .sorted { $0.date! < $1.date! }
         self.sortedSchedules = schedules
+        sortedDates = schedules.map { Calendar.current.startOfDay(for: $0.date!) }
 
         self.poisByDay = schedules.map { schedule in
             return (schedule.pois?.array as? [POI]) ?? []

@@ -8,7 +8,6 @@
 import UIKit
 protocol DetailSheetDelegate: AnyObject {
     func detailSheetGoToDetail(_ sheet: DetailSheetViewController)
-    func detailSheetGoToRoute(_ sheet: DetailSheetViewController, didRequestRouteFor pois: [POI])
 
 }
 
@@ -17,12 +16,6 @@ class DetailSheetViewController: UIViewController {
     @IBOutlet weak var placeCategoryLabel: UILabel!
     @IBOutlet weak var openTimeLabel: UILabel!
     
-    @IBAction func goToRoute(_ sender: Any) {
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.detailSheetGoToRoute(self, didRequestRouteFor: self.pois)
-        }
-    }
     
     @IBAction func goToDetail(_ sender: Any) {
         dismiss(animated: true) { [weak self] in

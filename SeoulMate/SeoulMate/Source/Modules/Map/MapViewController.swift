@@ -973,14 +973,7 @@ extension MapViewController: DetailSheetDelegate {
         }
     }
     
-    func detailSheetGoToRoute(_ sheet: DetailSheetViewController, didRequestRouteFor pois: [POI]) {
-        let storyboard = UIStoryboard(name: "RouteMap", bundle: nil)
-        if let vc = storyboard.instantiateViewController(withIdentifier: "RouteMap") as? RouteMapViewController {
-            vc.pois = pois
-            navigationController?.pushViewController(vc, animated: true)
-        }
-
-    }
+    
 }
 
 extension MapViewController: NSFetchedResultsControllerDelegate {

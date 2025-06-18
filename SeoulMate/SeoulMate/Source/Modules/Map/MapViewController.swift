@@ -818,7 +818,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         vc.placeCategory = poisByDay[indexPath.section][indexPath.row].category ?? ""
         vc.placeOpenTime = poisByDay[indexPath.section][indexPath.row].openingHours ?? ""
         vc.pois = poisByDay[indexPath.section]
-        vc.selectedRows = indexPath.row
+        vc.selectedRow = indexPath.row
         vc.delegate = self
         if let presentationController = vc.presentationController as? UISheetPresentationController {
             let small = UISheetPresentationController.Detent.custom(identifier: .init(rawValue: "small")) { context in

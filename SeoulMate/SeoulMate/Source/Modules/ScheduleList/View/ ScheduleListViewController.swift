@@ -29,8 +29,21 @@ class ScheduleListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         scheduleListTableView.prefetchDataSource = self
-        FloatingButtondesign()
         showLoadingOverlay()
+
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            floatingButton.isHidden = true
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                barButtonSystemItem: .add,
+                target: self,
+                action: #selector(floattingTapped)
+            )
+        } else {
+            FloatingButtondesign()
+            floatingButton.addTarget(self,
+                                     action: #selector(floattingTapped),
+                                     for: .touchUpInside)
+        }
 
         CoreDataManager.shared.seedDummyData()
 

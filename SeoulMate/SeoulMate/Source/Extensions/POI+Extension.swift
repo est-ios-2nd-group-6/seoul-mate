@@ -12,9 +12,9 @@ extension POI {
     var assetImageName: String {
         switch name {
         case "남대문": return "Namdaemun"
-        case "명동성당": return "Myeongdong Cathedral"
+        case "명동성당": return "Myeongdong_Cathedral"
         case "청계천": return "Cheonggyecheon"
-        case "광장시장": return "Gwangjang Market"
+        case "광장시장": return "Gwangjang_Market"
         case "경복궁": return "gyeongbokgung"
         case "창덕궁": return "changdeokgung"
         case "북촌한옥마을": return "bukchon"

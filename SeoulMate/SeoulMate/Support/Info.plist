@@ -4,8 +4,6 @@
 <dict>
 	<key>GoogleApiKey</key>
 	<string>${GOOGLE_API_KEY}</string>
-	<key>GoogleRoutesApiKey</key>
-	<string>${GOOGLE_ROUTES_API_KEY}</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -51,5 +49,11 @@
 	</dict>
 	<key>NaverMapApiKey</key>
 	<string>${NaverMap_API_KEY}</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>위치정보 권한이 필요합니다.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>위치정보 권한이 필요합니다.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>위치정보 권한이 필요합니다.</string>
 </dict>
 </plist>

@@ -7,10 +7,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Tab Bar Controller-->
+        <!--Main View Controller-->
         <scene sceneID="6bz-s7-aRX">
             <objects>
-                <tabBarController storyboardIdentifier="Main" automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="overFullScreen" id="eeQ-wO-9jg" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="Main" automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="overFullScreen" id="eeQ-wO-9jg" customClass="MainViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="e9j-ug-7V5">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
@@ -18,8 +18,8 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
-                        <segue destination="iEC-KF-NbZ" kind="relationship" relationship="viewControllers" id="juQ-8Z-6KN"/>
                         <segue destination="btf-M3-dfl" kind="relationship" relationship="viewControllers" id="MnB-76-wlo"/>
+                        <segue destination="iEC-KF-NbZ" kind="relationship" relationship="viewControllers" id="juQ-8Z-6KN"/>
                         <segue destination="heM-aW-CJd" kind="relationship" relationship="viewControllers" id="tgM-dN-Fv7"/>
                     </connections>
                 </tabBarController>
@@ -35,7 +35,7 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Av1-eT-mzF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="892" y="-241"/>
+            <point key="canvasLocation" x="850" y="-8"/>
         </scene>
         <!--ScheduleList-->
         <scene sceneID="0Je-CI-RTG">
@@ -45,7 +45,7 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tce-0l-Rm5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="856" y="-13"/>
+            <point key="canvasLocation" x="822" y="-172"/>
         </scene>
         <!--Setting-->
         <scene sceneID="Bq6-XG-dBd">

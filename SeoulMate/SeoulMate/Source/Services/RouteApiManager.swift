@@ -104,8 +104,8 @@ class RouteApiManager {
             fatalError("URL Initialization is Failed")
         }
 
-        guard let googleRoutesApiKey = Bundle.main.googleRoutesApiKey else {
-            fatalError("Google Routes Api Key is missing")
+        guard let googleApiKey = Bundle.main.googleApiKey else {
+            fatalError("Google Api Key is missing")
         }
 
         let origin = Destination(latitude: startPoint.latitude, longitude: startPoint.longitude)
@@ -115,7 +115,8 @@ class RouteApiManager {
             origin: origin,
             destination: destination,
             intermediates: nil,
-            computeAlternativeRoutes: false
+            computeAlternativeRoutes: false,
+            polylineQuality: "HIGH_QUALITY"
         )
 
         do {
@@ -124,12 +125,16 @@ class RouteApiManager {
             request.httpMethod = "POST"
             request.httpBody = try JSONEncoder().encode(routeReqDto)
 
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.addValue(googleRoutesApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
+            request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
+            request.addValue("*/*", forHTTPHeaderField: "Aceept")
+            request.addValue("gzip, deflate, br", forHTTPHeaderField: "Aceept-Encoding")
+            request.addValue("keep-alive", forHTTPHeaderField: "Connection")
+            
+            request.addValue(googleApiKey, forHTTPHeaderField: "X-Goog-Api-Key")
             request.addValue("routes.distanceMeters,routes.duration,routes.legs.startLocation,routes.legs.endLocation,routes.legs.steps", forHTTPHeaderField: "X-Goog-FieldMask")
             request.addValue(Bundle.main.bundleIdentifier ?? "", forHTTPHeaderField: "X-Ios-Bundle-Identifier")
 
-            let session = URLSession.shared
+            let session = URLSession(configuration: .ephemeral)
 
             let (data, _) = try await session.data(for: request)
 

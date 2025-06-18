@@ -11,17 +11,16 @@ class ScheduleListTripTableViewCell: UITableViewCell {
     @IBOutlet weak var tripImageView: UIImageView!
     @IBOutlet weak var tripNameLabel: UILabel!
     @IBOutlet weak var tripDateLabel: UILabel!
-    @IBOutlet weak var cityCountLabel: UILabel!
-    @IBAction func moreButton(_ sender: Any) {
-    }
+    @IBOutlet weak var placeCountLabel: UILabel!
+
     override func awakeFromNib() {
         super.awakeFromNib()
+        tripImageView.layer.cornerRadius = tripImageView.frame.height / 2
+        tripImageView.clipsToBounds = true
+        tripImageView.contentMode = .scaleAspectFill
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        tripImageView.layer.cornerRadius = tripImageView.frame.height / 2
-        tripImageView.clipsToBounds = true
     }
 }

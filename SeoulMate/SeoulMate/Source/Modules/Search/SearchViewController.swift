@@ -75,10 +75,17 @@ class SearchViewController: UIViewController {
         }
     }
     
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
+
+
+    @IBAction func backToSchduleView(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+    
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "POIDetail" {

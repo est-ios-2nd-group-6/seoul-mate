@@ -17,6 +17,7 @@ struct GoogleRoutesApiRequestDto: Encodable {
     let languageCode = "ko-KR"
     let units = "METRIC"
     let polylineEncoding = "GEO_JSON_LINESTRING"
+    var polylineQuality: String = "OVERVIEW"
 }
 
 struct Destination: Codable {

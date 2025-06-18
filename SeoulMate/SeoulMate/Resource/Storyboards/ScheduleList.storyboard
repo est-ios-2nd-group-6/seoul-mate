@@ -61,29 +61,29 @@
                                                             <rect key="frame" x="4" y="4" width="369" height="82"/>
                                                             <subviews>
                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="aNK-Fz-DoT">
-                                                                    <rect key="frame" x="0.0" y="1" width="100" height="80"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="80" height="80"/>
                                                                     <constraints>
-                                                                        <constraint firstAttribute="width" constant="100" id="PzP-Ea-oVb"/>
+                                                                        <constraint firstAttribute="width" constant="80" id="PzP-Ea-oVb"/>
                                                                         <constraint firstAttribute="height" constant="80" id="otJ-w3-fer"/>
                                                                     </constraints>
                                                                 </imageView>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="pSY-mM-4FW">
-                                                                    <rect key="frame" x="110.00000000000001" y="5.3333333333333357" width="201.33333333333337" height="71.666666666666657"/>
+                                                                    <rect key="frame" x="90.000000000000014" y="5.3333333333333357" width="221.33333333333337" height="71.666666666666657"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="brB-Ff-kOv">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="201.33333333333334" height="24"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="221.33333333333334" height="24"/>
                                                                             <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6xd-HI-qyJ">
-                                                                            <rect key="frame" x="0.0" y="34" width="201.33333333333334" height="14.333333333333336"/>
+                                                                            <rect key="frame" x="0.0" y="34" width="221.33333333333334" height="14.333333333333336"/>
                                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nh5-vZ-nr3">
-                                                                            <rect key="frame" x="0.0" y="58.33333333333335" width="201.33333333333334" height="13.333333333333336"/>
+                                                                            <rect key="frame" x="0.0" y="58.33333333333335" width="221.33333333333334" height="13.333333333333336"/>
                                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -120,16 +120,16 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="cityCountLabel" destination="Nh5-vZ-nr3" id="o8d-lm-l78"/>
+                                            <outlet property="placeCountLabel" destination="Nh5-vZ-nr3" id="o8d-lm-l78"/>
                                             <outlet property="tripDateLabel" destination="6xd-HI-qyJ" id="8ZU-Xd-gNZ"/>
                                             <outlet property="tripImageView" destination="aNK-Fz-DoT" id="5Op-ka-NBJ"/>
                                             <outlet property="tripNameLabel" destination="brB-Ff-kOv" id="TP3-vi-ffx"/>
-                                            <segue destination="1yb-j8-xa7" kind="show" id="mhw-MM-EUY"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="CrW-ba-Bhz" id="hRZ-X1-RSp"/>
+                                    <outlet property="delegate" destination="CrW-ba-Bhz" id="ze4-YZ-xur"/>
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1vT-zo-RuT">
@@ -142,7 +142,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" image="plus" catalog="system"/>
                                 <connections>
-                                    <segue destination="VaP-cN-1Kv" kind="show" id="84W-Om-63h"/>
+                                    <action selector="floattingTapped:" destination="CrW-ba-Bhz" eventType="touchUpInside" id="ben-z1-f5o"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -168,26 +168,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YZf-3h-xr0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2840.4580152671756" y="-34.507042253521128"/>
-        </scene>
-        <!--Map-->
-        <scene sceneID="hbP-ZL-fx6">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="MapViewController" storyboardName="Map" id="1yb-j8-xa7" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="WHf-dm-R7p"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="8y6-Wa-drI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3642" y="-298"/>
-        </scene>
-        <!--Calendar-->
-        <scene sceneID="MP6-eE-SRP">
-            <objects>
-                <viewControllerPlaceholder storyboardName="Calendar" id="VaP-cN-1Kv" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="FXi-sD-EXU"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="37u-lE-WeB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3582" y="228"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="9l3-l9-cBr">
@@ -216,7 +196,7 @@
             <color red="0.92941176891326904" green="0.47450977563858032" blue="0.38431376218795776" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

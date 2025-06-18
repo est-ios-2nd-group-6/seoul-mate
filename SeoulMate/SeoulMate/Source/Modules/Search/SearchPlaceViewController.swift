@@ -30,6 +30,7 @@ class SearchPlaceViewController: UIViewController {
         scheduleAddButton.layer.masksToBounds = true
         scheduleAddButton.layer.cornerRadius = 15
         scheduleAddButton.isHidden = true
+        
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

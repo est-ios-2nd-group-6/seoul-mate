@@ -114,6 +114,7 @@ extension SearchViewController: UICollectionViewDataSource,UICollectionViewDeleg
                 for: indexPath
             ) as! TagCollectionViewCell
         cell.setCell(text: tags[indexPath.item])
+        cell.delegate = self
         return cell
     }
 }
@@ -126,7 +127,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGSize {
         let text = tags[indexPath.item]
         let size = (text as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)])
-        return CGSize(width: size.width + 24, height: size.height + 16)
+        return CGSize(width: size.width + 60, height: size.height + 4)
     }
 }
 
@@ -199,6 +200,7 @@ protocol SearchViewControllerDelegate: AnyObject {
     func didRemoveAllButtonTapped()
     func didRemoveButtonTapped(cell: UITableViewCell)
     func didSelectButtonTapped(cell: UITableViewCell)
+    func didDeselectButtonTapped(cell: UICollectionViewCell)
 }
 
 extension SearchViewController: SearchViewControllerDelegate {
@@ -223,7 +225,13 @@ extension SearchViewController: SearchViewControllerDelegate {
         else { return }
         tags.append(items[item.row].title)
     }
+    
+    func didDeselectButtonTapped(cell: UICollectionViewCell) {
+        guard let item = self.tagCollectionView.indexPath(for: cell) else { return }
+        tags.remove(at: item.row)
+    }
 }
+
 
 extension SearchViewController: CustomAlertControllerDelegate {
     func deleteRecentItem(_ alert: CustomAlertController) {

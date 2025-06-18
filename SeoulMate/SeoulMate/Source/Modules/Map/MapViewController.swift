@@ -961,7 +961,7 @@ extension MapViewController: DetailSheetDelegate {
         let poi = sheet.pois[sheet.selectedRow]
         let storyboard = UIStoryboard(name: "POIDetail", bundle: nil)
         if let vc = storyboard.instantiateViewController(withIdentifier: "POIDetailView") as? POIDetailViewController {
-            vc.id = poi.name
+            vc.nameLabel = poi.placeID ?? ""
             vc.latitude = poi.latitude
             vc.longtitude = poi.longitude
             navigationController?.pushViewController(vc, animated: true)

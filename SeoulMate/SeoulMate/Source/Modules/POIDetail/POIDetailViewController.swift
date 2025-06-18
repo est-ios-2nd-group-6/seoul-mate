@@ -17,7 +17,7 @@ class POIDetailViewController: UIViewController {
     var POIItems: [POICellType] = []
     var nameLabel: String = ""
     var location: PlaceInfo?
-    var id: String?
+    var id: String? = ""
     var latitude: Double?
     var longtitude: Double?
     var pois: [POI] = []
@@ -40,6 +40,10 @@ class POIDetailViewController: UIViewController {
             await TourApiManager_hs.shared.fetchPOIDetailNearbyPlace(latitude: latitude, longitude: longitude)
             self.detailTableView.reloadData()
         }
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
 }
 

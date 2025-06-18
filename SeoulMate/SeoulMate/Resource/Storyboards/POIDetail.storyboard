@@ -14,11 +14,11 @@
             <objects>
                 <viewController storyboardIdentifier="POIDetailView" id="VFB-Gz-2EN" customClass="POIDetailViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rbO-2G-cZz">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="690"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" sectionIndexMinimumDisplayRowCount="5" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="10" estimatedSectionHeaderHeight="-1" sectionFooterHeight="10" estimatedSectionFooterHeight="-1" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="geY-gY-pio">
-                                <rect key="frame" x="0.0" y="118" width="393" height="734"/>
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="690"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="POIInfoCell" rowHeight="365" id="AkD-u6-Kc3" customClass="POIInfoCell" customModule="SeoulMate" customModuleProvider="target">
@@ -352,11 +352,13 @@
                             <constraint firstItem="i4X-ve-l3P" firstAttribute="trailing" secondItem="geY-gY-pio" secondAttribute="trailing" id="mOL-Ay-Qux"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="4pQ-VS-gNk">
+                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="4pQ-VS-gNk">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="arrow.left" catalog="system" id="0lX-UT-IaK">
                             <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="detailTableView" destination="geY-gY-pio" id="Pwf-hv-qpS"/>
                     </connections>
@@ -370,6 +372,7 @@
             <objects>
                 <navigationController storyboardIdentifier="POIDetail" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" navigationBarHidden="YES" id="B57-UH-jZW" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <nil key="simulatedTopBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ohz-oh-NPA">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

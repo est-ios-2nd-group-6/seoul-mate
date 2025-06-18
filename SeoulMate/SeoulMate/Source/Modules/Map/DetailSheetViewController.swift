@@ -7,8 +7,8 @@
 
 import UIKit
 protocol DetailSheetDelegate: AnyObject {
-    func detailSheetPresent(_ sheet: DetailSheetViewController)
-    func detailSheetDismiss(_ sheet: DetailSheetViewController, didRequestRouteFor pois: [POI])
+    func detailSheetGoToDetail(_ sheet: DetailSheetViewController)
+    func detailSheetGoToRoute(_ sheet: DetailSheetViewController, didRequestRouteFor pois: [POI])
 
 }
 
@@ -20,13 +20,15 @@ class DetailSheetViewController: UIViewController {
     @IBAction func goToRoute(_ sender: Any) {
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
-            self.delegate?.detailSheetDismiss(self, didRequestRouteFor: self.pois)
+            self.delegate?.detailSheetGoToRoute(self, didRequestRouteFor: self.pois)
         }
     }
     
     @IBAction func goToDetail(_ sender: Any) {
-        delegate?.detailSheetPresent(self)
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.detailSheetGoToDetail(self)
+}
     }
     
     var pois: [POI] = []

@@ -256,16 +256,6 @@
             </objects>
             <point key="canvasLocation" x="2307.6335877862593" y="-2.1126760563380285"/>
         </scene>
-        <!--Search-->
-        <scene sceneID="QsW-FY-kw2">
-            <objects>
-                <viewControllerPlaceholder storyboardName="Search" id="eQp-y4-GLI" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="ihf-6j-7Oj"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="sgX-8w-5Qp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3240" y="-2"/>
-        </scene>
         <!--Detail Sheet View Controller-->
         <scene sceneID="Zy6-kn-bpz">
             <objects>
@@ -352,16 +342,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fDw-4P-Rcs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2308" y="713"/>
-        </scene>
-        <!--RouteMap-->
-        <scene sceneID="jrp-eQ-b9C">
-            <objects>
-                <viewControllerPlaceholder storyboardName="RouteMap" id="O5C-VO-OxJ" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="i1x-MI-kwi"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="WFp-f1-oj7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3460" y="737"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="SsI-va-5Ro">

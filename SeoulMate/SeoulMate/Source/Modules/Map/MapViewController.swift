@@ -240,15 +240,15 @@ class MapViewController: UIViewController {
         
         
         
-//        updateTravelPeriodLabel()
-//        updateTravelTitleLabel()
+        //        updateTravelPeriodLabel()
+        //        updateTravelTitleLabel()
         loadTourData()
         tableView.reloadData()
         let coords = coordsByDay.first ?? []
         makePath(for: 0, with: coords)
         updateDaysLabel(for: 0)
     }
-  
+    
     
     private func loadTourData() {
         guard let tour = tour else { return }
@@ -448,16 +448,16 @@ class MapViewController: UIViewController {
         let allPois: [POI] = poisByDay.flatMap { $0 }
         print("allpois: \(allPois)")
         guard let firstPoi = allPois.first,
-                  let poiName = firstPoi.name else {
-                travleTitleLabel.text = tourTitle
-                return
-            }
+              let poiName = firstPoi.name else {
+            travleTitleLabel.text = tourTitle
+            return
+        }
         let extraCount = allPois.count - 1
         
         if extraCount > 0 {
             let fullText = "\(tourTitle) \(poiName) 외 \(extraCount)곳"
             let suffix = "\(poiName) 외 \(extraCount)곳"
-
+            
             let attributed = NSMutableAttributedString(
                 string: fullText,
                 attributes: [
@@ -465,7 +465,7 @@ class MapViewController: UIViewController {
                     .foregroundColor: UIColor.label
                 ]
             )
-
+            
             if let range = fullText.range(of: suffix) {
                 let nsRange = NSRange(range, in: fullText)
                 attributed.addAttributes([
@@ -473,7 +473,7 @@ class MapViewController: UIViewController {
                     .foregroundColor: UIColor.secondaryLabel
                 ], range: nsRange)
             }
-
+            
             travleTitleLabel.attributedText = attributed
         }
     }
@@ -544,10 +544,10 @@ class MapViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         
-
+        
         if let vc = segue.destination as? DetailSheetViewController {
             guard let indexPath = tableView.indexPathForSelectedRow else { return }
-
+            
             vc.pois = poisByDay[indexPath.section]
             vc.delegate = self
         }
@@ -666,7 +666,7 @@ class MapViewController: UIViewController {
                 .foregroundColor: UIColor.label
             ]
         )
-
+        
         if let range = fullText.range(of: suffix) {
             let nsRange = NSRange(range, in: fullText)
             attributed.addAttributes([
@@ -676,10 +676,10 @@ class MapViewController: UIViewController {
         }
         
         daysLabel.attributedText = attributed
-
+        
         
     }
-
+    
     
     
     func showRequestLocationServiceAlert() {
@@ -855,7 +855,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
         let isLastSection = section == poisByDay.count - 1
-
+        
         if isLastSection {
             return UIView()
         } else {
@@ -952,21 +952,16 @@ extension MapViewController: AddPlaceButtonCellDelegate {
 }
 
 extension MapViewController: DetailSheetDelegate {
-    func detailSheetPresent(_ sheet: DetailSheetViewController) {
+    func detailSheetGoToDetail(_ sheet: DetailSheetViewController) {
         
-        let poiStoryboard = UIStoryboard(name: "POIDetail", bundle: nil)
-        guard let poiDetailVC = poiStoryboard
-            .instantiateViewController(withIdentifier: "POIDetail")
-                as? POIDetailViewController else { return }
-        
-        //        poiDetailVC.place = sheet.place
-        //        poiDetailVC.placeCategory = sheet.placeCategory
-        //        poiDetailVC.placeOpenTime = sheet.placeOpenTime
-        
-        navigationController?.pushViewController(poiDetailVC, animated: true)
+        let storyboard = UIStoryboard(name: "POIDetail", bundle: nil)
+        if let vc = storyboard.instantiateViewController(withIdentifier: "POIDetailView") as? POIDetailViewController {
+            
+            navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
-    func detailSheetDismiss(_ sheet: DetailSheetViewController, didRequestRouteFor pois: [POI]) {
+    func detailSheetGoToRoute(_ sheet: DetailSheetViewController, didRequestRouteFor pois: [POI]) {
         let storyboard = UIStoryboard(name: "RouteMap", bundle: nil)
         if let vc = storyboard.instantiateViewController(withIdentifier: "RouteMap") as? RouteMapViewController {
             vc.pois = pois

@@ -38,14 +38,6 @@ class MapViewController: UIViewController {
     @IBAction func saveAction(_ sender: Any) {
         do {
             try context.save()
-            let req: NSFetchRequest<POI> = POI.fetchRequest()
-            // (필요하다면 predicate로 오늘 날짜 등 조건 추가)
-            let savedPOIs = try context.fetch(req)
-            print("▶️ 현재 저장된 POI 개수: \(savedPOIs.count)")
-            savedPOIs.forEach { poi in
-                print("   • \(poi.name ?? "이름없음") @ (\(poi.latitude), \(poi.longitude))")
-            }
-            
             
             tableView.setEditing(false, animated: true)
             cameBackFromSearch = false
@@ -56,13 +48,26 @@ class MapViewController: UIViewController {
     }
     @IBAction func editAction(_ sender: UIButton) {
         if tableView.isEditing {
+            // 1) Core Data 저장
+            do {
+                try context.save()
+                print("저장했따리")
+            } catch {
+                print("Core Data 저장 실패:", error)
+            }
+            
+         
+            
+            // 3) poisByDay / coordsByDay 재구성
+            fetchTourData()
+            
             tableView.setEditing(false, animated: true)
             sender.setTitle("편집", for: .normal)
         } else {
             tableView.setEditing(true, animated: true)
             sender.setTitle("완료", for: .normal)
         }
-        tableView.reloadData()
+
     }
     private var cameBackFromSearch = false
     var isMapViewHidden = false
@@ -94,12 +99,10 @@ class MapViewController: UIViewController {
     var colorSequence: [UIColor] = []
     
     private var poisByDay: [[POI]] = []
+    private var schedules: [Schedule] = []
     private var coordsByDay: [[NMGLatLng]] = []
     
     let defaultDistanceStrategy = NMCDefaultDistanceStrategy()
-    
-    let infoWindow = NMFInfoWindow()
-    var customInfoWindowDataSource = CustomInfoWindowDataSource()
     
     var currentTopSection: Int?
     private var isMarkerScroll = false
@@ -107,24 +110,6 @@ class MapViewController: UIViewController {
     var currentTopIndexPath: IndexPath?
     
     var scehduels: [[Schedule]] = []
-    
-    private lazy var fetchedResultsController: NSFetchedResultsController<POI> = {
-        // 1) 요청 생성: schedule.date 기준으로 정렬
-        let request: NSFetchRequest<POI> = POI.fetchRequest()
-        request.sortDescriptors = [
-            NSSortDescriptor(key: "schedule.date", ascending: true),
-            NSSortDescriptor(key: "name", ascending: true) // 같은 날짜 내 정렬
-        ]
-        // 2) FRC 초기화: 섹션 키패스로 날짜(Date 객체)를 그대로 사용
-        let frc = NSFetchedResultsController(
-            fetchRequest: request,
-            managedObjectContext: context,
-            sectionNameKeyPath: "schedule.date",
-            cacheName: nil
-        )
-        frc.delegate = self
-        return frc
-    }()
     
     
     var allSchedules: [Schedule] = []
@@ -150,29 +135,7 @@ class MapViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let tour = tour else { return }
-        fetchedResultsController = {
-            let request: NSFetchRequest<POI> = POI.fetchRequest()
-            request.predicate = NSPredicate(format: "schedule.tour == %@", tour)
-            request.sortDescriptors = [
-                NSSortDescriptor(key: "schedule.date", ascending: true),
-                NSSortDescriptor(key: "name", ascending: true)
-            ]
-            let frc = NSFetchedResultsController(
-                fetchRequest: request,
-                managedObjectContext: context,
-                sectionNameKeyPath: "schedule.date",
-                cacheName: nil
-            )
-            frc.delegate = self
-            return frc
-        }()
         
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            print(error)
-        }
         
         // CoreLocation
         locationManager.delegate = self
@@ -184,9 +147,6 @@ class MapViewController: UIViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
-        
-        
-        debugPrintFRC()
         
         myMapView.showLocationButton = true
         myMapView.showCompass = true
@@ -240,47 +200,58 @@ class MapViewController: UIViewController {
         
         
         
-        //        updateTravelPeriodLabel()
-        //        updateTravelTitleLabel()
-        loadTourData()
+        fetchTourData()
         tableView.reloadData()
         let coords = coordsByDay.first ?? []
         makePath(for: 0, with: coords)
         updateDaysLabel(for: 0)
+        updateEditButtonVisibility()
+        updateTravelPeriodLabel()
+        updateTravelTitleLabel()
+        
     }
     
     
-    private func loadTourData() {
-        guard let tour = tour else { return }
-        print("tourunwrapping")
-        // 1) Tour.days에서 Schedule을 날짜 순으로 추출
-        let schedules = (tour.days as? Set<Schedule> ?? [])
-            .compactMap { $0.date != nil ? $0 : nil }
-            .sorted { $0.date! < $1.date! }
-        print(schedules)
-        // 2) 섹션용 날짜 배열
-        sortedDates = schedules.map { Calendar.current.startOfDay(for: $0.date!) }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchTourData()
         
-        // 3) 각 Schedule별 POI 배열 (NSOrderedSet 처리)
-        poisByDay = schedules.map { schedule in
-            // Core Data 관계가 NSOrderedSet이므로 array로 변환
-            let ordered = schedule.pois
-            let poiArray = (ordered?.array as? [POI]) ?? []
-            return poiArray.sorted { ($0.name ?? "") < ($1.name ?? "") }
-        }
-        
-        // 4) 좌표 2차원 배열로 변환
-        coordsByDay = poisByDay.map { poiList in
-            poiList.map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
-        }
-        if poisByDay.count == 0 {
-            editButton.isHidden = true
+        if cameBackFromSearch {
+            saveButton.isHidden = false
+            tableView.setEditing(true, animated: true)
+            cameBackFromSearch = false
         } else {
-            editButton.isHidden = false
+            saveButton.isHidden = true
         }
         
-        updateTravelPeriodLabel()
-        updateTravelTitleLabel()
+        circleTimer = CADisplayLink(target: self, selector: #selector(updateCircle))
+        circleTimer?.preferredFramesPerSecond = 20
+        
+        circleTimer?.add(to: RunLoop.current, forMode: RunLoop.Mode.default)
+        circleTimer?.isPaused = true
+        
+        tableView.reloadData()
+        
+        updateEditButtonVisibility()
+    }
+    
+    
+    private func fetchTourData() {
+        guard let tour = self.tour else { return }
+        let fetched = CoreDataManager.shared.fetchSchedules(for: tour)
+        schedules = fetched
+        
+        sortedDates = fetched.compactMap {
+            $0.date.map { Calendar.current.startOfDay(for: $0) }
+        }
+        
+        poisByDay = fetched.map { sched in
+            CoreDataManager.shared.fetchPOIs(for: sched)
+                .sorted { ($0.name ?? "") < ($1.name ?? "") }
+        }
+        
+        coordsByDay = poisByDay.map { $0.map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) } }
     }
     
     
@@ -345,98 +316,78 @@ class MapViewController: UIViewController {
     
     
     
+    //
+    //
+    //    private func fetchSchedules() {
+    //        let scheduleRequest: NSFetchRequest<Schedule> = Schedule.fetchRequest()
+    //        scheduleRequest.sortDescriptors = [
+    //            NSSortDescriptor(key: "date", ascending: true)
+    //        ]
+    //
+    //        do {
+    //            allSchedules = try context.fetch(scheduleRequest)
+    //            print("All Schduels: \(allSchedules.count)개")
+    //        } catch {
+    //            print("❌ 스케줄 fetch 실패:", error)
+    //        }
+    //    }
+    //    private func fetchTours() {
+    //        let tourRequest: NSFetchRequest<Tour> = Tour.fetchRequest()
+    //        tourRequest.sortDescriptors = [
+    //            NSSortDescriptor(key: "startDate", ascending: true)
+    //        ]
+    //        do {
+    //            allTours = try context.fetch(tourRequest)
+    //            print("All Tours: \(allTours.count)")
+    //        } catch {
+    //            print(error)
+    //        }
+    //    }
+    //
+    //    private func fetchPois() {
+    //        let poiRequest: NSFetchRequest<POI> = POI.fetchRequest()
+    //        poiRequest.sortDescriptors = [
+    //            // Schedule 객체의 date 속성을 기준으로 정렬
+    //            NSSortDescriptor(key: "schedule.date", ascending: true),
+    //        ]
+    //
+    //        do {
+    //            allPois = try context.fetch(poiRequest)  // [POI]
+    //            print(" 전체 POI (\(allPois.count)")
+    //        } catch {
+    //            print(error)
+    //        }
+    //    }
+    
+    //    private func fetchTourData() {
+    //        guard let tour = tour else {
+    //            scheduleItemsArray = []
+    //            return
+    //        }
+    //        // 1) 날짜 순 Schedule
+    //        let schedules = (tour.days as? Set<Schedule> ?? [])
+    //            .compactMap { $0.date != nil ? $0 : nil }
+    //            .sorted { $0.date! < $1.date! }
+    //
+    //        // 2) 섹션용 날짜 리스트
+    //        sortedDates = schedules.map { Calendar.current.startOfDay(for: $0.date!) }
+    //
+    //        // 3) Schedule → [POI] 그룹핑
+    //        let grouped: [Date: [POI]] = Dictionary(
+    //            uniqueKeysWithValues: schedules.map { sched in
+    //                let day = Calendar.current.startOfDay(for: sched.date!)
+    //                let pois = (sched.pois as? Set<POI> ?? [])
+    //                    .sorted { ($0.name ?? "") < ($1.name ?? "") }
+    //                return (day, pois)
+    //            }
+    //        )
+    //
+    //        scheduleItemsArray = sortedDates.map { grouped[$0] ?? [] }
+    //
+    //        updateTravelTitleLabel()
+    //    }
     
     
-    private func fetchSchedules() {
-        let scheduleRequest: NSFetchRequest<Schedule> = Schedule.fetchRequest()
-        scheduleRequest.sortDescriptors = [
-            NSSortDescriptor(key: "date", ascending: true)
-        ]
-        
-        do {
-            allSchedules = try context.fetch(scheduleRequest)
-            print("All Schduels: \(allSchedules.count)개")
-        } catch {
-            print("❌ 스케줄 fetch 실패:", error)
-        }
-    }
-    private func fetchTours() {
-        let tourRequest: NSFetchRequest<Tour> = Tour.fetchRequest()
-        tourRequest.sortDescriptors = [
-            NSSortDescriptor(key: "startDate", ascending: true)
-        ]
-        do {
-            allTours = try context.fetch(tourRequest)
-            print("All Tours: \(allTours.count)")
-        } catch {
-            print(error)
-        }
-    }
-    
-    private func fetchPois() {
-        let poiRequest: NSFetchRequest<POI> = POI.fetchRequest()
-        poiRequest.sortDescriptors = [
-            // Schedule 객체의 date 속성을 기준으로 정렬
-            NSSortDescriptor(key: "schedule.date", ascending: true),
-        ]
-        
-        do {
-            allPois = try context.fetch(poiRequest)  // [POI]
-            print(" 전체 POI (\(allPois.count)")
-        } catch {
-            print(error)
-        }
-    }
-    
-    private func fetchTourData() {
-        guard let tour = tour else {
-            scheduleItemsArray = []
-            return
-        }
-        // 1) 날짜 순 Schedule
-        let schedules = (tour.days as? Set<Schedule> ?? [])
-            .compactMap { $0.date != nil ? $0 : nil }
-            .sorted { $0.date! < $1.date! }
-        
-        // 2) 섹션용 날짜 리스트
-        sortedDates = schedules.map { Calendar.current.startOfDay(for: $0.date!) }
-        
-        // 3) Schedule → [POI] 그룹핑
-        let grouped: [Date: [POI]] = Dictionary(
-            uniqueKeysWithValues: schedules.map { sched in
-                let day = Calendar.current.startOfDay(for: sched.date!)
-                let pois = (sched.pois as? Set<POI> ?? [])
-                    .sorted { ($0.name ?? "") < ($1.name ?? "") }
-                return (day, pois)
-            }
-        )
-        
-        scheduleItemsArray = sortedDates.map { grouped[$0] ?? [] }
-        
-        updateTravelTitleLabel()
-    }
-    
-    
-    
-    
-    private func debugPrintFRC() {
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            print("❌ FRC performFetch failed:", error)
-            return
-        }
-        guard let sections = fetchedResultsController.sections else {
-            print("🟠 FRC.sections is nil")
-            return
-        }
-        print("🟢 FRC 섹션 개수: \(sections.count)")
-        for sec in sections {
-            print("  • section name(raw): \(sec.name), 객체 수: \(sec.numberOfObjects)")
-        }
-        let total = (sections.reduce(0) { $0 + $1.numberOfObjects })
-        print("  → 총 POI 개수: \(total)")
-    }
     
     
     
@@ -478,6 +429,10 @@ class MapViewController: UIViewController {
         }
     }
     
+    private func updateEditButtonVisibility() {
+        let allEmpty = poisByDay.allSatisfy { $0.isEmpty }
+        editButton.isHidden = allEmpty
+    }
     
     private func updateTravelPeriodLabel() {
         guard
@@ -512,28 +467,6 @@ class MapViewController: UIViewController {
     
     
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        if cameBackFromSearch {
-            saveButton.isHidden = false
-            tableView.setEditing(true, animated: true)
-            cameBackFromSearch = false
-        } else {
-            saveButton.isHidden = true
-        }
-        
-        circleTimer = CADisplayLink(target: self, selector: #selector(updateCircle))
-        circleTimer?.preferredFramesPerSecond = 20
-        
-        circleTimer?.add(to: RunLoop.current, forMode: RunLoop.Mode.default)
-        circleTimer?.isPaused = true
-        
-        
-        fetchTourData()
-        tableView.reloadData()
-    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -760,8 +693,6 @@ extension MapViewController: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         checkUserDeviceLocationServiceAuthorization()
     }
-    
-    
 }
 
 extension MapViewController: UITableViewDelegate, UITableViewDataSource {
@@ -801,14 +732,16 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            
+            CoreDataManager.shared.delete(poisByDay[indexPath.section][indexPath.row])
             poisByDay[indexPath.section].remove(at: indexPath.row)
+            fetchTourData()
             tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
             
             let coords = poisByDay[indexPath.section]
                 .map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
             
             makePath(for: indexPath.section, with: coords)
+            updateEditButtonVisibility()
             
         }
     }
@@ -831,25 +764,28 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let itemToMove = poisByDay[sourceIndexPath.section].remove(at: sourceIndexPath.row)
-        poisByDay[destinationIndexPath.section].insert(itemToMove, at: destinationIndexPath.row)
-        //        tableView.reloadSections(IndexSet(integer: destinationIndexPath.section), with: .automatic)
-        let coords = poisByDay[destinationIndexPath.section]
-            .map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
+        let movedPOI = poisByDay[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+        poisByDay[destinationIndexPath.section].insert(movedPOI, at: destinationIndexPath.row)
         
-        makePath(for: destinationIndexPath.section, with: coords)
+        makePath(for: destinationIndexPath.section,
+                 with: coordsByDay[destinationIndexPath.section])
+        
+        tableView.reloadSections(
+            IndexSet([sourceIndexPath.section, destinationIndexPath.section]),
+            with: .automatic
+        )
     }
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
         let section = proposedDestinationIndexPath.section
-        let maxRow = poisByDay[section].count - 1
+        let maxRow = poisByDay[section].count
         let row = min(proposedDestinationIndexPath.row, maxRow)
         return IndexPath(row: row, section: section)
     }
     
     func tableView(_ tableView: UITableView,
                    heightForFooterInSection section: Int) -> CGFloat {
-        return 1
+        return 0.5
     }
     
     
@@ -861,7 +797,8 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
             return UIView()
         } else {
             let separator = UIView()
-            separator.backgroundColor = .main
+            separator.backgroundColor = .gray
+            separator.layer.opacity = 0.5
             return separator
         }
         
@@ -973,35 +910,35 @@ extension MapViewController: DetailSheetDelegate {
     }
 }
 
-extension MapViewController: NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        tableView.beginUpdates()
-    }
-    
-    func controller(_ controller: NSFetchedResultsController<any NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch type {
-        case .insert:
-            if let insertIndexPath = newIndexPath {
-                tableView.insertRows(at: [insertIndexPath], with: .automatic)
-            }
-        case .delete:
-            if let deleteIndexPath = indexPath {
-                tableView.deleteRows(at: [deleteIndexPath], with: .automatic)
-            }
-        case .update:
-            if let updateIndexPath = indexPath {
-                tableView.reloadRows(at: [updateIndexPath], with: .automatic)
-            }
-        case .move:
-            if let originalIndexPath = indexPath, let targetIndexPath = newIndexPath {
-                tableView.moveRow(at: originalIndexPath, to: targetIndexPath)
-            }
-        default:
-            break
-        }
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        tableView.endUpdates()
-    }
-}
+//extension MapViewController: NSFetchedResultsControllerDelegate {
+//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
+//        tableView.beginUpdates()
+//    }
+//
+//    func controller(_ controller: NSFetchedResultsController<any NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+//        switch type {
+//        case .insert:
+//            if let insertIndexPath = newIndexPath {
+//                tableView.insertRows(at: [insertIndexPath], with: .automatic)
+//            }
+//        case .delete:
+//            if let deleteIndexPath = indexPath {
+//                tableView.deleteRows(at: [deleteIndexPath], with: .automatic)
+//            }
+//        case .update:
+//            if let updateIndexPath = indexPath {
+//                tableView.reloadRows(at: [updateIndexPath], with: .automatic)
+//            }
+//        case .move:
+//            if let originalIndexPath = indexPath, let targetIndexPath = newIndexPath {
+//                tableView.moveRow(at: originalIndexPath, to: targetIndexPath)
+//            }
+//        default:
+//            break
+//        }
+//    }
+//
+//    func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
+//        tableView.endUpdates()
+//    }
+//}

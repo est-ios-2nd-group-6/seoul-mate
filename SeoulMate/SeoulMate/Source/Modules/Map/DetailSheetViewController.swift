@@ -45,7 +45,8 @@ class DetailSheetViewController: UIViewController {
         placeNameLabel.text = place
         placeCategoryLabel.text = placeCategory
         openTimeLabel.text = "영업 시간: \(placeOpenTime)"
-        print(pois)
+
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

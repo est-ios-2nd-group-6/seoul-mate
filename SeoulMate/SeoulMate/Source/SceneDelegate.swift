@@ -18,15 +18,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = scene as? UIWindowScene else { return }
 
+        // UIWindow를 생성하여 해당 씬에 연결
         window = UIWindow(windowScene: windowScene)
 
+        // 첫 실행인지 여부에 따라 온보딩 또는 메인 스토리보드 선택
         let storyboardName = Storage.isFirstLaunch() ? "Onboarding" : "Main"
         let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
 
+        // 스토리보드의 초기 뷰 컨트롤러를 인스턴스화
         guard let rootVC = storyboard.instantiateInitialViewController() else {
             fatalError("Initial View Controller 설정 확인 필요")
         }
 
+        // 루트 뷰 컨트롤러로 설정하고 키 윈도우로 표시
         window?.rootViewController = rootVC
         window?.makeKeyAndVisible()
     }

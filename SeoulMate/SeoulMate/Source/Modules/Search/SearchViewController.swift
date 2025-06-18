@@ -74,6 +74,11 @@ class SearchViewController: UIViewController {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: placeName)
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "POIDetail" {

@@ -7,22 +7,16 @@
 
 import UIKit
 
-enum SourceType {
-    case home
-    case map
-}
-
 class SearchViewController: UIViewController {
-
-    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
-    var items = [SearchResult]()
 
     @IBOutlet weak var searchResultTableView: UITableView!
     @IBOutlet weak var tagCollectionView: UICollectionView!
     @IBOutlet weak var searchbarView: UISearchBar!
     @IBOutlet weak var searchBar: UISearchBar!
 
-    var vcSourceType: SourceType?
+    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
+    var items = [SearchResult]()
+    var nameString: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,15 +27,36 @@ class SearchViewController: UIViewController {
         searchbarView.setImage(UIImage(), for: .search, state: .normal)
         searchbarView.becomeFirstResponder()
 
-        tagCollectionView.dataSource = self
-        tagCollectionView.delegate = self
-
         let layout = LeftAlignedCollectionViewFlowLayout()
         layout.minimumLineSpacing = 3
         layout.minimumInteritemSpacing = 3
         layout.sectionInset = UIEdgeInsets(top: 5, left: 2, bottom: 5, right: 3)
         tagCollectionView.collectionViewLayout = layout
         tagCollectionView.backgroundColor = .systemBackground
+        
+        tagCollectionView.dataSource = self
+        tagCollectionView.delegate = self
+        tagCollectionView.allowsSelection = true
+
+        Task {
+            items.removeAll()
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: "서울 맛집")
+            items = TourApiManager_hs.shared.searchByTitleResultList
+            self.searchResultTableView.reloadData()
+            self.searchBar.text = "서울 맛집"
+            guard let placeName = nameString else { return }
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: placeName)
+        }
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "POIDetail" {
+            if let nav = segue.destination as? UINavigationController,
+                let detailVC = nav.topViewController as? POIDetailViewController
+            {
+                detailVC.nameLabel = nameString ?? ""
+            }
+        }
     }
 
     @IBAction func searchItemButton(_ sender: Any) {
@@ -50,20 +65,22 @@ class SearchViewController: UIViewController {
         Task {
             self.searchResultTableView.isHidden = false
             items.removeAll()
-            //            await TourApiManager_hs.shared.fetchRcmCourseList(keyword: keyword)
-            await TourApiManager_hs.shared.fetchGooglePlaceAPI(keyword: keyword)
+            await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: keyword)
             items = TourApiManager_hs.shared.searchByTitleResultList
             self.searchResultTableView.reloadData()
         }
-        searchBar.text = ""
     }
 
 }
 
-extension SearchViewController: UICollectionViewDataSource {
+extension SearchViewController: UICollectionViewDataSource,UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return tags.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(#function)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
@@ -100,41 +117,31 @@ extension SearchViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath.row {
-        case 0:
-            let cell =
-                tableView.dequeueReusableCell(withIdentifier: String(describing: SearchResultTableHeaderCell.self))
-                as! SearchResultTableHeaderCell
-            cell.delegate = self
-            return cell
-        default:
-            let cell =
-                tableView.dequeueReusableCell(
-                    withIdentifier: String(describing: SearchResultTableViewCell.self),
-                    for: indexPath
-                ) as! SearchResultTableViewCell
-                print(#line,items.count)
-            if items.count != 0 {
-                cell.titleLabel.text = items[indexPath.row].title
-                cell.subTitleLabel.text = items[indexPath.row].primaryTypeDisplayName?.text
-                if let profileURL = items[indexPath.row].profileImage, let apiKey = Bundle.main.googleApiKey,
-                    let url = URL(
-                        string:
-                            "https://places.googleapis.com/v1/\(profileURL)/media?maxHeightPx=50&maxWidthPx=50&key=\(apiKey)"
-                    )
-                {
-                    URLSession.shared.dataTask(with: url) { data, _, error in
-                        if let data = data {
-                            DispatchQueue.main.async {
-                                cell.searchImageView.image = UIImage(data: data)
-                            }
+        let cell =
+            tableView.dequeueReusableCell(
+                withIdentifier: String(describing: SearchResultTableViewCell.self),
+                for: indexPath
+            ) as! SearchResultTableViewCell
+        if items.count != 0 {
+            cell.titleLabel.text = items[indexPath.row].title
+            cell.subTitleLabel.text = items[indexPath.row].primaryTypeDisplayName?.text
+            if let profileURL = items[indexPath.row].profileImage, let apiKey = Bundle.main.googleApiKey,
+                let url = URL(
+                    string:
+                        "https://places.googleapis.com/v1/\(profileURL)/media?maxHeightPx=50&maxWidthPx=50&key=\(apiKey)"
+                )
+            {
+                URLSession.shared.dataTask(with: url) { data, _, error in
+                    if let data = data {
+                        DispatchQueue.main.async {
+                            cell.searchImageView.image = UIImage(data: data)
                         }
-                    }.resume()
-                }
-                cell.delegate = self
+                    }
+                }.resume()
             }
-            return cell
+            cell.delegate = self
         }
+        return cell
     }
 }
 
@@ -144,8 +151,25 @@ extension SearchViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        nameString = items[indexPath.row].id
+        performSegue(withIdentifier: "POIDetail", sender: nameString)
     }
 
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0 {
+            let headerView = SearchResultTableHeaderView()
+            headerView.delegate = self
+            return headerView
+        }
+        return nil
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return 60
+        }
+        return 0
+    }
 }
 
 protocol SearchViewControllerDelegate: AnyObject {
@@ -156,13 +180,9 @@ protocol SearchViewControllerDelegate: AnyObject {
 extension SearchViewController: SearchViewControllerDelegate {
     func didRemoveButtonTapped(cell: UITableViewCell) {
         guard let item = self.searchResultTableView.indexPath(for: cell) else { return }
-        print(item)
         items.remove(at: item.row)
         DispatchQueue.main.async {
             self.searchResultTableView.deleteRows(at: [item], with: .fade)
-            if self.items.count == 1 {
-                self.searchResultTableView.isHidden = true
-            }
         }
     }
 
@@ -179,5 +199,11 @@ extension SearchViewController: CustomAlertControllerDelegate {
     func deleteRecentItem(_ alert: CustomAlertController) {
         self.items.removeAll()
         self.searchResultTableView.reloadData()
+    }
+}
+
+extension SearchViewController: SearchResultTableHeaderViewDelegate {
+    func didTapSomeButton() {
+        didRemoveAllButtonTapped()
     }
 }

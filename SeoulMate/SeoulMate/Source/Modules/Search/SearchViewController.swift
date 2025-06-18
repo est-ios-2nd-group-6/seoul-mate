@@ -19,16 +19,22 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var searchbarView: UISearchBar!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tagCollectionViewTitle: UILabel!
+    @IBOutlet weak var totalPlaceCountLabel: UILabel!
     
-    var comingVCType:SourceViewController?
-//    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
-    var pois:[POI] = [] {
+    var comingVCType: SourceViewController?
+    //    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
+    var pois: [POI] = [] {
         didSet {
             self.tagCollectionView.reloadData()
-            print(#line,pois.count)
+            if pois.count > 0 {
+                self.totalPlaceCountLabel.isHidden = false
+                self.totalPlaceCountLabel.text = "\(pois.count)개의 장소가 선택됨"
+            } else {
+                self.totalPlaceCountLabel.isHidden = true
+            }
         }
     }
-    var POIsBackToVC:(([POI])->Void)?
+    var POIsBackToVC: (([POI]) -> Void)?
     var items = [SearchResult]()
     var nameString: String?
 
@@ -40,6 +46,8 @@ class SearchViewController: UIViewController {
 
         searchbarView.setImage(UIImage(), for: .search, state: .normal)
         searchbarView.becomeFirstResponder()
+        
+        totalPlaceCountLabel.isHidden = true
 
         let layout = LeftAlignedCollectionViewFlowLayout()
         layout.minimumLineSpacing = 3
@@ -47,21 +55,21 @@ class SearchViewController: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 5, left: 2, bottom: 5, right: 3)
         tagCollectionView.collectionViewLayout = layout
         tagCollectionView.backgroundColor = .systemBackground
-        
+
         tagCollectionView.dataSource = self
         tagCollectionView.delegate = self
         tagCollectionView.allowsSelection = true
-        
+
         switch comingVCType {
-            case .home:
-                tagCollectionViewTitle.text = "인기 검색"
-                break
-            case .schedule:
-                tagCollectionViewTitle.text = "최근 검색 장소"
-                pois.removeAll()
-                tagCollectionView.reloadData()
-            default:
-                break
+        case .home:
+            tagCollectionViewTitle.text = "인기 검색"
+            break
+        case .schedule:
+            tagCollectionViewTitle.text = "최근 검색 장소"
+            pois.removeAll()
+            tagCollectionView.reloadData()
+        default:
+            break
         }
 
         Task {
@@ -74,24 +82,30 @@ class SearchViewController: UIViewController {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: placeName)
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
-
-
-    @IBAction func backToSchduleView(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-    }
-    
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "POIDetail" {
             if let nav = segue.destination as? UINavigationController,
                 let detailVC = nav.topViewController as? POIDetailViewController
             {
-                detailVC.nameLabel = nameString ?? ""
+                if let selectedItem = items.first(where: {$0.id == nameString}) {
+                    let poi = POI(context: CoreDataManager.shared.context)
+                    poi.id = UUID()
+                    poi.name = selectedItem.title
+                    poi.latitude = selectedItem.location.latitude
+                    poi.longitude = selectedItem.location.longitude
+                    poi.category = selectedItem.primaryTypeDisplayName?.text
+                    poi.placeID = selectedItem.id
+                    poi.imageURL = selectedItem.profileImage
+                    poi.openingHours = selectedItem.weekdayDescription?.joined(separator: "\n")
+                    detailVC.pois.append(poi)
+                    detailVC.nameLabel = nameString ?? ""
+                }
             }
         }
     }
@@ -107,14 +121,15 @@ class SearchViewController: UIViewController {
             self.searchResultTableView.reloadData()
         }
     }
+    
     @IBAction func dismissVC(_ sender: Any) {
         POIsBackToVC?(pois)
         navigationController?.popViewController(animated: true)
     }
-    
+
 }
 
-extension SearchViewController: UICollectionViewDataSource,UICollectionViewDelegate {
+extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return pois.count
@@ -201,7 +216,7 @@ extension SearchViewController: UITableViewDelegate {
         }
         return nil
     }
-  
+
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
             return 60
@@ -233,7 +248,7 @@ extension SearchViewController: SearchViewControllerDelegate {
         alertVC.delegate = self
         present(alertVC, animated: false)
     }
-    
+
     func didSelectButtonTapped(cell: UITableViewCell) {
         guard let item = self.searchResultTableView.indexPath(for: cell)
         else { return }
@@ -246,14 +261,14 @@ extension SearchViewController: SearchViewControllerDelegate {
         poi.imageURL = items[item.row].profileImage
         poi.openingHours = items[item.row].weekdayDescription?.joined(separator: "\n")
         pois.append(poi)
+        
     }
-    
+
     func didDeselectButtonTapped(cell: UICollectionViewCell) {
         guard let item = self.tagCollectionView.indexPath(for: cell) else { return }
         pois.remove(at: item.row)
     }
 }
-
 
 extension SearchViewController: CustomAlertControllerDelegate {
     func deleteRecentItem(_ alert: CustomAlertController) {

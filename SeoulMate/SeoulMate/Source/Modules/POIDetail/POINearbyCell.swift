@@ -35,7 +35,6 @@ class POINearbyCell: UITableViewCell {
     }
 
     @IBAction func changeCategorySegment(_ sender: UISegmentedControl) {
-        print(sender.selectedSegmentIndex)
         segmentedIndex = sender.selectedSegmentIndex
         self.PoiNearbyDetailTableView.reloadData()
     }

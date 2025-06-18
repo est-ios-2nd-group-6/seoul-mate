@@ -15,8 +15,8 @@
         <scene sceneID="dfT-sH-mMQ">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="Yfy-Fm-F6S" sceneMemberID="viewController">
+                    <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems/>
-                    <nil key="simulatedTopBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Hko-pH-zRo">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -227,6 +227,12 @@
                                     <outlet property="delegate" destination="mU0-P1-Z8a" id="EpV-rA-khb"/>
                                 </connections>
                             </collectionView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SGS-LK-JWI">
+                                <rect key="frame" x="341.66666666666669" y="139.33333333333334" width="35.333333333333314" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" red="0.0" green="0.30196078430000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="n9g-jy-S6T"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -243,21 +249,24 @@
                             <constraint firstItem="Qfi-5I-5XW" firstAttribute="top" secondItem="piL-UN-FgT" secondAttribute="bottom" constant="16.666666666666657" id="adE-N1-Rie"/>
                             <constraint firstItem="aOB-Xs-V9n" firstAttribute="leading" secondItem="Rda-O9-MWb" secondAttribute="trailing" id="agu-HJ-2Y6"/>
                             <constraint firstItem="n9g-jy-S6T" firstAttribute="trailing" secondItem="oqK-yO-mxr" secondAttribute="trailing" constant="15" id="blB-iJ-TiW"/>
+                            <constraint firstItem="S56-yh-Qu9" firstAttribute="top" secondItem="SGS-LK-JWI" secondAttribute="bottom" constant="10" id="hix-M8-ZVv"/>
                             <constraint firstItem="Rda-O9-MWb" firstAttribute="leading" secondItem="piL-UN-FgT" secondAttribute="trailing" id="iR6-B5-yNO"/>
+                            <constraint firstItem="n9g-jy-S6T" firstAttribute="trailing" secondItem="SGS-LK-JWI" secondAttribute="trailing" constant="16" id="jd3-TL-4m9"/>
                             <constraint firstItem="n9g-jy-S6T" firstAttribute="trailing" secondItem="S56-yh-Qu9" secondAttribute="trailing" constant="17" id="soz-l5-z2M"/>
                             <constraint firstItem="oqK-yO-mxr" firstAttribute="leading" secondItem="n9g-jy-S6T" secondAttribute="leading" constant="15" id="tmj-VU-2q7"/>
                             <constraint firstItem="Rda-O9-MWb" firstAttribute="top" secondItem="ybQ-Lx-XRJ" secondAttribute="top" constant="70" id="uhB-Ao-Npg"/>
                             <constraint firstAttribute="bottom" secondItem="oqK-yO-mxr" secondAttribute="bottom" constant="10" id="zrF-YV-6hk"/>
                         </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" id="n5U-lU-Qkx"/>
-                    <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="searchBar" destination="Rda-O9-MWb" id="4uZ-qR-PsX"/>
                         <outlet property="searchResultTableView" destination="oqK-yO-mxr" id="bIW-gC-bss"/>
                         <outlet property="searchbarView" destination="Rda-O9-MWb" id="eSa-j4-KXA"/>
                         <outlet property="tagCollectionView" destination="S56-yh-Qu9" id="hTW-QU-ILE"/>
                         <outlet property="tagCollectionViewTitle" destination="Qfi-5I-5XW" id="NKf-Us-kbv"/>
+                        <outlet property="totalPlaceCountLabel" destination="SGS-LK-JWI" id="60n-Vr-0Ou"/>
                         <segue destination="Oon-eJ-qw7" kind="show" identifier="POIDetail" id="gXs-pA-WSL"/>
                     </connections>
                 </viewController>

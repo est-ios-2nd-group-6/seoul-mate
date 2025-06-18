@@ -7,11 +7,15 @@
 
 import UIKit
 
+/// 일정 추가 시트가 닫힐 때 호출될 델리게이트 프로토콜.
 protocol AddToScheduleSheetViewControllerDelegate: AnyObject {
+    /// POI가 일정에 성공적으로 추가되고 시트가 닫혔음을 알림.
     func sheetViewControllerDidDismiss(_ viewController: AddToScheduleSheetViewController)
 }
 
+/// `AddToScheduleSheet`의 테이블/컬렉션 뷰에서 사용할 데이터 모델.
 struct CellItem {
+    /// `Schedule` 객체의 데이터 모델.
     struct Day {
         var id: UUID?
         var dayText: String
@@ -25,6 +29,7 @@ struct CellItem {
     var days: [Day] = []
     var isSelected: Bool = false
 
+    /// `Tour` 엔티티로부터 `CellItem`을 초기화.
     init(tour: Tour) {
         id = tour.id
         title = tour.title
@@ -35,11 +40,18 @@ struct CellItem {
     }
 }
 
+/// 추천 코스나 검색한 장소를 기존 여행 일정에 추가하기 위한 시트(Sheet) 형태의 뷰 컨트롤러.
 class AddToScheduleSheetViewController: UIViewController {
-    @IBOutlet weak var addToScheduleTableView: UITableView!
 
+    // MARK: - IBOutlet
+    @IBOutlet weak var addToScheduleTableView: UITableView!
     @IBOutlet weak var addToScheduleBtn: UIButton!
 
+    // MARK: - IBAction
+
+    /// '일정에 추가하기' 버튼을 탭했을 때 호출.
+    ///
+    /// 선택된 여행(`Tour`)과 일자(`Schedule`)에 POI들을 추가하고 CoreData에 저장.
     @IBAction func addToSchedule(_ sender: Any) {
         guard let selectedTour = cellItems.first(where: { $0.isSelected }) else { return }
         guard let selectedSchedule = selectedTour.days.first(where: { $0.isSelected }) else { return }
@@ -58,14 +70,18 @@ class AddToScheduleSheetViewController: UIViewController {
         dismiss(animated: true)
     }
 
+    // MARK: - Properties
+
+    /// 테이블 뷰에 표시될 데이터 아이템 배열.
     public var cellItems: [CellItem] = [] {
         didSet {
             validateButton()
         }
     }
-
+    /// 원본 `Tour` 엔티티 배열.
     var ToursOriginal: [Tour] = []
 
+    /// 추가할 `POI` 객체 배열.
     var pois: [POI] = []
 
     weak var delegate: AddToScheduleSheetViewControllerDelegate?
@@ -81,6 +97,7 @@ class AddToScheduleSheetViewController: UIViewController {
         }
     }
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -91,8 +108,10 @@ class AddToScheduleSheetViewController: UIViewController {
         addToScheduleTableView.register(cell, forCellReuseIdentifier: "AddToScheduleTableViewCell")
 
         Task {
+            // CoreData에서 모든 여행 정보를 비동기적으로 가져옴.
             ToursOriginal = await CoreDataManager.shared.fetchToursAsync()
 
+            // 가져온 Tour 데이터를 UI에 표시하기 위한 CellItem 모델로 변환.
             for tour in ToursOriginal {
                 guard let schedules = tour.days?.allObjects as? [Schedule] else {
                     continue
@@ -117,6 +136,7 @@ class AddToScheduleSheetViewController: UIViewController {
                 cellItems.append(item)
             }
 
+            // 초기 선택 상태 설정 (첫 번째 여행의 첫 번째 날)
             if !cellItems.isEmpty {
                 cellItems[0].isSelected = true
                 cellItems[0].days[0].isSelected = true
@@ -128,6 +148,9 @@ class AddToScheduleSheetViewController: UIViewController {
         }
     }
 
+    /// '추가하기' 버튼의 활성화 상태를 검증.
+    ///
+    /// 선택된 '일자'가 하나라도 있어야 버튼이 활성화됨.
     func validateButton() {
         if cellItems.count(where: { $0.days.count(where: { $0.isSelected == true }) > 0 }) != 0 {
             addToScheduleBtn.isEnabled = true
@@ -137,6 +160,7 @@ class AddToScheduleSheetViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
 extension AddToScheduleSheetViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cellItems.count
@@ -156,12 +180,16 @@ extension AddToScheduleSheetViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
 extension AddToScheduleSheetViewController: UITableViewDelegate {
+
+    /// 사용자가 특정 여행(행)을 선택했을 때 호출.
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let targetIndex = indexPath.row
 
         var reloadIndexs = [indexPath]
 
+        // 이전에 선택된 행이 있다면 선택 해제하고, 새로운 행을 선택.
         if let selected = cellItems.firstIndex(where: { $0.isSelected == true }) {
             if selected != targetIndex {
                 cellItems[selected].isSelected = false
@@ -177,6 +205,7 @@ extension AddToScheduleSheetViewController: UITableViewDelegate {
             cellItems[targetIndex].isSelected = true
         }
 
+        // UI 갱신을 위해 해당 행들을 리로드.
         tableView.reloadRows(at: reloadIndexs, with: .automatic)
     }
 
@@ -185,7 +214,10 @@ extension AddToScheduleSheetViewController: UITableViewDelegate {
     }
 }
 
+// MARK: - AddToScheduleTableViewCellDelegate
 extension AddToScheduleSheetViewController: AddToScheduleTableViewCellDelegate {
+
+    /// 하위 셀(AddToScheduleTableViewCell)에서 일자 선택 이벤트가 발생했을 때 호출됨.
     func AddToScheduleTableViewCell(_ cell: AddToScheduleTableViewCell, didUpdateItem item: CellItem) {
         if let index = cellItems.firstIndex(where: { $0.id == item.id }) {
             cellItems[index] = item

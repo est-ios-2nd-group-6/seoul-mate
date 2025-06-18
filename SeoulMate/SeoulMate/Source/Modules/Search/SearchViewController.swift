@@ -75,7 +75,6 @@ class SearchViewController: UIViewController {
         }
     }
     
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -202,7 +201,7 @@ extension SearchViewController: UITableViewDelegate {
         }
         return nil
     }
-
+  
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
             return 60

@@ -7,7 +7,9 @@
 
 import UIKit
 protocol DetailSheetDelegate: AnyObject {
-    func detailSheetDidTapNavigate(_ sheet: DetailSheetViewController)
+    func detailSheetGoToDetail(_ sheet: DetailSheetViewController)
+    func detailSheetGoToRoute(_ sheet: DetailSheetViewController, didRequestRouteFor pois: [POI])
+
 }
 
 class DetailSheetViewController: UIViewController {
@@ -15,30 +17,27 @@ class DetailSheetViewController: UIViewController {
     @IBOutlet weak var placeCategoryLabel: UILabel!
     @IBOutlet weak var openTimeLabel: UILabel!
     
-    @IBAction func goToNavigate(_ sender: Any) {
-
+    @IBAction func goToRoute(_ sender: Any) {
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.detailSheetGoToRoute(self, didRequestRouteFor: self.pois)
+        }
     }
     
     @IBAction func goToDetail(_ sender: Any) {
-        delegate?.detailSheetDidTapNavigate(self)
-        dismiss(animated: true, completion: nil)
-
-//        let detailStoryboard = UIStoryboard(name: "POIDetail", bundle: nil)
-//        
-//        guard let poiDetailVC = detailStoryboard
-//                .instantiateViewController(withIdentifier: "POIDetail")
-//                as? PoiDetailViewController else {
-//            return
-//        }
-//        
-//        navigationController?.pushViewController(poiDetailVC, animated: true)
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.detailSheetGoToDetail(self)
+}
     }
     
+    var pois: [POI] = []
+    var selectedRow: Int = 0
     var place: String = ""
     var placeCategory: String = ""
     var placeOpenTime: String = ""
     weak var delegate: DetailSheetDelegate?
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,17 +45,20 @@ class DetailSheetViewController: UIViewController {
         placeNameLabel.text = place
         placeCategoryLabel.text = placeCategory
         openTimeLabel.text = "영업 시간: \(placeOpenTime)"
-        
+        print(pois)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         if segue.identifier == "POIDetail",
            let vc = segue.destination as? POIDetailViewController {
-                
+        } else if segue.identifier == "RouteMap",
+                  let vc = segue.destination as? RouteMapViewController {
+//            vc.pois = self.pois
         }
-        
     }
     
 }
+
+
 

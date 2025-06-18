@@ -12,7 +12,7 @@
         <!--Detail View Controller-->
         <scene sceneID="OIC-sV-Ufy">
             <objects>
-                <viewController id="VFB-Gz-2EN" customClass="POIDetailViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="POIDetailView" id="VFB-Gz-2EN" customClass="POIDetailViewController" customModule="SeoulMate" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rbO-2G-cZz">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -44,7 +44,7 @@ struct TourApiGoogleResponse: Codable {
         var types:[String]
         var displayName:DisplayName
         var primaryTypeDisplayName:PrimaryTypeDisplayName?
-        var photos:[Photo]
+        var photos:[Photo]?
         var rating:Double?
         var location:Location
         var regularOpeningHours: RegularOpeningHours?

@@ -20,9 +20,13 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tagCollectionViewTitle: UILabel!
     @IBOutlet weak var totalPlaceCountLabel: UILabel!
-    
+
     var comingVCType: SourceViewController?
-    //    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
+    var tags: [Tag] = [] {
+        didSet {
+            self.tagCollectionView.reloadData()
+        }
+    }
     var pois: [POI] = [] {
         didSet {
             self.tagCollectionView.reloadData()
@@ -46,7 +50,7 @@ class SearchViewController: UIViewController {
 
         searchbarView.setImage(UIImage(), for: .search, state: .normal)
         searchbarView.becomeFirstResponder()
-        
+
         totalPlaceCountLabel.isHidden = true
 
         let layout = LeftAlignedCollectionViewFlowLayout()
@@ -62,10 +66,15 @@ class SearchViewController: UIViewController {
 
         switch comingVCType {
         case .home:
-            tagCollectionViewTitle.text = "인기 검색"
+            tagCollectionViewTitle.text = "관심 태그"
+            Task {
+                tags = await CoreDataManager.shared.fetchTagsAsync().filter{$0.selected}
+            }
+            searchBar.text = ""
             break
         case .schedule:
             tagCollectionViewTitle.text = "최근 검색 장소"
+            self.searchBar.text = "서울 맛집"
             pois.removeAll()
             tagCollectionView.reloadData()
         default:
@@ -77,7 +86,6 @@ class SearchViewController: UIViewController {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: "서울 맛집")
             items = TourApiManager_hs.shared.searchByTitleResultList
             self.searchResultTableView.reloadData()
-            self.searchBar.text = "서울 맛집"
             guard let placeName = nameString else { return }
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: placeName)
         }
@@ -87,7 +95,7 @@ class SearchViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -98,7 +106,7 @@ class SearchViewController: UIViewController {
             if let nav = segue.destination as? UINavigationController,
                 let detailVC = nav.topViewController as? POIDetailViewController
             {
-                if let selectedItem = items.first(where: {$0.id == nameString}) {
+                if let selectedItem = items.first(where: { $0.id == nameString }) {
                     let poi = POI(context: CoreDataManager.shared.context)
                     poi.id = UUID()
                     poi.name = selectedItem.title
@@ -126,7 +134,7 @@ class SearchViewController: UIViewController {
             self.searchResultTableView.reloadData()
         }
     }
-    
+
     @IBAction func dismissVC(_ sender: Any) {
         POIsBackToVC?(pois)
         navigationController?.popViewController(animated: true)
@@ -137,7 +145,23 @@ class SearchViewController: UIViewController {
 extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return pois.count
+        if comingVCType == .home {
+            return tags.count
+        } else {
+            return pois.count
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if comingVCType == .home {
+            if let keyword = tags[indexPath.item].name {
+                Task {
+                    await TourApiManager_hs.shared.fetchGooglePlaceAPIByKeyword(keyword: "서울 \(keyword)")
+                    items = TourApiManager_hs.shared.searchByTitleResultList
+                    self.searchResultTableView.reloadData()
+                }
+            }
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
@@ -147,9 +171,15 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
                 withReuseIdentifier: String(describing: TagCollectionViewCell.self),
                 for: indexPath
             ) as! TagCollectionViewCell
-        cell.setCell(text: pois[indexPath.item].name ?? "")
-        cell.delegate = self
-        return cell
+        if comingVCType == .home {
+            cell.setCell(text: tags[indexPath.item].name ?? "")
+            cell.delegate = self
+            return cell
+        } else {
+            cell.setCell(text: pois[indexPath.item].name ?? "")
+            cell.delegate = self
+            return cell
+        }
     }
 }
 
@@ -159,9 +189,14 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let text = pois[indexPath.item].name ?? ""
+        var text = ""
+        if comingVCType == .home {
+            text = tags[indexPath.item].name ?? ""
+        } else {
+            text = pois[indexPath.item].name ?? ""
+        }
         let size = (text as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)])
-        return CGSize(width: size.width + 60, height: size.height + 4)
+        return CGSize(width: size.width + 60, height: size.height + 8)
     }
 }
 
@@ -197,6 +232,11 @@ extension SearchViewController: UITableViewDataSource {
                         }
                     }
                 }.resume()
+            }
+            if comingVCType == .home {
+                cell.selectButton.isHidden = true
+            } else {
+                cell.selectButton.isHidden = false
             }
             cell.delegate = self
         }
@@ -267,12 +307,15 @@ extension SearchViewController: SearchViewControllerDelegate {
         poi.imageURL = items[item.row].profileImage
         poi.openingHours = items[item.row].weekdayDescription?.joined(separator: "\n")
         pois.append(poi)
-        
     }
 
     func didDeselectButtonTapped(cell: UICollectionViewCell) {
         guard let item = self.tagCollectionView.indexPath(for: cell) else { return }
-        pois.remove(at: item.row)
+        if comingVCType == .home {
+            tags.remove(at: item.row)
+        } else {
+            pois.remove(at: item.row)
+        }
     }
 }
 

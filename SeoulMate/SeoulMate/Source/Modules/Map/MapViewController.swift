@@ -783,6 +783,7 @@ extension MapViewController: AddPlaceButtonCellDelegate {
         if let vc = storyboard.instantiateViewController(withIdentifier: "SearchVC") as? SearchViewController {
             navigationController?.pushViewController(vc, animated: true)
             navigationController?.navigationBar.isHidden = true
+            vc.comingVCType = .schedule
             let dayIndex = cell.addButton.tag
             vc.POIsBackToVC = { [weak self] returnedPois in
                 returnedPois.forEach { i in

@@ -970,11 +970,31 @@ extension MapViewController: AddPlaceButtonCellDelegate {
     func goToRoute(_ cell: AddPlaceButtonCell) {
         let dayIndex = cell.routeButton.tag
         let pois = poisByDay[dayIndex]
-        let storyboard = UIStoryboard(name: "RouteMap", bundle: nil)
-        if let vc = storyboard.instantiateViewController(withIdentifier: "RouteMap") as? RouteMapViewController {
-            vc.pois = pois
-            navigationController?.pushViewController(vc, animated: true)
+
+        if pois.count > 5 {
+            setupNoRouteAlert()
+        } else {
+            let storyboard = UIStoryboard(name: "RouteMap", bundle: nil)
+
+            if let vc = storyboard.instantiateViewController(withIdentifier: "RouteMap") as? RouteMapViewController {
+                vc.pois = pois
+                navigationController?.pushViewController(vc, animated: true)
+            }
         }
+    }
+
+    func setupNoRouteAlert() {
+        let noRouteAlert = UIAlertController(
+            title: "죄송합니다.",
+            message: "경로 탐색은 한번에 5개의 장소까지만 지원합니다.\n일정 조정 후 다시 시도해 주세요",
+            preferredStyle: .alert
+        )
+
+        let confirm = UIAlertAction(title: "확인", style: .default)
+
+        noRouteAlert.addAction(confirm)
+
+        present(noRouteAlert, animated: true)
     }
 }
 

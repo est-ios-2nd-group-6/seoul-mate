@@ -269,8 +269,7 @@ class MapViewController: UIViewController {
         
         poisByDay = schedules.map { schedule in
             let ordered = schedule.pois
-            let poiArray = (ordered?.array as? [POI]) ?? []
-            return poiArray.sorted { ($0.name ?? "") < ($1.name ?? "") }
+            return (schedule.pois?.array as? [POI]) ?? []
         }
         
         coordsByDay = poisByDay.map { poiList in
@@ -536,7 +535,6 @@ class MapViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
         circleTimer?.invalidate()
     }
     

@@ -48,7 +48,11 @@ class SearchViewController: UIViewController {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: placeName)
         }
     }
-
+    
+    @IBAction func backToSchduleView(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "POIDetail" {
             if let nav = segue.destination as? UINavigationController,

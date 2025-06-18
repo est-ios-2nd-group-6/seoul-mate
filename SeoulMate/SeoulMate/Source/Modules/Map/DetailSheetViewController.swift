@@ -52,7 +52,6 @@ class DetailSheetViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
         if segue.identifier == "POIDetail",
            let vc = segue.destination as? POIDetailViewController {
-            
         } else if segue.identifier == "RouteMap",
                   let vc = segue.destination as? RouteMapViewController {
 //            vc.pois = self.pois

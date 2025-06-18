@@ -21,6 +21,7 @@ class SettingViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.navigationBar.tintColor = .label
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

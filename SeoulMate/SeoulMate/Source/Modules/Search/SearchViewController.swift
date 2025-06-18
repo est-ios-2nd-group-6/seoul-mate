@@ -74,6 +74,17 @@ class SearchViewController: UIViewController {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: placeName)
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+
+
+    @IBAction func backToSchduleView(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+    
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "POIDetail" {
@@ -190,7 +201,7 @@ extension SearchViewController: UITableViewDelegate {
         }
         return nil
     }
-
+  
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
             return 60

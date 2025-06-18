@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol AddToScheduleSheetViewControllerDelegate: AnyObject {
+    func sheetViewControllerDidDismiss(_ viewController: AddToScheduleSheetViewController)
+}
+
 struct CellItem {
     struct Day {
         var id: UUID?
@@ -49,6 +53,8 @@ class AddToScheduleSheetViewController: UIViewController {
 
         CoreDataManager.shared.saveContext()
 
+        delegate?.sheetViewControllerDidDismiss(self)
+
         dismiss(animated: true)
     }
 
@@ -61,6 +67,8 @@ class AddToScheduleSheetViewController: UIViewController {
     var ToursOriginal: [Tour] = []
 
     var pois: [POI] = []
+
+    weak var delegate: AddToScheduleSheetViewControllerDelegate?
 
     var selectedRow: Int? = nil {
         didSet(oldVal) {
@@ -79,7 +87,7 @@ class AddToScheduleSheetViewController: UIViewController {
         self.sheetPresentationController?.detents = [.medium()]
         self.sheetPresentationController?.prefersGrabberVisible = false
 
-		let cell = UINib(nibName: "AddToScheduleTableViewCell", bundle: nil)
+        let cell = UINib(nibName: "AddToScheduleTableViewCell", bundle: nil)
         addToScheduleTableView.register(cell, forCellReuseIdentifier: "AddToScheduleTableViewCell")
 
         Task {
@@ -87,7 +95,7 @@ class AddToScheduleSheetViewController: UIViewController {
 
             for tour in ToursOriginal {
                 guard let schedules = tour.days?.allObjects as? [Schedule] else {
-					continue
+                    continue
                 }
 
                 var item = CellItem(tour: tour)
@@ -109,8 +117,12 @@ class AddToScheduleSheetViewController: UIViewController {
                 cellItems.append(item)
             }
 
-            cellItems[0].isSelected = true
-            cellItems[0].days[0].isSelected = true
+            if !cellItems.isEmpty {
+                cellItems[0].isSelected = true
+                cellItems[0].days[0].isSelected = true
+            }
+
+            validateButton()
 
             addToScheduleTableView.reloadData()
         }
@@ -129,7 +141,7 @@ extension AddToScheduleSheetViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cellItems.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "AddToScheduleTableViewCell") as? AddToScheduleTableViewCell else {
             return UITableViewCell()
@@ -176,7 +188,7 @@ extension AddToScheduleSheetViewController: UITableViewDelegate {
 extension AddToScheduleSheetViewController: AddToScheduleTableViewCellDelegate {
     func AddToScheduleTableViewCell(_ cell: AddToScheduleTableViewCell, didUpdateItem item: CellItem) {
         if let index = cellItems.firstIndex(where: { $0.id == item.id }) {
-			cellItems[index] = item
+            cellItems[index] = item
         }
     }
 }

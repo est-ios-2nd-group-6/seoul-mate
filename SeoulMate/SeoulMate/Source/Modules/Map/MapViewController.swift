@@ -970,6 +970,7 @@ extension MapViewController: DetailSheetDelegate {
             vc.pois = pois
             navigationController?.pushViewController(vc, animated: true)
         }
+
     }
 }
 

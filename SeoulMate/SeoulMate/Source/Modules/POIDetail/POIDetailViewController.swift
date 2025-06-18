@@ -73,6 +73,7 @@ extension POIDetailViewController: UITableViewDataSource {
             if let location = location {
                 cell.titleLabel.text = location.title
                 cell.reviewNumberLabel.text = "\(String(describing: location.rating ?? 0))"
+                cell.placeRating = location.rating ?? 0
                 cell.addressLabel.text = location.address
                 if let url = location.profileImage {
                     let session = URLSession(configuration: .ephemeral)

@@ -13,7 +13,13 @@ class POIInfoCell: UITableViewCell {
     @IBOutlet weak var reviewNumberLabel: UILabel!
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var placeImageView: UIImageView!
+    @IBOutlet weak var startStack: UIStackView!
     
+    var placeRating: Double = 0.0 {
+        didSet {
+            drawStar()
+        }
+    }
     weak var delegate:(any POIDetailViewControllerDelegate)?
     
     override func awakeFromNib() {
@@ -41,5 +47,20 @@ class POIInfoCell: UITableViewCell {
     
     @IBAction func shareButton(_ sender: Any) {
         delegate?.didShareButtonTapped()
+    }
+    
+    func drawStar(){
+        let fullStars = Int(placeRating)
+        let totalStars = 5
+        for i in 1...totalStars {
+            if let starImageView = startStack.viewWithTag(i) as? UIImageView {
+                if i <= fullStars {
+                    starImageView.image = UIImage(named: "star2")
+                } else {
+                    starImageView.image = UIImage(named: "star")
+                }
+            }
+        }
+
     }
 }

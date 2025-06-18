@@ -20,6 +20,7 @@ class POIDetailViewController: UIViewController {
     var id:String?
     var latitude:Double?
     var longtitude:Double?
+    var pois:[POI] = []
 
     
     @IBOutlet weak var detailTableView: UITableView!
@@ -104,10 +105,19 @@ extension POIDetailViewController: POIDetailViewControllerDelegate {
     }
     
     func didFindRoutesButtonTapped() {
-        print(#file,#function,"called")
+        let sheet = AddToScheduleSheetViewController()
+        sheet.pois = pois
+        sheet.delegate = self
+        present(sheet, animated: true)
     }
     
     func didShareButtonTapped() {
         print(#file,#function,"called")
+    }
+}
+
+extension POIDetailViewController: AddToScheduleSheetViewControllerDelegate {
+    func sheetViewControllerDidDismiss(_ viewController: AddToScheduleSheetViewController) {
+        self.showInAppNotification(message: "길 안내로 이동합니다.", duration: 2, backgroundColor: .main)
     }
 }

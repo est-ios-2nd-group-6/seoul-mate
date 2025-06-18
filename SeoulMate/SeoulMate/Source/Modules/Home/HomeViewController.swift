@@ -62,6 +62,8 @@ class HomeViewController: UIViewController {
                     }
                 }
             }
+        } else if let searchVC = segue.destination as? SearchViewController {
+            searchVC.comingVCType = .home
         }
     }
 
@@ -103,6 +105,8 @@ class HomeViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
         self.tabBarController?.tabBar.isHidden = false
     }
 }

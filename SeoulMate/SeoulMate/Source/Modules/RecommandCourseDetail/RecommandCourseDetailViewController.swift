@@ -7,9 +7,25 @@
 
 import UIKit
 
-struct fetchGooglePlaceNameResponoseDto: Codable {
+struct fetchGooglePlaceDataResponoseDto: Codable {
     struct Place: Codable {
-        let name: String
+        struct Location: Codable {
+            let latitude: Double
+            let longitude: Double
+        }
+
+        struct RegularOpeningHours: Codable {
+            let weekdayDescriptions: [String]
+        }
+
+        struct Photo: Codable {
+            var name: String
+        }
+
+        let id: String
+        let location: Location
+        let regularOpeningHours: RegularOpeningHours?
+        var photos: [Photo]?
     }
 
     let places: [Place]
@@ -28,32 +44,29 @@ class RecommandCourseDetailViewController: UIViewController {
         Task {
             var pois: [POI] = []
 
-            for place in places {
-                let name = await fetchGooglePlaceName(textQuery: place.name)
+            for rcmPlace in places {
+                let poi = await fetchGooglePlaceData(
+                    name: rcmPlace.name,
+                    category: rcmPlace.description
+                )
 
-                let poi = POI(context: CoreDataManager.shared.context)
-                poi.name = place.name
-                poi.placeID = name
+                if let poi {
+                    pois.append(poi)
+                }
 
-                pois.append(poi)
-            }
+                if !pois.isEmpty {
+                    let sheet = AddToScheduleSheetViewController()
 
-//            let tours = await CoreDataManager.shared.fetchToursAsync()
+                    sheet.pois = pois
+                    sheet.delegate = self
 
-//            let pois = tours[0].pois?.allObjects as! [POI]
-
-            if !pois.isEmpty {
-                let sheet = AddToScheduleSheetViewController()
-
-                sheet.pois = pois
-                sheet.delegate = self
-
-                present(sheet, animated: true)
+                    present(sheet, animated: true)
+                }
             }
         }
 
     }
-    
+
     var course: RecommandCourse?
 
     var places: [RecommandCoursePlace] = []
@@ -65,6 +78,8 @@ class RecommandCourseDetailViewController: UIViewController {
 
         let cell = UINib(nibName: "RecommandCourseItemListTableViewCell", bundle: nil)
         courseListTableView.register(cell, forCellReuseIdentifier: "RecommandCourseItemListTableViewCell")
+
+        titleLabel.text = course?.title
 
         Task {
             if let url = course?.firstImageUrl {
@@ -100,25 +115,24 @@ class RecommandCourseDetailViewController: UIViewController {
             }
         }
     }
-
-    override func viewIsAppearing(_ animated: Bool) {
-        super.viewIsAppearing(animated)
-
-        thumbnailImageView.image = UIImage(named: "subdetailimg")
-        titleLabel.text = course?.title
-    }
-
 }
 
 extension RecommandCourseDetailViewController {
-    func fetchGooglePlaceName(textQuery: String) async -> String? {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            courseListTableView.reloadData()
+        }
+    }
+
+    func fetchGooglePlaceData(name: String, category: String) async -> POI? {
         let baseUrl: String = "https://places.googleapis.com/v1/places:searchText"
 
         var queryItems: [URLQueryItem]
 
         queryItems = [
-            URLQueryItem(name: "textQuery", value: textQuery),
-            URLQueryItem(name: "languageCode", value: "ko")
+            URLQueryItem(name: "textQuery", value: name),
+            URLQueryItem(name: "languageCode", value: "ko"),
+            URLQueryItem(name: "pageSize", value: "1"),
         ]
 
         guard var url = URL(string: baseUrl) else {
@@ -134,7 +148,10 @@ extension RecommandCourseDetailViewController {
         }
 
         let fieldMasks: [String] = [
-            "places.name",
+            "places.id",
+            "places.location",
+            "places.regularOpeningHours",
+            "places.photos",
         ]
 
         request.httpMethod = "POST"
@@ -161,9 +178,28 @@ extension RecommandCourseDetailViewController {
                 return nil
             }
 
-            let json = try JSONDecoder().decode(fetchGooglePlaceNameResponoseDto.self, from: data)
+            let json = try JSONDecoder().decode(fetchGooglePlaceDataResponoseDto.self, from: data)
 
-            return json.places[0].name
+            let poi = POI(context: CoreDataManager.shared.context)
+
+            let place = json.places[0]
+
+            poi.name = name
+            poi.category = category
+            poi.latitude = place.location.latitude
+            poi.longitude = place.location.longitude
+
+            poi.openingHours = place.regularOpeningHours?.weekdayDescriptions.joined(separator: "\n")
+
+            if let photoName = place.photos?[0].name {
+                let imageURL = "https://places.googleapis.com/v1/\(photoName)/media?key=\(googleApiKey)"
+
+                poi.imageURL = imageURL
+            }
+
+            poi.placeID = place.id
+
+            return poi
         } catch {
             print("Fetcing is Failed!!", error, separator: "\n")
 
@@ -182,15 +218,28 @@ extension RecommandCourseDetailViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
+        cell.cellImageView.isHidden = false
+
         let row = indexPath.row
 
         let subItem = places[indexPath.item]
 
         cell.contentWrapperView.layer.cornerRadius = 8
 
+        if traitCollection.userInterfaceStyle == .light {
+            cell.contentWrapperView.backgroundColor = .systemBackground
+        } else {
+            cell.contentWrapperView.backgroundColor = .lightGray.withAlphaComponent(0.1)
+        }
+
         cell.contentWrapperView.layer.borderWidth = 1
-        cell.contentWrapperView.layer.borderColor = UIColor.tertiaryLabel.withAlphaComponent(0.1).cgColor
-        
+
+        if traitCollection.userInterfaceStyle == .light {
+            cell.contentWrapperView.layer.borderColor = UIColor.black.withAlphaComponent(0.1).cgColor
+        } else {
+            cell.contentWrapperView.layer.borderColor = UIColor.tertiaryLabel.withAlphaComponent(0.1).cgColor
+        }
+
         cell.contentWrapperView.layer.shadowColor = UIColor.black.cgColor
         cell.contentWrapperView.layer.shadowOpacity = 0.2
         cell.contentWrapperView.layer.shadowRadius = 10
@@ -204,9 +253,9 @@ extension RecommandCourseDetailViewController: UITableViewDataSource {
         cell.indexIndicator.clipsToBounds = true
 
         if let image = subItem.image {
-            cell.cellImageView?.image = image
+            cell.cellImageView.image = image
         } else {
-            cell.cellImageView?.removeFromSuperview()
+            cell.cellImageView.isHidden = true
             cell.titleLabel.topAnchor.constraint(equalTo: cell.wrapperStackView.topAnchor, constant: 12).isActive = true
         }
 

@@ -32,6 +32,7 @@ class DetailSheetViewController: UIViewController {
     }
     
     var pois: [POI] = []
+    var selectedRow: Int
     var place: String = ""
     var placeCategory: String = ""
     var placeOpenTime: String = ""

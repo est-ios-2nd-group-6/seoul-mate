@@ -99,7 +99,6 @@ class MapViewController: UIViewController {
     let defaultDistanceStrategy = NMCDefaultDistanceStrategy()
     
     let infoWindow = NMFInfoWindow()
-    var customInfoWindowDataSource = CustomInfoWindowDataSource()
     
     var currentTopSection: Int?
     private var isMarkerScroll = false

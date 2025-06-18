@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// T Map Api 응답 JSON 객체
 struct TMapRoutesApiResponseDto: Codable {
     let usedFavoriteRouteVertices: String?
     let type: String
@@ -65,7 +66,6 @@ struct Properties: Codable {
     let name, description: String?
     let direction, nearPoiName, nearPoiX, nearPoiY: String?
     let intersectionName: String?
-//    let facilityType, facilityName: String?
     let turnType: Int?
     let pointType: PointType?
     let lineIndex, distance, time, roadType: Int?

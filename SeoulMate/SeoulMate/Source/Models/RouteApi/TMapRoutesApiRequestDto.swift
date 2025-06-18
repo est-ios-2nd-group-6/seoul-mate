@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// T Map Api 요청 JSON 객체
 struct TMapRoutesApiRequestDto: Codable {
     let startX, startY: Double
     let startName: String

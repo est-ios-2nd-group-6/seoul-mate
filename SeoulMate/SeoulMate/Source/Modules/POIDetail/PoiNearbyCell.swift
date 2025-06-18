@@ -8,7 +8,7 @@
 import CoreLocation
 import UIKit
 
-class PoiNearbyCell: UITableViewCell {
+class POINearbyCell: UITableViewCell {
 
     var nearbyPlaceList: [TourNearybyAPIGoogleResponse.Place] = [] {
         didSet {
@@ -42,7 +42,7 @@ class PoiNearbyCell: UITableViewCell {
 
 }
 
-extension PoiNearbyCell: UITableViewDataSource {
+extension POINearbyCell: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch segmentedIndex {
@@ -119,6 +119,6 @@ extension PoiNearbyCell: UITableViewDataSource {
         }
     }
 }
-extension PoiNearbyCell: UITableViewDelegate {
+extension POINearbyCell: UITableViewDelegate {
 
 }

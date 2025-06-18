@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PoiInfoCell: UITableViewCell {
+class POIInfoCell: UITableViewCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var reviewNumberLabel: UILabel!

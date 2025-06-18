@@ -114,7 +114,7 @@ class TourApiManager_hs {
                     title: value.displayName.text,
                     rating: value.rating ?? 0,
                     category: value.types,
-                    profileImage: value.photos.first?.name,
+                    profileImage: value.photos?.first?.name,
                     photos: value.photos,
                     primaryTypeDisplayName: value.primaryTypeDisplayName,
                     location: value.location,

@@ -64,6 +64,7 @@ extension POINearbyCell: UITableViewDataSource {
             guard indexPath.row < list.count else { return UITableViewCell() }
             cell.titleLabel.text = list[indexPath.row].displayName.text
             cell.detailLabel.text = list[indexPath.row].primaryTypeDisplayName?.text
+                cell.placeRating = list[indexPath.row].rating
             cell.ratingCountLabel.text = "\(list[indexPath.row].rating)"
             if let profileURL = list[indexPath.row].photos.first?.name, let apiKey = Bundle.main.googleApiKey,
                 let url = URL(
@@ -95,6 +96,7 @@ extension POINearbyCell: UITableViewDataSource {
             cell.titleLabel.text = list[indexPath.row].displayName.text
             cell.detailLabel.text = list[indexPath.row].primaryTypeDisplayName?.text
             cell.ratingCountLabel.text = "\(list[indexPath.row].rating)"
+                cell.placeRating = list[indexPath.row].rating
             if let profileURL = list[indexPath.row].photos.first?.name, let apiKey = Bundle.main.googleApiKey,
                 let url = URL(
                     string:

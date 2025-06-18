@@ -24,6 +24,10 @@ class POIDetailViewController: UIViewController {
 
     @IBOutlet weak var detailTableView: UITableView!
 
+    @IBAction func dismissVC(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         detailTableView.dataSource = self
@@ -48,9 +52,8 @@ class POIDetailViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "RouteMap" {
-            if let nav = segue.destination as? UINavigationController,let routeVC = nav.topViewController as? RouteMapViewController {
+            if let routeVC = segue.destination as? RouteMapViewController {
                 routeVC.pois = pois
-                print(pois)
             }
         }
     }
@@ -70,6 +73,7 @@ extension POIDetailViewController: UITableViewDataSource {
             if let location = location {
                 cell.titleLabel.text = location.title
                 cell.reviewNumberLabel.text = "\(String(describing: location.rating ?? 0))"
+                cell.placeRating = location.rating ?? 0
                 cell.addressLabel.text = location.address
                 if let url = location.profileImage {
                     let session = URLSession(configuration: .ephemeral)

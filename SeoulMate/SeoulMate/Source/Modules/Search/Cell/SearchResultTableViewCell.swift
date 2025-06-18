@@ -13,6 +13,7 @@ class SearchResultTableViewCell: UITableViewCell {
     @IBOutlet weak var searchImageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var subTitleLabel: UILabel!
+    @IBOutlet weak var selectButton: UIButton!
     weak var delegate: (any SearchViewControllerDelegate)?
     override func awakeFromNib() {
         super.awakeFromNib()

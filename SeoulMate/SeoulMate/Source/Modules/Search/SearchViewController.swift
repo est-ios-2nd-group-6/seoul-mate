@@ -22,9 +22,10 @@ class SearchViewController: UIViewController {
     
     var comingVCType:SourceViewController?
 //    var tags = ["오사카", "제주", "다낭", "파리", "도쿄", "부산", "방콕", "다낭", "괌", "삿포로"]
-    var tags:[String] = [] {
+    var pois:[POI] = [] {
         didSet {
             self.tagCollectionView.reloadData()
+            print(#line,pois.count)
         }
     }
     var items = [SearchResult]()
@@ -56,7 +57,7 @@ class SearchViewController: UIViewController {
                 break
             case .schedule:
                 tagCollectionViewTitle.text = "최근 검색 장소"
-                tags.removeAll()
+                pois.removeAll()
                 tagCollectionView.reloadData()
             default:
                 break
@@ -100,10 +101,7 @@ class SearchViewController: UIViewController {
 extension SearchViewController: UICollectionViewDataSource,UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return tags.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        return pois.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
@@ -113,7 +111,7 @@ extension SearchViewController: UICollectionViewDataSource,UICollectionViewDeleg
                 withReuseIdentifier: String(describing: TagCollectionViewCell.self),
                 for: indexPath
             ) as! TagCollectionViewCell
-        cell.setCell(text: tags[indexPath.item])
+        cell.setCell(text: pois[indexPath.item].name ?? "")
         cell.delegate = self
         return cell
     }
@@ -125,7 +123,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let text = tags[indexPath.item]
+        let text = pois[indexPath.item].name ?? ""
         let size = (text as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)])
         return CGSize(width: size.width + 60, height: size.height + 4)
     }
@@ -223,12 +221,20 @@ extension SearchViewController: SearchViewControllerDelegate {
     func didSelectButtonTapped(cell: UITableViewCell) {
         guard let item = self.searchResultTableView.indexPath(for: cell)
         else { return }
-        tags.append(items[item.row].title)
+        let poi = POI(context: CoreDataManager.shared.context)
+        poi.name = items[item.row].title
+        poi.latitude = items[item.row].location.latitude
+        poi.longitude = items[item.row].location.longitude
+        poi.category = items[item.row].primaryTypeDisplayName?.text
+        poi.placeID = items[item.row].id
+        poi.imageURL = items[item.row].profileImage
+        poi.openingHours = items[item.row].weekdayDescription?.joined(separator: "\n")
+        pois.append(poi)
     }
     
     func didDeselectButtonTapped(cell: UICollectionViewCell) {
         guard let item = self.tagCollectionView.indexPath(for: cell) else { return }
-        tags.remove(at: item.row)
+        pois.remove(at: item.row)
     }
 }
 

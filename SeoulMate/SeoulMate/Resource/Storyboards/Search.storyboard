@@ -152,6 +152,7 @@
                                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
                                             <outlet property="searchImageView" destination="XW6-Ue-Nkb" id="ycG-jy-kXH"/>
+                                            <outlet property="selectButton" destination="vDp-LX-uWY" id="VvB-KW-SSK"/>
                                             <outlet property="subTitleLabel" destination="YGu-c2-Zft" id="mth-Nq-A6d"/>
                                             <outlet property="titleLabel" destination="UVo-8i-7Vk" id="R2o-s4-hjz"/>
                                         </connections>

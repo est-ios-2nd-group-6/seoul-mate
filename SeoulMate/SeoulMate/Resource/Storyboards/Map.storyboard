@@ -266,7 +266,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="aHv-y7-vA8">
-                                <rect key="frame" x="20" y="620.33333333333337" width="353" height="133.66666666666663"/>
+                                <rect key="frame" x="20" y="644.66666666666663" width="353" height="89.333333333333371"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="zG9-zT-BLz">
                                         <rect key="frame" x="0.0" y="0.0" width="353" height="89.333333333333329"/>
@@ -281,7 +281,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="장소 카테고리" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P2U-lj-zCk">
-                                                        <rect key="frame" x="0.0" y="44.666666666666629" width="92.666666666666671" height="20.333333333333329"/>
+                                                        <rect key="frame" x="0.0" y="44.666666666666742" width="92.666666666666671" height="20.333333333333329"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                         <color key="textColor" systemColor="secondaryLabelColor"/>
                                                         <nil key="highlightedColor"/>
@@ -300,18 +300,10 @@
                                             </imageView>
                                         </subviews>
                                     </stackView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A5A-vT-toR">
-                                        <rect key="frame" x="0.0" y="99.333333333333258" width="353" height="34.333333333333343"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="길찾기"/>
-                                        <connections>
-                                            <action selector="goToRoute:" destination="IRv-ac-uaC" eventType="touchUpInside" id="qFS-Mw-5Hp"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="miZ-T3-ObW">
-                                <rect key="frame" x="20" y="620.33333333333337" width="353" height="89.333333333333371"/>
+                                <rect key="frame" x="20" y="644.66666666666663" width="353" height="89.333333333333371"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain"/>
                                 <connections>
@@ -326,7 +318,7 @@
                             <constraint firstItem="QuL-Dr-hU0" firstAttribute="trailing" secondItem="aHv-y7-vA8" secondAttribute="trailing" constant="20" id="B5I-nk-G8N"/>
                             <constraint firstItem="miZ-T3-ObW" firstAttribute="bottom" secondItem="zG9-zT-BLz" secondAttribute="bottom" id="EpH-Bb-HNJ"/>
                             <constraint firstItem="miZ-T3-ObW" firstAttribute="height" secondItem="zG9-zT-BLz" secondAttribute="height" id="Sls-3a-6Bv"/>
-                            <constraint firstItem="QuL-Dr-hU0" firstAttribute="bottom" secondItem="aHv-y7-vA8" secondAttribute="bottom" constant="30" id="TwN-W1-sBf"/>
+                            <constraint firstItem="QuL-Dr-hU0" firstAttribute="bottom" secondItem="aHv-y7-vA8" secondAttribute="bottom" constant="50" id="TwN-W1-sBf"/>
                             <constraint firstItem="aHv-y7-vA8" firstAttribute="leading" secondItem="QuL-Dr-hU0" secondAttribute="leading" constant="20" id="gyW-jH-MEh"/>
                             <constraint firstItem="miZ-T3-ObW" firstAttribute="width" secondItem="zG9-zT-BLz" secondAttribute="width" id="lGf-eb-b8m"/>
                             <constraint firstItem="miZ-T3-ObW" firstAttribute="trailing" secondItem="zG9-zT-BLz" secondAttribute="trailing" id="nTn-a2-UKg"/>

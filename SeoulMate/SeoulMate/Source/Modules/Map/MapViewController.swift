@@ -269,8 +269,7 @@ class MapViewController: UIViewController {
         
         poisByDay = schedules.map { schedule in
             let ordered = schedule.pois
-            let poiArray = (ordered?.array as? [POI]) ?? []
-            return poiArray.sorted { ($0.name ?? "") < ($1.name ?? "") }
+            return (schedule.pois?.array as? [POI]) ?? []
         }
         
         coordsByDay = poisByDay.map { poiList in
@@ -536,7 +535,6 @@ class MapViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
         circleTimer?.invalidate()
     }
     
@@ -975,14 +973,7 @@ extension MapViewController: DetailSheetDelegate {
         }
     }
     
-    func detailSheetGoToRoute(_ sheet: DetailSheetViewController, didRequestRouteFor pois: [POI]) {
-        let storyboard = UIStoryboard(name: "RouteMap", bundle: nil)
-        if let vc = storyboard.instantiateViewController(withIdentifier: "RouteMap") as? RouteMapViewController {
-            vc.pois = pois
-            navigationController?.pushViewController(vc, animated: true)
-        }
-
-    }
+    
 }
 
 extension MapViewController: NSFetchedResultsControllerDelegate {

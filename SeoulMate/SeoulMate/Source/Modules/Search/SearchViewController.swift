@@ -189,7 +189,8 @@ extension SearchViewController: UITableViewDataSource {
                         "https://places.googleapis.com/v1/\(profileURL)/media?maxHeightPx=50&maxWidthPx=50&key=\(apiKey)"
                 )
             {
-                URLSession.shared.dataTask(with: url) { data, _, error in
+                let session = URLSession(configuration: .ephemeral)
+                session.dataTask(with: url) { data, _, error in
                     if let data = data {
                         DispatchQueue.main.async {
                             cell.searchImageView.image = UIImage(data: data)

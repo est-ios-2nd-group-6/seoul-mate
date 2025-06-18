@@ -85,15 +85,19 @@ API 키 설정이 완료되면, `Command + R`을 눌러 프로젝트를 빌드�
     ├── 📂 SeoulMate
     │   ├── 📂 Resource
     │   │   ├── Assets.xcassets    # 이미지, 컬러 등 리소스
-    │   │   ├── Base.lproj         # Storyboard 파일
-    │   │   └── Info.plist
+    │   │   └── Storyboards        # Storyboard 파일
+    │   │
     │   ├── 📂 Source
     │   │   ├── 📂 Components      # In-App 알림 등 재사용 가능한 UI 컴포넌트
     │   │   ├── 📂 Extensions      # Foundation, UIKit 클래스 확장
     │   │   ├── 📂 Models          # 데이터 모델 (API DTO, CoreData 모델 등)
     │   │   ├── 📂 Modules         # 각 화면(탭)별 모듈
     │   │   └── 📂 Services        # API 통신, 이미지 캐싱 등 서비스 관리
-    │   ├── 📂 Support             # Info.plist, Secret.xcconfig 등 설정 파일
+    │   │
+    │   └── 📂 Support
+    │       ├── Info.plist
+    │       └── Secret.xcconfig    # Api Key 관리 설정 파일
+    │   
     └── 📂 SeoulMate.xcodeproj
 ```
 

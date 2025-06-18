@@ -63,7 +63,8 @@ extension POIDetailViewController: UITableViewDataSource {
                 cell.reviewNumberLabel.text = "\(String(describing: location.rating ?? 0))"
                 cell.addressLabel.text = location.address
                 if let url = location.profileImage {
-                    URLSession.shared.dataTask(with: url) { data, _, error in
+                    let session = URLSession(configuration: .ephemeral)
+                    session.dataTask(with: url) { data, _, error in
                         if let data = data {
                             DispatchQueue.main.async {
                                 cell.placeImageView.image = UIImage(data: data)

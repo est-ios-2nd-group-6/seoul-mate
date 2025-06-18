@@ -17,12 +17,11 @@ class POIDetailViewController: UIViewController {
     var POIItems: [POICellType] = []
     var nameLabel: String = ""
     var location: PlaceInfo?
-    var id:String?
-    var latitude:Double?
-    var longtitude:Double?
-    var pois:[POI] = []
+    var id: String?
+    var latitude: Double?
+    var longtitude: Double?
+    var pois: [POI] = []
 
-    
     @IBOutlet weak var detailTableView: UITableView!
 
     override func viewDidLoad() {
@@ -37,7 +36,7 @@ class POIDetailViewController: UIViewController {
         Task {
             await TourApiManager_hs.shared.fetchGooglePlaceAPIByName(name: nameLabel)
             location = TourApiManager_hs.shared.placeInfo
-            guard let longitude = location?.longitude,let latitude = location?.latitude else {return}
+            guard let longitude = location?.longitude, let latitude = location?.latitude else { return }
             await TourApiManager_hs.shared.fetchPOIDetailNearbyPlace(latitude: latitude, longitude: longitude)
             self.detailTableView.reloadData()
         }
@@ -54,7 +53,7 @@ extension POIDetailViewController: UITableViewDataSource {
         case .Location:
             let cell =
                 tableView.dequeueReusableCell(withIdentifier: String(describing: POIInfoCell.self)) as! POIInfoCell
-                cell.delegate = self
+            cell.delegate = self
             if let location = location {
                 cell.titleLabel.text = location.title
                 cell.reviewNumberLabel.text = "\(String(describing: location.rating ?? 0))"
@@ -73,10 +72,10 @@ extension POIDetailViewController: UITableViewDataSource {
         case .Recommandation:
             let cell =
                 tableView.dequeueReusableCell(withIdentifier: String(describing: POINearbyCell.self)) as! POINearbyCell
-                cell.nearbyPlaceList = TourApiManager_hs.shared.nearybyPlaceList
-                if let longitude = location?.longitude,let latitude = location?.latitude {
-                    cell.currentLocation = CurrentLocation(longitude: longitude, latitude: latitude)
-                }
+            cell.nearbyPlaceList = TourApiManager_hs.shared.nearybyPlaceList
+            if let longitude = location?.longitude, let latitude = location?.latitude {
+                cell.currentLocation = CurrentLocation(longitude: longitude, latitude: latitude)
+            }
             return cell
         }
     }
@@ -101,18 +100,20 @@ protocol POIDetailViewControllerDelegate: AnyObject {
 
 extension POIDetailViewController: POIDetailViewControllerDelegate {
     func didAddScheduleButtonTapped() {
-        print(#file,#function,"called")
-    }
-    
-    func didFindRoutesButtonTapped() {
         let sheet = AddToScheduleSheetViewController()
         sheet.pois = pois
         sheet.delegate = self
         present(sheet, animated: true)
     }
-    
+
+    func didFindRoutesButtonTapped() {
+        let route = RouteMapViewController()
+        route.pois = pois
+        performSegue(withIdentifier: "RouteMap", sender: pois)
+    }
+
     func didShareButtonTapped() {
-        
+
     }
 }
 

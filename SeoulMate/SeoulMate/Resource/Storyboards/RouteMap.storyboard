@@ -130,17 +130,17 @@
                                                 </constraints>
                                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                 <prototypes>
-                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="RouteInfoTableViewCell" translatesAutoresizingMaskIntoConstraints="NO" id="OFK-hR-Q7i" customClass="RouteInfoTableViewCell" customModule="SeoulMate" customModuleProvider="target">
+                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="RouteInfoTableViewCell" translatesAutoresizingMaskIntoConstraints="NO" id="OFK-hR-Q7i" customClass="RouteInfoTableViewCell" customModule="SeoulMate" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="50" width="329" height="45"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OFK-hR-Q7i" id="GgH-ZF-r9e">
                                                             <rect key="frame" x="0.0" y="0.0" width="329" height="45"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
-                                                                <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="eDV-Kl-1zx">
+                                                                <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="eDV-Kl-1zx">
                                                                     <rect key="frame" x="0.0" y="0.0" width="329" height="50"/>
                                                                     <subviews>
-                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KeI-25-Qnq">
+                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KeI-25-Qnq">
                                                                             <rect key="frame" x="0.0" y="0.66666666666666785" width="19.666666666666668" height="48.666666666666657"/>
                                                                             <imageReference key="image" image="target" catalog="system" renderingMode="hierarchical-single">
                                                                                 <hierarchicalColors>
@@ -150,7 +150,7 @@
                                                                                 </hierarchicalColors>
                                                                             </imageReference>
                                                                         </imageView>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="서울역" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hEc-1p-kIF">
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" ambiguous="YES" text="서울역" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hEc-1p-kIF">
                                                                             <rect key="frame" x="27.666666666666657" y="0.0" width="301.33333333333337" height="50"/>
                                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                             <nil key="textColor"/>
@@ -387,7 +387,9 @@
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="18I-wx-NKg" secondAttribute="trailing" constant="32" id="VIz-2g-XUq"/>
-                                    <constraint firstAttribute="height" constant="300" id="W0M-DY-qcF"/>
+                                    <constraint firstAttribute="height" constant="300" id="W0M-DY-qcF">
+                                        <variation key="heightClass=regular-widthClass=regular" constant="600"/>
+                                    </constraint>
                                     <constraint firstItem="18I-wx-NKg" firstAttribute="leading" secondItem="8i1-00-g69" secondAttribute="leading" constant="32" id="eaL-Wy-vWJ"/>
                                 </constraints>
                             </stackView>

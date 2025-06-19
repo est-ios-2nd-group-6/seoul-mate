@@ -155,7 +155,7 @@ API 키 설정이 완료되면, `Command + R`을 눌러 프로젝트를 빌드�
 
 | Name | GitHub Profile |
 | :--- | :--- |
-| 김현식 | `https://github.com/hyuns12` |
-| 성주현 | `https://github.com/juhyeon-seong` |
-| 윤혜주 | `https://github.com/hyejuyun` |
-| 하재준 | `https://github.com/hajunha` |
+| 김현식 | `https://github.com/whitespace-kr` |
+| 성주현 | `https://github.com/zudugy` |
+| 윤혜주 | `https://github.com/unaexoo` |
+| 하재준 | `https://github.com/haejaejoon` |

@@ -1008,7 +1008,7 @@ extension RouteMapViewController: UICollectionViewDataSource {
         cell.wrapperView.layer.shadowOffset = CGSize(width: 0, height: 0)
 
 
-        cell.optionLabel.text = option?.title ?? "추천 경로 \(index + 1)"
+        cell.optionLabel.text = option?.title ?? "추천 경로"
 
         cell.totalDistance.text = "\(Int(round(Double(data.totalDistance / 1000))))km"
 

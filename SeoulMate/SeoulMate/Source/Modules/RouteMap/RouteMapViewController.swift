@@ -244,7 +244,23 @@ class RouteMapViewController: UIViewController {
 
     var isFetchedLocationList: Bool = false
 
-    var transitDetailWrapperViewHeight: Int = 300
+//    var transitDetailWrapperViewHeight: Int = 300
+    var transitDetailWrapperViewHeight: Int {
+        if UITraitCollection.current.verticalSizeClass == .regular {
+            // iPad
+
+            if view.bounds.width < view.bounds.height {
+                // landscape
+                return 600
+            } else {
+                // portrait
+                return 300
+            }
+        } else {
+            // iPhone
+            return 300
+        }
+    }
 
     /// API 호출 결과를 캐싱하여 불필요한 네트워크 요청을 방지하기 위한 딕셔너리.
     /// - Key: `RouteOption` (교통수단)

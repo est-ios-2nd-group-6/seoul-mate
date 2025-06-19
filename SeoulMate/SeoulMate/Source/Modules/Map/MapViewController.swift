@@ -535,8 +535,10 @@ class MapViewController: UIViewController {
         
         requestLocationServiceAlert.addAction(cancel)
         requestLocationServiceAlert.addAction(goSetting)
-        
-        present(requestLocationServiceAlert, animated: true)
+
+        DispatchQueue.main.async { [weak self] in
+            self?.present(requestLocationServiceAlert, animated: true)
+        }
     }
     
     

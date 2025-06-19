@@ -35,6 +35,52 @@
 
 -----
 
+## 📸 앱 미리보기
+
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center"><strong>Onboarding</strong></th>
+      <th align="center"><strong>TagSelect</strong></th>
+      <th align="center"><strong>Home</strong></th>
+      <th align="center"><strong>ScheduleList</strong></th>
+      <th align="center"><strong>Setting</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><img src="https://github.com/user-attachments/assets/248402f1-e3f8-4618-ab5e-541e8c6c9ba1" width="300"/></td>
+      <td align="center"><img src="https://github.com/user-attachments/assets/32af6354-3917-4d49-8ee3-beec63366b5f" width="300"/></td>
+      <td align="center"><img src="https://github.com/user-attachments/assets/2ad77e5c-95a1-4603-97ec-fe1ee79bf3a1" width="300"/></td>
+      <td align="center"><img src="https://github.com/user-attachments/assets/0a412a9c-70aa-4b23-9433-0665ed81f58a" width="300"/></td>
+      <td align="center"><img src="https://github.com/user-attachments/assets/03ab74a2-e177-4d94-8b6d-c36dfbd36884" width="300"/></td>
+    </tr>
+  </tbody>
+</table>
+
+<br>
+
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center"><strong>Map</strong></th>
+      <th align="center"><strong>Search</strong></th>
+      <th align="center"><strong>POIDetail</strong></th>
+      <th align="center"><strong>Route</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><img src="https://github.com/user-attachments/assets/76260cfe-f4b8-4951-8deb-d14f8894e4ce" width="300"/></td>
+      <td align="center"><img src="https://github.com/user-attachments/assets/df72d4fe-4769-481f-b19f-202ecd503215" width="300"/></td>
+      <td align="center"><img src="https://github.com/user-attachments/assets/8adae85a-7433-460c-a48f-438c6d49ed7c" width="300"/></td>
+      <td align="center"><img src="https://github.com/user-attachments/assets/93746125-cf57-4837-bb87-c49a377e99c0" width="300"/></td>
+    </tr>
+  </tbody>
+</table>
+
+-----
+
 ## ⚙️ 구현 기술 및 라이브러리
 
   - **UI & Layout**: `UIKit` & `Storyboard`

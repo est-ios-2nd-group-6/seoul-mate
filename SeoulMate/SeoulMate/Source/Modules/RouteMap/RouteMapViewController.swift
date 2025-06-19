@@ -246,7 +246,7 @@ class RouteMapViewController: UIViewController {
 
 //    var transitDetailWrapperViewHeight: Int = 300
     var transitDetailWrapperViewHeight: Int {
-        if UITraitCollection.current.verticalSizeClass == .regular {
+        if UITraitCollection.current.horizontalSizeClass == .regular {
             // iPad
 
             if view.bounds.width < view.bounds.height {

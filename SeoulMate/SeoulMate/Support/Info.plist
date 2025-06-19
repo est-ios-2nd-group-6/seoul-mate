@@ -2,6 +2,32 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>GoogleApiKey</key>
+	<string>${GOOGLE_API_KEY}</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>apis.data.go.kr</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>tong.visitkorea.or.kr</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>TMapRoutesApiKey</key>
+	<string>${TMAP_ROUTES_API_KEY}</string>
+	<key>TourApiKey</key>
+	<string>${TOUR_API_KEY}</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -16,10 +42,16 @@
 					<key>UISceneDelegateClassName</key>
 					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
 					<key>UISceneStoryboardFile</key>
-					<string>Main</string>
+					<string>Onboarding</string>
 				</dict>
 			</array>
 		</dict>
 	</dict>
+	<key>NaverMapApiKey</key>
+	<string>${NaverMap_API_KEY}</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>사용자의 위치를 기반으로 정보를 제공하기 위해 권한이 필요합니다</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>사용자의 위치를 기반으로 정보를 제공하기 위해 권한이 필요합니다</string>
 </dict>
 </plist>
